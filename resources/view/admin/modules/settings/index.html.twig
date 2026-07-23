@@ -1,0 +1,99 @@
+{{ sweetAlert|raw }}
+<div class="app-content content ">
+	<div class="content-overlay"></div>
+	<div class="header-navbar-shadow"></div>
+	<div class="content-wrapper">
+		<div class="content-header row">
+			<div class="content-header-left col-md-9 col-12 mb-2">
+				<div class="row breadcrumbs-top">
+					<div class="col-12">
+						<h2 class="content-header-title float-start mb-0">Website</h2>
+						<div class="breadcrumb-wrapper">
+							<ol class="breadcrumb">
+								<li class="breadcrumb-item">
+									<a href="{{ URL }}/admin/home">Home</a>
+								</li>
+								<li class="breadcrumb-item active">Settings</li>
+								<li class="breadcrumb-item active">Website</li>
+							</ol>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="content-body">
+			<section id="settings">
+				<div class="row match-height">
+					<div class="col-xl-8 col-md-12 col-12">
+						{{ status|raw }}
+						<div class="card">
+							<div class="card-body">
+								<form action="{{URL}}/admin/settings" method="post">
+									<div class="row">
+										<div class="col-md-12 col-lg-6">
+											<label class="form-label" for="website_title">Title</label>
+											<input type="text" name="website_title" id="website_title" class="form-control mb-1" value="{{ title }}">
+										</div>
+										<div class="col-md-12 col-lg-6">
+											<label class="form-label" for="website_download">Client Link</label>
+											<input type="text" name="website_download" id="website_download" class="form-control mb-1" value="{{ download_link }}">
+										</div>
+										<div class="col-md-12 col-lg-2 mb-1">
+											<label class="form-label" for="website_vocation">Vocation</label>
+											<div class="form-check form-switch">
+												{% if player_voc == 0 %}
+													<input type="checkbox" class="form-check-input" name="website_vocation" id="website_vocation" value="1">
+												{% endif %}
+												{% if player_voc == 1 %}
+													<input type="checkbox" class="form-check-input" name="website_vocation" id="website_vocation" value="1" checked="">
+												{% endif %}
+											</div>
+										</div>
+										<div class="col-md-12 col-lg-2 mb-1">
+											<label class="form-label" for="website_donates">Donates</label>
+											<div class="form-check form-switch">
+												{% if active_donates == 0 %}
+													<input type="checkbox" class="form-check-input" name="website_donates" id="website_donates" value="1">
+												{% endif %}
+												{% if active_donates == 1 %}
+													<input type="checkbox" class="form-check-input" name="website_donates" id="website_donates" value="1" checked="">
+												{% endif %}
+											</div>
+										</div>
+										<div class="col-md-12 col-lg-2 mb-1">
+											<label class="form-label" for="website_maxplayers" data-i18n="Max Players Account">Max Players Account</label>
+											<div class="demo-inline-spacing">
+												<div class="input-group bootstrap-touchspin">
+													<input type="number" class="touchspin" name="website_maxplayers" id="website_maxplayers" value="{{ player_max }}"/>
+												</div>
+											</div>
+										</div>
+										<div class="col-md-12 col-lg-2 mb-1">
+											<label class="form-label" for="website_levelguild" data-i18n="Level Guild">Level Guild</label>
+											<div class="demo-inline-spacing">
+												<div class="input-group">
+													<input type="number" class="form-control" name="website_levelguild" id="website_levelguild" value="{{ player_guild }}"/>
+												</div>
+											</div>
+										</div>
+										<div class="col-md-12 col-lg-4 mb-1">
+											<label class="form-label" for="website_timezone" data-i18n="Timezone">Timezone</label>
+											<select class="form-select" name="website_timezone" id="website_timezone">
+												{% for timezone in all_timezones %}
+													<option value="{{ timezone }}" {% if timezone == webtimezone %}selected="selected"{% endif %}>{{ timezone }}</option>
+												{% endfor %}
+											</select>
+										</div>
+										<div class="col-md-12 col-lg-12">
+											<input type="submit" class="btn btn-primary" name="website_update" id="sweet-success" value="Save Changes">
+										</div>
+									</div>
+								</form>
+							</div>
+						</div>
+					</div>
+				</div>
+			</section>
+		</div>
+	</div>
+</div>

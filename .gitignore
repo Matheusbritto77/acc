@@ -1,0 +1,8 @@
+.vs
+*items
+*outfits
+
+Thumbs.db
+.DS_Store
+.idea/
+/store

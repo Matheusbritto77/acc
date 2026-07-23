@@ -1,0 +1,49 @@
+<div class="main-content Content">
+	<div id="" class="Box">
+		<div class="Corner-tl" style="background-image:url({{IMAGE_PATH}}/global/content/corner-tl.gif);"></div>
+		<div class="Corner-tr" style="background-image:url({{IMAGE_PATH}}/global/content/corner-tr.gif);"></div>
+		<div class="Border_1" style="background-image:url({{IMAGE_PATH}}/global/content/border-1.gif);"></div>
+		<div class="BorderTitleText" style="background-image:url({{IMAGE_PATH}}/global/content/newsheadline_background.gif); height: 28px;">
+			<div class="InfoBar">
+				<div class="LanguageSwitcher" style="display: inline-block; position: absolute; left: 50%; transform: translateX(-50%); top: -3px; z-index: 100;">
+					<a href="{{URL}}/language/en" style="margin-right: 8px; border: 0; text-decoration: none;">
+						<img class="FlagIcon" src="https://flagcdn.com/w40/us.png" alt="English" style="width: 24px; height: 16px; border-radius: 3px; vertical-align: middle; transition: all 0.2s ease; {% if current_lang == 'en' %}border: 2px solid #ffcc00; box-shadow: 0 0 4px #ffcc00; opacity: 1;{% else %}opacity: 0.65; border: 2px solid transparent;{% endif %}" onmouseover="this.style.opacity='1'" onmouseout="{% if current_lang != 'en' %}this.style.opacity='0.65'{% endif %}">
+					</a>
+					<a href="{{URL}}/language/pt" style="margin-right: 8px; border: 0; text-decoration: none;">
+						<img class="FlagIcon" src="https://flagcdn.com/w40/br.png" alt="Português" style="width: 24px; height: 16px; border-radius: 3px; vertical-align: middle; transition: all 0.2s ease; {% if current_lang == 'pt' %}border: 2px solid #ffcc00; box-shadow: 0 0 4px #ffcc00; opacity: 1;{% else %}opacity: 0.65; border: 2px solid transparent;{% endif %}" onmouseover="this.style.opacity='1'" onmouseout="{% if current_lang != 'pt' %}this.style.opacity='0.65'{% endif %}">
+					</a>
+					<a href="{{URL}}/language/es" style="border: 0; text-decoration: none;">
+						<img class="FlagIcon" src="https://flagcdn.com/w40/es.png" alt="Español" style="width: 24px; height: 16px; border-radius: 3px; vertical-align: middle; transition: all 0.2s ease; {% if current_lang == 'es' %}border: 2px solid #ffcc00; box-shadow: 0 0 4px #ffcc00; opacity: 1;{% else %}opacity: 0.65; border: 2px solid transparent;{% endif %}" onmouseover="this.style.opacity='1'" onmouseout="{% if current_lang != 'es' %}this.style.opacity='0.65'{% endif %}">
+					</a>
+				</div>
+				{% if discord is not empty %}
+				<a class="InfoBarBlock" href="{{ discord }}" target="new">
+					<img class="InfoBarBigLogo NotOnMobile" src="{{IMAGE_PATH}}/global/header/info/icon-discord.png">
+					<img class="InfoBarSmallLogo" src="{{IMAGE_PATH}}/global/header/info/icon-discord.png">
+					<span class="InfoBarNumbers"><span class="InfoBarSmallElement">Join Discord</span></span>
+				</a>
+				{% endif %}
+				<a class="InfoBarBlock" href="{{URL}}/downloads">
+					<img class="InfoBarBigLogo NotOnMobile" src="{{IMAGE_PATH}}/global/header/info/icon-download.png">
+					<img class="InfoBarSmallLogo" src="{{IMAGE_PATH}}/global/header/info/icon-download.png">
+					<span class="InfoBarNumbers"><span class="InfoBarSmallElement">Download</span></span>
+				</a>
+				<a style="float:right;" href="{{URL}}/community/worlds">
+					<img class="InfoBarBigLogo" src="{{IMAGE_PATH}}/global/header/info/icon-players-online.png">
+					{% if server_status == 'Server Offline' %}
+						<span class="InfoBarNumbers"><span class="InfoBarSmallElement">Server Offline</span></span></span>
+					{% else %}
+						<span class="InfoBarNumbers"><span class="InfoBarSmallElement">{{ playersonline }}<span class="NotOnMobile"> Players Online</span></span></span>
+					{% endif %}
+				</a>
+			</div>
+		</div>
+		<div class="Border_1" style="background-image:url({{IMAGE_PATH}}/global/content/border-1.gif);"></div>
+		<div class="CornerWrapper-b">
+			<div class="Corner-bl" style="background-image:url({{IMAGE_PATH}}/global/content/corner-bl.gif);"></div>
+		</div>
+		<div class="CornerWrapper-b">
+			<div class="Corner-br" style="background-image:url({{IMAGE_PATH}}/global/content/corner-br.gif);"></div>
+		</div>
+	</div>
+</div>
