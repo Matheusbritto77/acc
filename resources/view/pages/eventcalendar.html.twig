@@ -1,0 +1,198 @@
+<div id="EventSchedule" class="Box">
+	<div class="Corner-tl" style="background-image:url({{IMAGE_PATH}}/global/content/corner-tl.gif);"></div>
+	<div class="Corner-tr" style="background-image:url({{IMAGE_PATH}}/global/content/corner-tr.gif);"></div>
+	<div class="Border_1" style="background-image:url({{IMAGE_PATH}}/global/content/border-1.gif);"></div>
+	<div class="BorderTitleText" style="background-image:url({{IMAGE_PATH}}/global/content/title-background-green.gif);"></div><img id="ContentBoxHeadline" class="Title" src="{{IMAGE_PATH}}/global/strings/headline-eventschedule.gif" alt="Contentbox headline">
+	<div class="Border_2">
+		<div class="Border_3">
+			<div class="BoxContent" style="background-image:url({{IMAGE_PATH}}/global/content/scroll.gif);">
+				<div id="eventscheduletablecontainer">
+					<div class="TableContainer">
+						<div class="CaptionContainer">
+							<div class="CaptionInnerContainer">
+								<span class="CaptionEdgeLeftTop" style="background-image:url({{IMAGE_PATH}}/global/content/box-frame-edge.gif);"></span>
+								<span class="CaptionEdgeRightTop" style="background-image:url({{IMAGE_PATH}}/global/content/box-frame-edge.gif);"></span>
+								<span class="CaptionBorderTop" style="background-image:url({{IMAGE_PATH}}/global/content/table-headline-border.gif);"></span>
+								<span class="CaptionVerticalLeft" style="background-image:url({{IMAGE_PATH}}/global/content/box-frame-vertical.gif);"></span>
+								<div class="Text">
+									<div class="eventscheduleheadertop">
+										<div class="eventscheduleheaderblockleft">
+											<div class="eventscheduleheaderdateblock">
+												{% if prev %}
+												<span class="eventscheduleheaderleft">
+													<a href="{{URL}}/eventcalendar?calendarmonth={{ prev_month }}&amp;calendaryear={{ prev_year }}" style="color:white;">&laquo;</a>
+												</span>
+												{% endif %}
+												{{ current_date }}
+												<span class="eventscheduleheaderright">
+													<a href="{{URL}}/eventcalendar?calendarmonth={{ next_month }}&amp;calendaryear={{ next_year }}" style="color:white;">&raquo;</a>
+												</span>
+											</div>
+										</div>
+										<div class="eventscheduleheaderblockright">{{ now }}</div>
+									</div>
+								</div>
+								<span class="CaptionVerticalRight" style="background-image:url({{IMAGE_PATH}}/global/content/box-frame-vertical.gif);"></span>
+								<span class="CaptionBorderBottom" style="background-image:url({{IMAGE_PATH}}/global/content/table-headline-border.gif);"></span>
+								<span class="CaptionEdgeLeftBottom" style="background-image:url({{IMAGE_PATH}}/global/content/box-frame-edge.gif);"></span>
+								<span class="CaptionEdgeRightBottom" style="background-image:url({{IMAGE_PATH}}/global/content/box-frame-edge.gif);"></span>
+							</div>
+						</div>
+						<table class="Table3" cellpadding="0" cellspacing="0" style="background-color: rgb(241, 224, 197);">
+							<tbody>
+								<tr>
+									<td>
+										<div class="TableScrollbarWrapper" style="width: unset;">
+											<div class="TableScrollbarContainer"></div>
+										</div>
+										<div class="InnerTableContainer" style="padding: 5px; max-width: unset;">
+											<table style="width: 98%;" id="eventscheduletable">
+												<tbody>
+													<tr>
+														<th style="text-align:center; width:120px; background-color:#5f4d41;">
+															<b>Monday</b>
+														</th>
+														<th style="text-align:center; width:120px; background-color:#5f4d41;">
+															<b>Tuesday</b>
+														</th>
+														<th style="text-align:center; width:120px; background-color:#5f4d41;">
+															<b>Wednesday</b>
+														</th>
+														<th style="text-align:center; width:120px; background-color:#5f4d41;">
+															<b>Thursday</b>
+														</th>
+														<th style="text-align:center; width:120px; background-color:#5f4d41;">
+															<b>Friday</b>
+														</th>
+														<th style="text-align:center; width:120px; background-color:#5f4d41;">
+															<b>Saturday</b>
+														</th>
+														<th style="text-align:center; width:120px; background-color:#5f4d41;">
+															<b>Sunday</b>
+														</th>
+													</tr>
+													{% for week, events in calendar %}
+														<tr>
+															{% for event in events %}
+																<td style="height:82px; background-clip: padding-box; overflow: hidden; vertical-align:top; background-color:{{ event.color }};">
+																	<div style="font-weight: bold; margin-left: 3px; margin-bottom: 2px;">
+																		<span style="vertical-align: text-bottom;">{{ event.day }}
+																		</span>
+																	</div>
+																	{{event.html|raw}}
+																</td>
+															{% endfor %}
+														</tr>
+													{% endfor %}
+												</tbody>
+											</table>
+										</div>
+									</td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+				</div><br>
+				<style>
+					.calendar {
+						display: flex;
+						flex-flow: column;
+					}
+					.calendar .header .month-year {
+						font-size: 20px;
+						font-weight: bold;
+						color: #636e73;
+						padding: 20px 0;
+					}
+					.calendar .days {
+						display: flex;
+						flex-flow: wrap;
+					}
+					.calendar .days .day_name {
+						width: calc(100% / 7);
+						border-right: 1px solid #2c7aca;
+						padding: 20px;
+						text-transform: uppercase;
+						font-size: 12px;
+						font-weight: bold;
+						color: #818589;
+						color: #fff;
+						background-color: #448cd6;
+					}
+					.calendar .days .day_name:nth-child(7) {
+						border: none;
+					}
+					.calendar .days .day_num {
+						display: flex;
+						flex-flow: column;
+						width: calc(100% / 7);
+						border-right: 1px solid #e6e9ea;
+						border-bottom: 1px solid #e6e9ea;
+						padding: 15px;
+						font-weight: bold;
+						color: #7c878d;
+						cursor: pointer;
+						min-height: 100px;
+					}
+					.calendar .days .day_num span {
+						display: inline-flex;
+						width: 30px;
+						font-size: 14px;
+					}
+					.calendar .days .day_num .event {
+						margin-top: 10px;
+						font-weight: 500;
+						font-size: 14px;
+						padding: 3px 6px;
+						border-radius: 4px;
+						background-color: #f7c30d;
+						color: #fff;
+						word-wrap: break-word;
+					}
+					.calendar .days .day_num .event.green {
+						background-color: #51ce57;
+					}
+					.calendar .days .day_num .event.blue {
+						background-color: #518fce;
+					}
+					.calendar .days .day_num .event.red {
+						background-color: #ce5151;
+					}
+					.calendar .days .day_num:nth-child(7n + 1) {
+						border-left: 1px solid #e6e9ea;
+					}
+					.calendar .days .day_num:hover {
+						background-color: #fdfdfd;
+					}
+					.calendar .days .day_num.ignore {
+						background-color: #fdfdfd;
+						color: #ced2d4;
+						cursor: inherit;
+					}
+					.calendar .days .day_num.selected {
+						background-color: #f1f2f3;
+						cursor: inherit;
+					}
+				</style>
+				{{day|raw}}
+				<div>* Event starts/ends at server save of this day.</div>
+				<script type="text/javascript">
+					$("#eventscheduletablecontainer .TableContainer .Table3").css("background-color", "#F1E0C5");
+				</script>
+				<script type="text/javascript">
+					$("#eventscheduletablecontainer .TableContainer .Table3 .InnerTableContainer").css("padding", "5px");
+				</script>
+				<script type="text/javascript">
+					$("#eventscheduletable").css("width", "98%");
+				</script>
+			</div>
+		</div>
+	</div>
+	<div class="Border_1" style="background-image:url({{IMAGE_PATH}}/global/content/border-1.gif);"></div>
+	<div class="CornerWrapper-b">
+		<div class="Corner-bl" style="background-image:url({{IMAGE_PATH}}/global/content/corner-bl.gif);"></div>
+	</div>
+	<div class="CornerWrapper-b">
+		<div class="Corner-br" style="background-image:url({{IMAGE_PATH}}/global/content/corner-br.gif);"></div>
+	</div>
+</div>
