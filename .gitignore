@@ -1,6 +1,7 @@
 .vs
 *items
 *outfits
+.env
 
 Thumbs.db
 .DS_Store
