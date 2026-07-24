@@ -341,31 +341,31 @@ document.getElementById("ActiveSubmenuItemLabel_createaccount").style.color = "w
 														</td>
 														<td>
 															<table width="100%">
-																<tbody>
-																	{% set vocation_rows = [] %}
-																	{% for vocation_id, vocation_name in vocations %}
-																		{% if vocation_id != 0 %}
-																			{% set vocation_rows = vocation_rows|merge([{'id': vocation_id, 'name': vocation_name}]) %}
-																		{% endif %}
-																	{% endfor %}
-																	{% for row in vocation_rows|batch(2) %}
-																		<tr>
-																			<td>
-																				{% for vocation in row %}
-																					{% if vocation is not empty %}
-																						<span style="margin-right:75px;" class="OptionContainer">
-																							<label for="vocation_{{ vocation.name|lower|replace({' ': '_'}) }}">
-																								<span class="OptionContainer"><input id="vocation_{{ vocation.name|lower|replace({' ': '_'}) }}" type="radio" name="vocation" value="{{ vocation.id }}"><label for="vocation_{{ vocation.name|lower|replace({' ': '_'}) }}">{{ vocation.name }}</label>
-																								</span>
-																							</label>
-																						</span>
-																					{% endif %}
-																				{% endfor %}
-																			</td>
-																		</tr>
-																	{% endfor %}
-																	</tbody>
-																</table>
+												<tbody>
+													{% set vocation_rows = [] %}
+													{% for vocation_id, vocation_name in vocations %}
+														{% if vocation_id != 0 %}
+															{% set vocation_rows = vocation_rows|merge([{'id': vocation_id, 'name': vocation_name}]) %}
+														{% endif %}
+													{% endfor %}
+													{% for row in vocation_rows|batch(2) %}
+														<tr>
+															{% for vocation in row %}
+																{% if vocation is not empty %}
+																	<td style="width:50%; padding: 4px 0;">
+																		<span class="OptionContainer">
+																			<label for="vocation_{{ vocation.name|lower|replace({' ': '_'}) }}">
+																				<input id="vocation_{{ vocation.name|lower|replace({' ': '_'}) }}" type="radio" name="vocation" value="{{ vocation.id }}">
+																				{{ vocation.name }}
+																			</label>
+																		</span>
+																	</td>
+																{% endif %}
+															{% endfor %}
+														</tr>
+													{% endfor %}
+													</tbody>
+												</table>
 															</td>
 														</tr>
 																			{% endif %}
