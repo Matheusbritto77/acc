@@ -19,6 +19,17 @@ escape_lua() {
 	printf '%s' "$1" | sed 's/\\/\\\\/g; s/"/\\"/g'
 }
 
+runtime_env_file="/tmp/canaryaac-runtime.env"
+cat > "$runtime_env_file" <<EOF
+CANARY_DB_HOST=$CANARY_DB_HOST
+CANARY_DB_PORT=$CANARY_DB_PORT
+CANARY_DB_NAME=$CANARY_DB_NAME
+CANARY_DB_USER=$CANARY_DB_USER
+CANARY_DB_PASSWORD=$CANARY_DB_PASSWORD
+URL=${URL:-}
+EOF
+export CANARY_RUNTIME_ENV_FILE="$runtime_env_file"
+
 require_uint() {
 	local name="$1"
 	local value="$2"

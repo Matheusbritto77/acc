@@ -1,5 +1,6 @@
 <?php
 require __DIR__.'/../vendor/autoload.php';
+require __DIR__.'/../app/Utils/RuntimeEnv.php';
 
 use App\Utils\Argon;
 use App\Utils\View;
@@ -17,11 +18,11 @@ define('SITE_NAME', !empty($_ENV['SITE_NAME']) ? $_ENV['SITE_NAME'] : 'CanaryAAC
 
 // Configure Database settings
 Database::config(
-    $_ENV['DB_HOST'],
-    $_ENV['DB_NAME'],
-    $_ENV['DB_USER'],
-    $_ENV['DB_PASS'],
-    $_ENV['DB_PORT']
+    runtime_env_value('DB_HOST', $_ENV['DB_HOST'] ?? 'db'),
+    runtime_env_value('DB_NAME', $_ENV['DB_NAME'] ?? 'canary'),
+    runtime_env_value('DB_USER', $_ENV['DB_USER'] ?? 'canary'),
+    runtime_env_value('DB_PASS', $_ENV['DB_PASS'] ?? 'canary'),
+    runtime_env_value('DB_PORT', $_ENV['DB_PORT'] ?? '3306')
 );
 
 Argon::configArgon(
