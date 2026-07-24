@@ -351,13 +351,15 @@ document.getElementById("ActiveSubmenuItemLabel_createaccount").style.color = "w
 																	{% for row in vocation_rows|batch(2) %}
 																		<tr>
 																			<td>
-																				{% for vocation in row if vocation is not empty %}
-																					<span style="margin-right:75px;" class="OptionContainer">
-																						<label for="vocation_{{ vocation.name|lower|replace({' ': '_'}) }}">
-																							<span class="OptionContainer"><input id="vocation_{{ vocation.name|lower|replace({' ': '_'}) }}" type="radio" name="vocation" value="{{ vocation.id }}"><label for="vocation_{{ vocation.name|lower|replace({' ': '_'}) }}">{{ vocation.name }}</label>
-																							</span>
-																						</label>
-																					</span>
+																				{% for vocation in row %}
+																					{% if vocation is not empty %}
+																						<span style="margin-right:75px;" class="OptionContainer">
+																							<label for="vocation_{{ vocation.name|lower|replace({' ': '_'}) }}">
+																								<span class="OptionContainer"><input id="vocation_{{ vocation.name|lower|replace({' ': '_'}) }}" type="radio" name="vocation" value="{{ vocation.id }}"><label for="vocation_{{ vocation.name|lower|replace({' ': '_'}) }}">{{ vocation.name }}</label>
+																								</span>
+																							</label>
+																						</span>
+																					{% endif %}
 																				{% endfor %}
 																			</td>
 																		</tr>

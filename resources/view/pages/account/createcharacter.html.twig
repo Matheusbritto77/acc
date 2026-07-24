@@ -81,16 +81,18 @@
 																									{% set vocation_rows = vocation_rows|merge([{'id': vocation_id, 'name': vocation_name}]) %}
 																								{% endif %}
 																							{% endfor %}
-																							{% for row in vocation_rows|batch(2) %}
-																								<td style="border-style: none" align="center">
-																									{% for vocation in row if vocation is not empty %}
-																										<div style="width: 15em; position: relative; text-align: left;">
-																											<input type="radio" name="vocation" id="vocation_{{ vocation.name|lower|replace({' ': '_'}) }}" value="{{ vocation.id }}">
-																											<label for="vocation_{{ vocation.name|lower|replace({' ': '_'}) }}">{{ vocation.name }}</label>
-																										</div>
-																									{% endfor %}
-																								</td>
-																							{% endfor %}
+																								{% for row in vocation_rows|batch(2) %}
+																									<td style="border-style: none" align="center">
+																										{% for vocation in row %}
+																											{% if vocation is not empty %}
+																											<div style="width: 15em; position: relative; text-align: left;">
+																												<input type="radio" name="vocation" id="vocation_{{ vocation.name|lower|replace({' ': '_'}) }}" value="{{ vocation.id }}">
+																												<label for="vocation_{{ vocation.name|lower|replace({' ': '_'}) }}">{{ vocation.name }}</label>
+																											</div>
+																											{% endif %}
+																										{% endfor %}
+																									</td>
+																								{% endfor %}
 																					</tbody>
 																				</table>
 																			</td>
