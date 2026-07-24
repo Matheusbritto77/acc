@@ -85,6 +85,8 @@ cat > /canary/data/XML/vocations.xml <<'EOF'
 	<vocation id="6" name="Elder Druid" fromvoc="2" />
 	<vocation id="7" name="Royal Paladin" fromvoc="3" />
 	<vocation id="8" name="Elite Knight" fromvoc="4" />
+	<vocation id="9" name="Monk" fromvoc="9" />
+	<vocation id="10" name="Exalted Monk" fromvoc="9" />
 </vocations>
 EOF
 
