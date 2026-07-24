@@ -79,9 +79,13 @@ class Payment extends Base{
         $donateConfigs = EntityServerConfig::getInfoWebsite([ 'id' => 1])->fetchObject();
         $postVars = $request->getPostVars();
 
-        if(!isset($postVars['payment_email'])){
-            $request->getRouter()->redirect('/payment');
+        $requiredFields = ['payment_email', 'payment_coins', 'payment_method', 'payment_country'];
+        foreach ($requiredFields as $field) {
+            if (!isset($postVars[$field])) {
+                $request->getRouter()->redirect('/payment');
+            }
         }
+
         if(!filter_var($postVars['payment_email'], FILTER_VALIDATE_EMAIL)){
             $request->getRouter()->redirect('/payment');
         }
@@ -106,29 +110,14 @@ class Payment extends Base{
         $donateConfigs = EntityServerConfig::getInfoWebsite([ 'id' => 1])->fetchObject();
         $postVars = $request->getPostVars();
 
-        if($postVars['TermsOfService'] != 1){
-            $request->getRouter()->redirect('/payment');
-        }
-        if(!isset($postVars['payment_coins'])){
-            $request->getRouter()->redirect('/payment');
-        }
-        if(!isset($postVars['payment_method'])){
-            $request->getRouter()->redirect('/payment');
-        }
-        if(!isset($postVars['payment_country'])){
-            $request->getRouter()->redirect('/payment');
-        }
-        if(!isset($postVars['payment_email'])){
-            $request->getRouter()->redirect('/payment');
+        $requiredFields = ['TermsOfService', 'payment_coins', 'payment_method', 'payment_country', 'payment_email'];
+        foreach ($requiredFields as $field) {
+            if (!isset($postVars[$field])) {
+                $request->getRouter()->redirect('/payment');
+            }
         }
 
-        if ($donateConfigs->mercadopago == 0) {
-            $request->getRouter()->redirect('/payment');
-        }
-        if ($donateConfigs->pagseguro == 0) {
-            $request->getRouter()->redirect('/payment');
-        }
-        if ($donateConfigs->paypal == 0) {
+        if((int)$postVars['TermsOfService'] !== 1){
             $request->getRouter()->redirect('/payment');
         }
 
@@ -156,6 +145,15 @@ class Payment extends Base{
                 $url_method = 0;
         }
         if($url_method == 0){
+            $request->getRouter()->redirect('/payment');
+        }
+        if ($filter_method === 'mercadopago' && (int)$donateConfigs->mercadopago === 0) {
+            $request->getRouter()->redirect('/payment');
+        }
+        if ($filter_method === 'pagseguro' && (int)$donateConfigs->pagseguro === 0) {
+            $request->getRouter()->redirect('/payment');
+        }
+        if ($filter_method === 'paypal' && (int)$donateConfigs->paypal === 0) {
             $request->getRouter()->redirect('/payment');
         }
 
