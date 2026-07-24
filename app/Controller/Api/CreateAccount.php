@@ -110,6 +110,8 @@ class CreateAccount extends Api
                 $password = $postVars['Password'] ?? '';
                 $charName = $postVars['CharacterName'] ?? '';
                 $charSex = (int)($postVars['CharacterSex'] ?? 1);
+                $charVocation = (int)($postVars['CharacterVocation'] ?? $postVars['Vocation'] ?? $postVars['vocation'] ?? 0);
+                $charWorld = $postVars['CharacterWorld'] ?? $postVars['World'] ?? $postVars['world'] ?? null;
 
                 // Generate a randomized account name since OTClient only asks for Email and Password
                 // Use a secure prefix like "ACC" followed by a unique number or random hex
@@ -138,16 +140,27 @@ class CreateAccount extends Api
                     return ['Success' => false, 'errorMessage' => 'Character name is already in use.'];
                 }
 
-                // Vocation selection: standard rookgaard/no-vocation sample (vocation 0)
-                $vocation = 0;
-                $playerSample = EntityCreateAccount::getPlayerSamples(['vocation' => $vocation])->fetchObject();
+                // Use the vocation sent by the client, falling back to vocation 0 when needed.
+                $playerSample = EntityCreateAccount::getPlayerSamples(['vocation' => $charVocation])->fetchObject();
                 if (empty($playerSample)) {
-                    // Fallback to any sample if vocation 0 doesn't exist
+                    $playerSample = EntityCreateAccount::getPlayerSamples(['vocation' => 0])->fetchObject();
+                }
+                if (empty($playerSample)) {
                     $playerSample = EntityCreateAccount::getPlayerSamples()->fetchObject();
                 }
 
-                // Find a default world
-                $selectWorlds = EntityWorlds::getWorlds()->fetchObject();
+                // Use the world sent by the client when available; otherwise use the first world.
+                $selectWorlds = null;
+                if (!empty($charWorld)) {
+                    if (is_numeric($charWorld)) {
+                        $selectWorlds = EntityWorlds::getWorlds(['id' => (int) $charWorld])->fetchObject();
+                    } else {
+                        $selectWorlds = EntityWorlds::getWorlds(['name' => $charWorld])->fetchObject();
+                    }
+                }
+                if (empty($selectWorlds)) {
+                    $selectWorlds = EntityWorlds::getWorlds()->fetchObject();
+                }
                 if (empty($selectWorlds)) {
                     return ['Success' => false, 'errorMessage' => 'No game world is available.'];
                 }
