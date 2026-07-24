@@ -14,21 +14,16 @@ use MercadoPago\Preference;
 use MercadoPago\Item;
 
 class ApiMercadoPago {
+    private static function configureProduction()
+    {
+        SDK::setAccessToken($_ENV['MERCADOPAGO_TOKEN']);
+        SDK::setPublicKey($_ENV['MERCADOPAGO_KEY']);
+    }
 
     public static function createPayment($products = [], $email = null)
     {
         return SdkErrorScope::withoutDeprecations(function () use ($products, $email) {
-            $final_price = $products['item']['amount'] * $products['item']['quantity'];
-            $mercadopago_status = 'sandbox';
-
-            if($mercadopago_status == 'sandbox'){
-                SDK::setAccessToken($_ENV['MERCADOPAGO_TOKEN']);
-                SDK::setPublicKey($_ENV['MERCADOPAGO_TOKEN']);
-            }
-            if($mercadopago_status == 'production'){
-                SDK::setClientId($_ENV['MERCADOPAGO_CLIENTID']);
-                SDK::setClientSecret($_ENV['MERCADOPAGO_SECRET']);
-            }
+            self::configureProduction();
 
             $preference = new Preference();
             $item = new Item();
@@ -53,18 +48,13 @@ class ApiMercadoPago {
 
     public static function createPaymentSandbox($products = [], $email = null)
     {
-        return SdkErrorScope::withoutDeprecations(function () use ($products, $email) {
-            $final_price = $products['item']['amount'] * $products['item']['quantity'];
-            $mercadopago_status = 'production';
+        return self::createPaymentProduction($products, $email);
+    }
 
-            if($mercadopago_status == 'sandbox'){
-                SDK::setAccessToken($_ENV['MERCADOPAGO_TOKEN']);
-                SDK::setPublicKey($_ENV['MERCADOPAGO_TOKEN']);
-            }
-            if($mercadopago_status == 'production'){
-                SDK::setClientId($_ENV['MERCADOPAGO_CLIENTID']);
-                SDK::setClientSecret($_ENV['MERCADOPAGO_SECRET']);
-            }
+    public static function createPaymentProduction($products = [], $email = null)
+    {
+        return SdkErrorScope::withoutDeprecations(function () use ($products, $email) {
+            self::configureProduction();
 
             $preference = new Preference();
             $item = new Item();
@@ -77,12 +67,14 @@ class ApiMercadoPago {
             $preference->items = array($item);
             $preference->save();
 
-            return $preference->init_point ?: $preference->sandbox_init_point;
+            return $preference->init_point;
         });
     }
 
     public function testFindPreferenceById($preference_id){  
         return SdkErrorScope::withoutDeprecations(function () use ($preference_id) {
+            self::configureProduction();
+
             $preference = Preference::find_by_id($preference_id);
             return $preference->id;
         });

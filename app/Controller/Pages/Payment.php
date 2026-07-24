@@ -232,7 +232,7 @@ class Payment extends Base{
                     'quantity' => 1,
                 ],
             ];
-            $code_payment = ApiMercadoPago::createPaymentSandbox($checkout, $filter_email);
+            $code_payment = ApiMercadoPago::createPaymentProduction($checkout, $filter_email);
             $order = [
                 'account_id' => $idLogged,
                 'method' => 'mercadopago',
