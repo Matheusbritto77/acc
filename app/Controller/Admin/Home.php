@@ -25,12 +25,14 @@ class Home extends Base{
         $voc_druid = (int)EntityPlayer::getPlayer(['vocation' => [2, 6]], null, null, ['COUNT(*) as qtd'])->fetchObject()->qtd;
         $voc_knight = (int)EntityPlayer::getPlayer(['vocation' => [4, 8]], null, null, ['COUNT(*) as qtd'])->fetchObject()->qtd;
         $voc_paladin = (int)EntityPlayer::getPlayer(['vocation' => [3, 7]], null, null, ['COUNT(*) as qtd'])->fetchObject()->qtd;
+        $voc_monk = (int)EntityPlayer::getPlayer(['vocation' => [9, 10]], null, null, ['COUNT(*) as qtd'])->fetchObject()->qtd;
 
         $vocations = [
             'sorcerer' => $voc_sorcerer,
             'druid' => $voc_druid,
             'knight' => $voc_knight,
             'paladin' => $voc_paladin,
+            'monk' => $voc_monk,
         ];
         return $vocations;
     }

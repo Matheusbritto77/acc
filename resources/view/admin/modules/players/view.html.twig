@@ -260,17 +260,9 @@
                     <div class="col-6 col-md-6">
                         <label class="form-label" for="char_vocation">Vocation</label>
                         <select id="char_vocation" name="char_vocation" class="form-select">
-                            <option value="0" {% if vocation == 'None' %}selected{% endif %}>None</option>
-                            <option value="1" {% if vocation == 'Sorcerer' %}selected{% endif %}>Sorcerer</option>
-                            <option value="2" {% if vocation == 'Druid' %}selected{% endif %}>Druid</option>
-                            <option value="3" {% if vocation == 'Paladin' %}selected{% endif %}>Paladin</option>
-                            <option value="4" {% if vocation == 'Knight' %}selected{% endif %}>Knight</option>
-                            <option value="5" {% if vocation == 'Master Sorcerer' %}selected{% endif %}>Master Sorcerer</option>
-                            <option value="6" {% if vocation == 'Elder Druid' %}selected{% endif %}>Elder Druid</option>
-                            <option value="7" {% if vocation == 'Royal Paladin' %}selected{% endif %}>Royal Paladin</option>
-                            <option value="8" {% if vocation == 'Elite Knight' %}selected{% endif %}>Elite Knight</option>
-                            <option value="9" {% if vocation == 'Monk' %}selected{% endif %}>Monk</option>
-                            <option value="10" {% if vocation == 'Exalted Monk' %}selected{% endif %}>Exalted Monk</option>
+                            {% for vocation_id, vocation_name in vocations %}
+                                <option value="{{ vocation_id }}" {% if vocation_id == vocation_selected_id %}selected{% endif %}>{{ vocation_name }}</option>
+                            {% endfor %}
                         </select>
                     </div>
 

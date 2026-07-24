@@ -18,6 +18,23 @@ use App\Model\Entity\ServerConfig;
 use App\Model\Functions\Guilds as FunctionsGuilds;
 
     class Player{
+        public static function getVocationList()
+        {
+            return [
+                0 => 'None',
+                1 => 'Sorcerer',
+                2 => 'Druid',
+                3 => 'Paladin',
+                4 => 'Knight',
+                5 => 'Master Sorcerer',
+                6 => 'Elder Druid',
+                7 => 'Royal Paladin',
+                8 => 'Elite Knight',
+                9 => 'Monk',
+                10 => 'Exalted Monk',
+            ];
+        }
+
         /**
          * Converte ID vocação para nome
          *
@@ -25,25 +42,7 @@ use App\Model\Functions\Guilds as FunctionsGuilds;
          * @return string $converted
          */
         public static function convertVocation($vocationId){
-            $vocationList = [
-                '0' => 'None',
-                '1' => 'Sorcerer',
-                '2' => 'Druid',
-                '3' => 'Paladin',
-                '4' => 'Knight',
-                '5' => 'Master Sorcerer',
-                '6' => 'Elder Druid',
-                '7' => 'Royal Paladin',
-                '8' => 'Elite Knight',
-                '9' => 'Monk',
-                '10' => 'Exalted Monk',
-            ];
-            foreach($vocationList as $key => $value){
-                if($key == $vocationId){
-                    $converted = $value;
-                }
-            }
-            return $converted;
+            return self::getVocationList()[$vocationId] ?? 'None';
         }
 
         public static function getAllCharacters($accountId)

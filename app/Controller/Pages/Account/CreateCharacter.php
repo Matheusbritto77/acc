@@ -171,6 +171,7 @@ class CreateCharacter extends Base{
             'worlds' => self::getWorlds(),
             'status' => $errorMessage,
             'activevoc' => self::getActiveVocation(),
+            'vocations' => Player::getVocationList(),
         ]);
         return parent::getBase('Account Management', $content);
     }

@@ -56,7 +56,7 @@ class Highscores extends Base{
         $queryParams = $request->getQueryParams();
 
         $input_profession = filter_var($queryParams['profession'] ?? null, FILTER_SANITIZE_NUMBER_INT);
-        if($input_profession > 5){
+        if($input_profession > 10){
             $input_profession = 5;
         }
         if(empty($input_profession)){

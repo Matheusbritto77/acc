@@ -49,7 +49,7 @@ class Worlds extends Base{
         $obPagination = new Pagination($totalAmount, $currentPage, 50);
         $select_PlayersOnline = EntityWorlds::getPlayersOnline(null, null, $obPagination->getLimit());
 
-        while($obOnline = $select_PlayersOnline->fetchObject(EntityWorlds::class)){
+        while($obOnline = $select_PlayersOnline->fetchObject()){
             $playersInfo = EntityPlayer::getPlayer([ 'id' => $obOnline->player_id]);
             while($obPlayers = $playersInfo->fetchObject()){
                 $players[] = [

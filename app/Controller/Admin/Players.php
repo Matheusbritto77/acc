@@ -152,7 +152,10 @@ class Players extends Base{
             'town' => Server::convertTown($character->town_id),
             'name' => $character->name,
             'level' => $character->level,
+            'vocation_id' => $character->vocation,
+            'vocation_selected_id' => (int) $character->vocation,
             'vocation' => Player::convertVocation($character->vocation),
+            'vocations' => Player::getVocationList(),
             'group' => Player::convertGroup($character->group_id),
             'outfit' => Player::getOutfit($character->id),
             'online' => Player::isOnline($character->id)

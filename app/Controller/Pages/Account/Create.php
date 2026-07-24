@@ -20,6 +20,22 @@ use App\Utils\View;
 use App\Model\Functions\Player as FunctionsPlayer;
 
 class Create extends Base{
+    public static function getDefaultWorld()
+    {
+        $worlds = FunctionServer::getWorlds();
+        foreach ($worlds as $world) {
+            if (($world['location_initial'] ?? '') === 'USA' && ($world['pvp_type_initial'] ?? '') === 'open') {
+                return $world;
+            }
+        }
+
+        return $worlds[0] ?? [
+            'id' => 0,
+            'name' => 'OTServBR-Global',
+            'location_initial' => 'USA',
+            'pvp_type_initial' => 'open',
+        ];
+    }
 
     public static function getActiveVocation()
     {
@@ -33,8 +49,9 @@ class Create extends Base{
         $content = View::render('pages/account/createaccount', [
             'status' => $status,
             'worlds' => FunctionServer::getWorlds(),
-            'preselect_world_pvptype' => 'open',
+            'default_world' => self::getDefaultWorld(),
             'activevoc' => self::getActiveVocation(),
+            'vocations' => FunctionsPlayer::getVocationList(),
         ]);
         return parent::getBase('Create Account', $content, 'createaccount');
     }
@@ -118,14 +135,9 @@ class Create extends Base{
             $filter_vocation = 0;
         }
 
-        $filter_world = filter_var($character_world, FILTER_SANITIZE_SPECIAL_CHARS);
-        $filter_world = str_replace('server_', '', $filter_world);
-        if (is_numeric($filter_world)) {
-            $selectWorlds = EntityWorlds::getWorlds([ 'id' => $filter_world])->fetchObject();
-        } else {
-            $selectWorlds = EntityWorlds::getWorlds([ 'name' => $filter_world])->fetchObject();
-        }
-        if ($selectWorlds == false) {
+        $selectWorlds = self::getDefaultWorld();
+        $selectWorlds = (object) $selectWorlds;
+        if (empty($selectWorlds->id)) {
             $selectWorlds = EntityWorlds::getWorlds()->fetchObject();
         }
         if ($selectWorlds == false) {

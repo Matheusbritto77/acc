@@ -21,26 +21,24 @@ class Highscores extends Api
     {
 
         $queryParams = $request->getQueryParams();
+        $professionMap = [
+            'sorcerer' => 1,
+            'druid' => 2,
+            'paladin' => 3,
+            'knight' => 4,
+            'monk' => 9,
+            'exalted_monk' => 10,
+        ];
 
-        switch($queryParams['profession']) {
-            case 'sorcerer':
-            case 1:
-                $profession = 'vocation = 1';
-                break;
-            case 'druid':
-            case 2:
-                $profession = 'vocation = 2';
-                break;
-            case 'knight':
-            case 3:
-                $profession = 'vocation = 3';
-                break;
-            case 'paladin':
-            case 4:
-                $profession = 'vocation = 4';
-                break;
-            default:
-                $profession = null;
+        $profession = null;
+        $inputProfession = $queryParams['profession'] ?? null;
+        if (is_numeric($inputProfession)) {
+            $inputProfession = (int) $inputProfession;
+        }
+        if (isset($professionMap[$inputProfession])) {
+            $profession = 'vocation = ' . $professionMap[$inputProfession];
+        } elseif (in_array($inputProfession, $professionMap, true)) {
+            $profession = 'vocation = ' . $inputProfession;
         }
 
         switch($queryParams['category']) {
