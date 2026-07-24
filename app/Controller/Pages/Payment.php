@@ -232,7 +232,8 @@ class Payment extends Base{
                     'quantity' => 1,
                 ],
             ];
-            $code_payment = ApiMercadoPago::createPaymentProduction($checkout, $filter_email);
+            $pixPayment = ApiMercadoPago::createPixPayment($checkout, $filter_email);
+            $code_payment = $pixPayment['qr_code'] ?? null;
             $order = [
                 'account_id' => $idLogged,
                 'method' => 'mercadopago',
@@ -249,6 +250,9 @@ class Payment extends Base{
             'email' => $filter_email,
             'method' => $url_method,
             'code_payment' => $code_payment ?? null,
+            'pix_qr_code' => $pixPayment['qr_code'] ?? null,
+            'pix_qr_code_base64' => $pixPayment['qr_code_base64'] ?? null,
+            'pix_ticket_url' => $pixPayment['ticket_url'] ?? null,
         ]);
         return parent::getBase('Webshop', $content, 'donate');
     }
