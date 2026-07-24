@@ -80,6 +80,50 @@ function execute_sql_script(PDO $pdo, string $sqlPath): void
 	}
 }
 
+function normalize_world_location(string $location): int
+{
+	$location = trim($location);
+	if ($location === '') {
+		return 0;
+	}
+
+	if (ctype_digit($location)) {
+		return (int) $location;
+	}
+
+	return match (strtoupper($location)) {
+		'BRA', 'BRASIL', 'SOUTH AMERICA', 'SOUTH_AMERICA', 'SA' => 7,
+		'USA', 'US', 'NORTH AMERICA', 'NORTH_AMERICA', 'NA' => 6,
+		'EUR', 'EU', 'EUROPE' => 5,
+		default => 0,
+	};
+}
+
+function sync_world_endpoint(PDO $pdo): void
+{
+	$worldName = runtime_env_value('CANARY_SERVER_NAME', 'OTServBR-Global');
+	$worldIp = runtime_env_value('CANARY_SERVER_IP', '127.0.0.1');
+	$worldPort = (int) runtime_env_value('CANARY_GAME_PORT', '7172');
+	$worldLocation = normalize_world_location(runtime_env_value('CANARY_SERVER_LOCATION', 'BRA'));
+
+	$statement = $pdo->query('SELECT id FROM canary_worlds ORDER BY id ASC LIMIT 1');
+	$worldId = $statement ? $statement->fetchColumn() : false;
+
+	if ($worldId === false) {
+		$insert = $pdo->prepare(
+			'INSERT INTO canary_worlds (name, location, pvp_type, premium_type, transfer_type, battle_eye, world_type, ip, port)
+			 VALUES (?, ?, 0, 0, 0, 0, 0, ?, ?)'
+		);
+		$insert->execute([$worldName, $worldLocation, $worldIp, $worldPort]);
+		echo "Canary world endpoint created from runtime env.\n";
+		return;
+	}
+
+	$update = $pdo->prepare('UPDATE canary_worlds SET name = ?, location = ?, ip = ?, port = ? WHERE id = ?');
+	$update->execute([$worldName, $worldLocation, $worldIp, $worldPort, (int) $worldId]);
+	echo "Canary world endpoint synchronized from runtime env.\n";
+}
+
 $pdo = wait_for_database();
 wait_for_canary_schema($pdo);
 
@@ -89,6 +133,8 @@ if (!table_exists($pdo, 'account_authentication')) {
 } else {
 	echo "CanaryAAC schema already imported.\n";
 }
+
+sync_world_endpoint($pdo);
 
 // Generate the .env file
 $siteUrl = runtime_env_value('URL', env_value('CANARYAAC_SITE_URL', env_value('MYAAC_SITE_URL', 'http://localhost:8080')));

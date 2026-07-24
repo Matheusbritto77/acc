@@ -278,7 +278,11 @@ class Server
 
     public static function getServerStatus()
     {
-        $socket = @fsockopen('server', 7171, $errno, $errstr, 0.5);
+        $serverIp = \runtime_env_value('CANARY_SERVER_IP', '127.0.0.1');
+        $statusPort = (int) \runtime_env_value('CANARY_STATUS_PORT', '7173');
+        $timeoutMs = (int) \runtime_env_value('CANARY_STATUS_TIMEOUT', '5000');
+        $timeout = max(0.1, $timeoutMs / 1000);
+        $socket = @fsockopen($serverIp, $statusPort, $errno, $errstr, $timeout);
         if ($socket) {
             fclose($socket);
             return 'Server Online';
