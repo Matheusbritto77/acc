@@ -103,6 +103,7 @@ class Index extends Base{
                 'premdays' => $account->premdays,
                 'dateprem' => $datePrem,
                 'coins' => $account->coins,
+                'coins_transferable' => $account->coins_transferable,
                 'registered' => $registered,
                 'account_banned' => $account_banned,
                 'page_access' => $account->page_access,

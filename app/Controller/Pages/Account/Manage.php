@@ -112,6 +112,7 @@ class Manage extends Base{
                 'colorprem' => $colorPrem,
                 'dateprem' => $datePrem,
                 'coins' => $account->coins,
+                'coins_transferable' => $account->coins_transferable,
                 'creation' => $created,
                 'badges' => self::getBadges($account->id),
                 'players' => $players,
