@@ -27,7 +27,6 @@ use App\Model\Functions\Guilds as FunctionsGuilds;
                 3 => 'Paladin',
                 4 => 'Knight',
                 9 => 'Monk',
-                10 => 'Exalted Monk',
             ];
         }
 
