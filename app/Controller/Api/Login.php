@@ -190,6 +190,15 @@ class Login extends Api
                         'currenttournamentphase' => 2
                     ];
                 }
+
+                // Canary's single-world protocol uses world id 0. Keep the
+                // AAC response aligned with the character rows in that mode.
+                $singleWorldId = null;
+                if (count($arrayWorlds) === 1) {
+                    $arrayWorlds[0]['id'] = 0;
+                    $singleWorldId = 0;
+                }
+
                 $arrayPlayers = [];
                 $characters = EntityPlayer::getPlayer(['account_id' => $account->id]);
                 while ($character = $characters->fetchObject()) {
@@ -209,7 +218,7 @@ class Login extends Api
                         }
                     }
                     $arrayPlayers[] = [
-                        'worldid' => (int) $character->world,
+                        'worldid' => $singleWorldId ?? (int) $character->world,
                         'name' => $character->name,
                         'ismale' => (int) $character->sex,
                         'tutorial' => false,
