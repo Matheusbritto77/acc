@@ -18,15 +18,17 @@ class NotifyMercadoPago {
 
     public static function ReturnMercadoPago()
     {
-        if(isset($_POST['type'])){
-            SDK::setAccessToken($_ENV['MERCADOPAGO_TOKEN']);
-            if($_POST['type'] == 'payment'){
-                $payment = Payment::find_by_id($_POST['data']['id']);
-                self::updatePayment($payment);
-            }else{
-                $payment = null;
+        return SdkErrorScope::withoutDeprecations(function () {
+            if(isset($_POST['type'])){
+                SDK::setAccessToken($_ENV['MERCADOPAGO_TOKEN']);
+                if($_POST['type'] == 'payment'){
+                    $payment = Payment::find_by_id($_POST['data']['id']);
+                    self::updatePayment($payment);
+                }else{
+                    $payment = null;
+                }
             }
-        }
+        });
     }
 
     public static function updatePayment($payment)
