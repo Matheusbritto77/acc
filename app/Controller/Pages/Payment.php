@@ -250,11 +250,35 @@ class Payment extends Base{
             'email' => $filter_email,
             'method' => $url_method,
             'code_payment' => $code_payment ?? null,
+            'payment_reference' => $reference ?? null,
             'pix_qr_code' => $pixPayment['qr_code'] ?? null,
             'pix_qr_code_base64' => $pixPayment['qr_code_base64'] ?? null,
             'pix_ticket_url' => $pixPayment['ticket_url'] ?? null,
         ]);
         return parent::getBase('Webshop', $content, 'donate');
+    }
+
+    public static function viewPaymentStatus($request, $reference)
+    {
+        $idLogged = SessionAdminLogin::idLogged();
+        $reference = filter_var($reference, FILTER_SANITIZE_SPECIAL_CHARS);
+        $payment = EntityPayments::getPayment([
+            'reference' => $reference,
+            'account_id' => $idLogged,
+        ])->fetchObject();
+
+        if (!$payment) {
+            return json_encode([
+                'status' => 'not_found',
+                'paid' => false,
+            ]);
+        }
+
+        return json_encode([
+            'status' => (int)$payment->status,
+            'paid' => (int)$payment->status === 4,
+            'coins' => (int)$payment->total_coins,
+        ]);
     }
 
 }

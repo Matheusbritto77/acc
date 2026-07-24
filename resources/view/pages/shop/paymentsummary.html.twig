@@ -169,7 +169,10 @@ if (!isOpenLightbox){
 								<div style="margin: 12px auto; max-width: 620px;">
 									<textarea readonly onclick="this.select();" style="width: 100%; min-height: 90px;">{{ pix_qr_code }}</textarea>
 								</div>
-								<div>Copy the Pix code above or scan the QR Code. The coins are delivered automatically after payment approval.</div>
+								<div id="PixPaymentPending" style="margin-top: 10px;">Waiting for payment confirmation. The coins are delivered automatically after approval.</div>
+								<div id="PixPaymentSuccess" style="display: none; margin: 12px auto; max-width: 520px; padding: 12px; font-weight: bold; color: #155724; background: #d4edda; border: 1px solid #c3e6cb;">
+									Payment completed. Your coins were added to your account.
+								</div>
 								{% else %}
 								<a href="{{URL}}/payment">
 									<div class="BigButton" style="background-image:url({{IMAGE_PATH}}/global/buttons/button_red.gif); margin: 0 auto;">
@@ -198,4 +201,44 @@ if (!isOpenLightbox){
 			<div class="Corner-br" style="background-image:url({{IMAGE_PATH}}/global/content/corner-br.gif);"></div>
 		</div>
 	</div>
+
+{% if method == 4 and payment_reference %}
+<script>
+(function () {
+	var reference = '{{ payment_reference }}';
+	var pending = document.getElementById('PixPaymentPending');
+	var success = document.getElementById('PixPaymentSuccess');
+	var attempts = 0;
+	var maxAttempts = 120;
+
+	function checkPaymentStatus() {
+		fetch('{{URL}}/payment/status/' + encodeURIComponent(reference), {
+			credentials: 'same-origin',
+			headers: { 'Accept': 'application/json' }
+		})
+			.then(function (response) { return response.json(); })
+			.then(function (data) {
+				if (data.paid) {
+					if (pending) pending.style.display = 'none';
+					if (success) success.style.display = 'block';
+					return;
+				}
+
+				attempts++;
+				if (attempts < maxAttempts) {
+					setTimeout(checkPaymentStatus, 5000);
+				}
+			})
+			.catch(function () {
+				attempts++;
+				if (attempts < maxAttempts) {
+					setTimeout(checkPaymentStatus, 5000);
+				}
+			});
+	}
+
+	checkPaymentStatus();
+})();
+</script>
+{% endif %}
 </div>

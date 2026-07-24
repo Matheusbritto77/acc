@@ -52,6 +52,14 @@ $obRouter->post('/payment/summary', [
         return new Response(200, Payment::viewPaymentSummary($request));
     }
 ]);
+$obRouter->get('/payment/status/{reference}', [
+    'middlewares' => [
+        'required-login'
+    ],
+    function($request, $reference){
+        return new Response(200, Payment::viewPaymentStatus($request, $reference), 'application/json');
+    }
+]);
 
 $obRouter->get('/payment/mercadopago/return', [
     function($request){
