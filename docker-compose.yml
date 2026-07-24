@@ -8,6 +8,7 @@ services:
       - "${CANARYAAC_HTTP_PORT:-8080}:80"
     environment:
       URL: ${URL}
+      REDIS_URL: ${REDIS_URL}
       CANARY_DB_HOST: ${CANARY_DB_HOST}
       CANARY_DB_PORT: ${CANARY_DB_PORT}
       CANARY_DB_NAME: ${CANARY_DB_NAME}

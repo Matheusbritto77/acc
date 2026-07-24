@@ -92,6 +92,7 @@ if (!table_exists($pdo, 'account_authentication')) {
 
 // Generate the .env file
 $siteUrl = runtime_env_value('URL', env_value('CANARYAAC_SITE_URL', env_value('MYAAC_SITE_URL', 'http://localhost:8080')));
+$redisUrl = runtime_env_value('REDIS_URL', env_value('REDIS_URL', ''));
 $dbHost = runtime_env_value('CANARY_DB_HOST', 'db');
 $dbPort = runtime_env_value('CANARY_DB_PORT', '3306');
 $dbName = runtime_env_value('CANARY_DB_NAME', 'canary');
@@ -100,6 +101,7 @@ $dbPassword = runtime_env_value('CANARY_DB_PASSWORD', 'canary');
 
 $envContent = <<<ENV
 URL='{$siteUrl}'
+REDIS_URL='{$redisUrl}'
 SERVER_PATH='/canary/'
 
 # Database connection
@@ -155,4 +157,3 @@ if (!file_exists($cacheDir)) {
 	echo "Created Twig cache directory: {$cacheDir}\n";
 }
 chmod($cacheDir, 0777);
-
