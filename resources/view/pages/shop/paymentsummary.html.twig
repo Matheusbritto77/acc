@@ -161,15 +161,23 @@ if (!isOpenLightbox){
 							</a>
 						</div>
 						{% endif %}
-						{% if method == 4 %}
-						<div class="LeftButton" style="padding: 10px;">
-							<a href="{{ code_payment }}">
-								<div class="BigButton" style="background-image:url({{IMAGE_PATH}}/global/buttons/button_green.gif)">
-									<div onmouseover="MouseOverBigButton(this);" onmouseout="MouseOutBigButton(this);"><div class="BigButtonOver" style="background-image:url({{IMAGE_PATH}}/global/buttons/button_green_over.gif);"></div><input class="BigButtonText" type="submit" value="Next"></div>
-								</div>
-							</a>
-						</div>
-						{% endif %}
+							{% if method == 4 %}
+							<div class="LeftButton" style="padding: 10px;">
+								{% if code_payment %}
+								<a href="{{ code_payment }}">
+									<div class="BigButton" style="background-image:url({{IMAGE_PATH}}/global/buttons/button_green.gif)">
+										<div onmouseover="MouseOverBigButton(this);" onmouseout="MouseOutBigButton(this);"><div class="BigButtonOver" style="background-image:url({{IMAGE_PATH}}/global/buttons/button_green_over.gif);"></div><input class="BigButtonText" type="submit" value="Next"></div>
+									</div>
+								</a>
+								{% else %}
+								<a href="{{URL}}/payment">
+									<div class="BigButton" style="background-image:url({{IMAGE_PATH}}/global/buttons/button_red.gif)">
+										<div onmouseover="MouseOverBigButton(this);" onmouseout="MouseOutBigButton(this);"><div class="BigButtonOver" style="background-image:url({{IMAGE_PATH}}/global/buttons/button_red_over.gif);"></div><input class="BigButtonText" type="button" value="Payment Error"></div>
+									</div>
+								</a>
+								{% endif %}
+							</div>
+							{% endif %}
 						<div class="RightButton" style="padding: 10px;">
 							<a href="{{URL}}/payment" style="padding:0px;margin:0px;">
 								<div class="BigButton" style="background-image:url({{IMAGE_PATH}}/global/buttons/button_blue.gif)">

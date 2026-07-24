@@ -77,7 +77,7 @@ class ApiMercadoPago {
             $preference->items = array($item);
             $preference->save();
 
-            return $preference->sandbox_init_point;
+            return $preference->init_point ?: $preference->sandbox_init_point;
         });
     }
 

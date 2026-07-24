@@ -228,8 +228,8 @@ class Payment extends Base{
                 'item' => [
                     'id' => '0001',
                     'title' => $filter_coins.' Coins',
-                    'amount' => $final_price,
-                    'quantity' => $filter_coins,
+                    'amount' => $price,
+                    'quantity' => 1,
                 ],
             ];
             $code_payment = ApiMercadoPago::createPaymentSandbox($checkout, $filter_email);
