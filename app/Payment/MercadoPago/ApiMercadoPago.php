@@ -111,8 +111,13 @@ class ApiMercadoPago {
     {
         return SdkErrorScope::withoutDeprecations(function () use ($products, $email) {
             $payerEmail = filter_var($email, FILTER_VALIDATE_EMAIL) ? $email : 'comprador@example.com';
+            $transactionAmount = round((float)$products['item']['amount'], 2);
+            if ($transactionAmount < 1) {
+                throw new \RuntimeException('Mercado Pago Pix requires transaction_amount greater than or equal to 1.00');
+            }
+
             $payload = [
-                'transaction_amount' => (float)$products['item']['amount'],
+                'transaction_amount' => $transactionAmount,
                 'description' => $products['item']['title'],
                 'payment_method_id' => 'pix',
                 'external_reference' => $products['reference'],

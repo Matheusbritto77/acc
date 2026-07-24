@@ -165,7 +165,7 @@ class Payment extends Base{
         if($final_price == 0){
             $request->getRouter()->redirect('/payment');
         }
-        $price = $final_price * $filter_coins;
+        $price = round($final_price * $filter_coins, 2);
 
         // METHOD PAGSEGURO
         if($url_method == 2){
