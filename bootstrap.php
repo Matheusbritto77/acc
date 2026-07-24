@@ -1,6 +1,8 @@
 <?php
 declare(strict_types=1);
 
+require '/var/www/html/app/Utils/RuntimeEnv.php';
+
 function env_value(string $name, string $default = ''): string
 {
 	$value = getenv($name);
@@ -9,11 +11,11 @@ function env_value(string $name, string $default = ''): string
 
 function wait_for_database(): PDO
 {
-	$host = env_value('CANARY_DB_HOST', 'db');
-	$port = env_value('CANARY_DB_PORT', '3306');
-	$name = env_value('CANARY_DB_NAME', 'canary');
-	$user = env_value('CANARY_DB_USER', 'canary');
-	$password = env_value('CANARY_DB_PASSWORD', 'canary');
+	$host = runtime_env_value('CANARY_DB_HOST', 'db');
+	$port = runtime_env_value('CANARY_DB_PORT', '3306');
+	$name = runtime_env_value('CANARY_DB_NAME', 'canary');
+	$user = runtime_env_value('CANARY_DB_USER', 'canary');
+	$password = runtime_env_value('CANARY_DB_PASSWORD', 'canary');
 	$dsn = "mysql:host={$host};port={$port};dbname={$name};charset=utf8mb4";
 
 	for ($attempt = 1; $attempt <= 90; ++$attempt) {
@@ -89,18 +91,23 @@ if (!table_exists($pdo, 'account_authentication')) {
 }
 
 // Generate the .env file
-$siteUrl = env_value('URL', env_value('CANARYAAC_SITE_URL', env_value('MYAAC_SITE_URL', 'http://localhost:8080')));
+$siteUrl = runtime_env_value('URL', env_value('CANARYAAC_SITE_URL', env_value('MYAAC_SITE_URL', 'http://localhost:8080')));
+$dbHost = runtime_env_value('CANARY_DB_HOST', 'db');
+$dbPort = runtime_env_value('CANARY_DB_PORT', '3306');
+$dbName = runtime_env_value('CANARY_DB_NAME', 'canary');
+$dbUser = runtime_env_value('CANARY_DB_USER', 'canary');
+$dbPassword = runtime_env_value('CANARY_DB_PASSWORD', 'canary');
 
 $envContent = <<<ENV
 URL='{$siteUrl}'
 SERVER_PATH='/canary/'
 
 # Database connection
-DB_HOST='{$_ENV['CANARY_DB_HOST']}'
-DB_NAME='{$_ENV['CANARY_DB_NAME']}'
-DB_USER='{$_ENV['CANARY_DB_USER']}'
-DB_PASS='{$_ENV['CANARY_DB_PASSWORD']}'
-DB_PORT='{$_ENV['CANARY_DB_PORT']}'
+DB_HOST='{$dbHost}'
+DB_NAME='{$dbName}'
+DB_USER='{$dbUser}'
+DB_PASS='{$dbPassword}'
+DB_PORT='{$dbPort}'
 
 # Config argon2
 M_COST='1<<16'
@@ -148,5 +155,4 @@ if (!file_exists($cacheDir)) {
 	echo "Created Twig cache directory: {$cacheDir}\n";
 }
 chmod($cacheDir, 0777);
-
 
