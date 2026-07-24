@@ -11,6 +11,17 @@ use App\Utils\Argon;
 
 class CreateAccount extends Api
 {
+    private static function normalizeVocation($vocation): int
+    {
+        $vocationId = (int) $vocation;
+
+        if ($vocationId === 10) {
+            return 9;
+        }
+
+        return $vocationId;
+    }
+
     public static function handle($request)
     {
         $postVars = $request->getPostVars();
@@ -110,7 +121,7 @@ class CreateAccount extends Api
                 $password = $postVars['Password'] ?? '';
                 $charName = $postVars['CharacterName'] ?? '';
                 $charSex = (int)($postVars['CharacterSex'] ?? 1);
-                $charVocation = (int)($postVars['CharacterVocation'] ?? $postVars['Vocation'] ?? $postVars['vocation'] ?? 0);
+                $charVocation = self::normalizeVocation($postVars['CharacterVocation'] ?? $postVars['Vocation'] ?? $postVars['vocation'] ?? 0);
                 $charWorld = $postVars['CharacterWorld'] ?? $postVars['World'] ?? $postVars['world'] ?? null;
 
                 // Generate a randomized account name since OTClient only asks for Email and Password

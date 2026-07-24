@@ -20,6 +20,16 @@ use App\Model\Entity\Player as EntityPlayer;
 use App\Model\Entity\ServerConfig as EntityServerConfig;
 
 class CreateCharacter extends Base{
+    private static function normalizeVocation($vocation): int
+    {
+        $vocationId = (int) $vocation;
+
+        if ($vocationId === 10) {
+            return 9;
+        }
+
+        return $vocationId;
+    }
 
     public static function getWorlds()
     {
@@ -70,7 +80,7 @@ class CreateCharacter extends Base{
         }
         
         $character_name = filter_var($postVars['name'], FILTER_SANITIZE_SPECIAL_CHARS);
-        $character_vocation = filter_var($postVars['vocation'], FILTER_SANITIZE_NUMBER_INT);
+        $character_vocation = self::normalizeVocation($postVars['vocation'] ?? 0);
         $character_world = filter_var($postVars['world'], FILTER_SANITIZE_NUMBER_INT);
         $character_tutorial = $postVars['tutorial'] ?? '';
 
@@ -102,7 +112,13 @@ class CreateCharacter extends Base{
 
             $verifyVocation = EntityCreateAccount::getPlayerSamples([ 'vocation' => $character_vocation])->fetchObject();
             if($verifyVocation == false){
-                return self::viewCreateCharacter($request, 'Please select your character vocation!');
+                if ($character_vocation === 9) {
+                    $verifyVocation = EntityCreateAccount::getPlayerSamples([ 'vocation' => 9])->fetchObject();
+                }
+
+                if($verifyVocation == false){
+                    return self::viewCreateCharacter($request, 'Please select your character vocation!');
+                }
             }
         }else{
             $character_vocation = 0;

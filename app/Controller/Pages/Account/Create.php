@@ -20,6 +20,17 @@ use App\Utils\View;
 use App\Model\Functions\Player as FunctionsPlayer;
 
 class Create extends Base{
+    private static function normalizeVocation($vocation): int
+    {
+        $vocationId = (int) $vocation;
+
+        if ($vocationId === 10) {
+            return 9;
+        }
+
+        return $vocationId;
+    }
+
     public static function getDefaultWorld()
     {
         $worlds = FunctionServer::getWorlds();
@@ -122,14 +133,20 @@ class Create extends Base{
 
         $activeVocations = EntityServerConfig::getInfoWebsite()->fetchObject();
         if($activeVocations->player_voc == 1){
-            $filter_vocation = filter_var($character_vocation, FILTER_SANITIZE_SPECIAL_CHARS);
+            $filter_vocation = self::normalizeVocation($character_vocation);
             if (empty($filter_vocation)) {
                 return self::getCreateAccount($request, 'Choose a vocation for the character.');
             }
 
             $verifyVocation = EntityCreateAccount::getPlayerSamples([ 'vocation' => $filter_vocation])->fetchObject();
             if($verifyVocation == false){
-                return self::getCreateAccount($request, 'Please select your character vocation!');
+                if ($filter_vocation === 9) {
+                    $verifyVocation = EntityCreateAccount::getPlayerSamples([ 'vocation' => 9])->fetchObject();
+                }
+
+                if($verifyVocation == false){
+                    return self::getCreateAccount($request, 'Please select your character vocation!');
+                }
             }
         } else {
             $filter_vocation = 0;
