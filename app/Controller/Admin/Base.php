@@ -309,7 +309,36 @@ class Base
             $admin = SessionAdminLogin::idLogged();
 
             $account = EntityPlayer::getAccount([ 'id' => $admin])->fetchObject();
+            if (!$account) {
+                return $logged;
+            }
+
             $playerMain = EntityPlayer::getPlayer([ 'account_id' => $account->id, 'main' => "1"])->fetchObject();
+            if (!$playerMain) {
+                $playerMain = EntityPlayer::getPlayer([ 'account_id' => $account->id], 'id ASC', 1)->fetchObject();
+            }
+
+            $player = [
+                'name' => $account->name,
+                'level' => 0,
+                'group' => 'None',
+                'outfit' => [
+                    'image_url' => Player::getOutfitImage(129, 0, 113, 115, 95, 39, 0),
+                ],
+                'main' => 0,
+                'online' => false
+            ];
+
+            if ($playerMain) {
+                $player = [
+                    'name' => $playerMain->name,
+                    'level' => $playerMain->level,
+                    'group' => Player::convertGroup($playerMain->group_id),
+                    'outfit' => Player::getOutfit($playerMain->id),
+                    'main' => $playerMain->main,
+                    'online' => Player::isOnline($playerMain->id)
+                ];
+            }
 
             $logged = [
                 'id' => $account->id,
@@ -317,14 +346,7 @@ class Base
                 'email' => $account->email,
                 'premdays' => $account->premdays,
                 'coins' => $account->coins,
-                'player' => [
-                    'name' => $playerMain->name,
-                    'level' => $playerMain->level,
-                    'group' => Player::convertGroup($playerMain->group_id),
-                    'outfit' => Player::getOutfit($playerMain->id),
-                    'main' => $playerMain->main,
-                    'online' => Player::isOnline($playerMain->id)
-                ],
+                'player' => $player,
             ];
         }
         return $logged;
