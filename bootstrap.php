@@ -53,7 +53,7 @@ function wait_for_canary_schema(PDO $pdo): void
 		sleep(2);
 	}
 
-	throw new RuntimeException('Canary schema was not created before CanaryAAC setup.');
+	throw new RuntimeException('Canary schema was not created before astarOT setup.');
 }
 
 function execute_sql_script(PDO $pdo, string $sqlPath): void
@@ -128,10 +128,10 @@ $pdo = wait_for_database();
 wait_for_canary_schema($pdo);
 
 if (!table_exists($pdo, 'account_authentication')) {
-	echo "Importing CanaryAAC database schema...\n";
+	echo "Importing astarOT database schema...\n";
 	execute_sql_script($pdo, '/var/www/html/canaryaac.sql');
 } else {
-	echo "CanaryAAC schema already imported.\n";
+	echo "astarOT schema already imported.\n";
 }
 
 sync_world_endpoint($pdo);

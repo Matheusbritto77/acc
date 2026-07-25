@@ -392,7 +392,7 @@ CREATE TABLE IF NOT EXISTS `canary_website` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 INSERT INTO `canary_website` (`id`, `timezone`, `title`, `downloads`, `player_voc`, `player_max`, `player_guild`, `donates`, `coin_price`, `mercadopago`, `pagseguro`, `paypal`, `discord`) VALUES
-(1, 'America/Sao_Paulo', 'CanaryAAC v1', 'http://www.google.com', 1, 10, 100, 1, '0.10', 1, 1, 1, 'discord.com');
+(1, 'America/Sao_Paulo', 'astarOT', 'http://www.google.com', 1, 10, 100, 1, '0.10', 1, 1, 1, 'discord.com');
 
 -- --------------------------------------------------------
 

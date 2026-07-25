@@ -1,7 +1,7 @@
 
-# CanaryAAC
+# astarOT
 
-CanaryAAC is a free and open-source Automatic Account Creator (AAC) written in MVC-PHP. It supports only MySQL databases.
+astarOT is a free and open-source Automatic Account Creator (AAC) written in MVC-PHP. It supports only MySQL databases.
 
 
 ## Infos
@@ -25,7 +25,7 @@ CanaryAAC is a free and open-source Automatic Account Creator (AAC) written in M
 
 ## Instalação
 
-Install CanaryAAC on Debian / Ubuntu
+Install astarOT on Debian / Ubuntu
 
 ```bash
   sudo apt install php-bcmath

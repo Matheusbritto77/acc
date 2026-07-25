@@ -2,9 +2,9 @@
 /**
  * Validator class for hashing and verifying passwords using Argon2Id.
  *
- * @package   CanaryAAC
+ * @package   astarOT
  * @author    Daniel Henrique <daniel15042015@gmail.com>
- * @copyright 2023 CanaryAAC
+ * @copyright 2023 astarOT
  */
 
 namespace App\Utils;

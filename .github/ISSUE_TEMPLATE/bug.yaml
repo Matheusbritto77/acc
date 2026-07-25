@@ -1,5 +1,5 @@
 name: Report a problem/bug
-description: Any issues that you have found while using the CanaryAAC website
+description: Any issues that you have found while using the astarOT website
 labels: ["Type: Bug"]
 body:
   - type: markdown

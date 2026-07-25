@@ -18,7 +18,7 @@ RUN apt-get update \
 
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 
-# Copy the local CanaryAAC codebase
+# Copy the local astarOT codebase
 COPY . /var/www/html/
 
 WORKDIR /var/www/html

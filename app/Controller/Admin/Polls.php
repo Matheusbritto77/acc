@@ -2,9 +2,9 @@
 /**
  * Polls Class
  *
- * @package   CanaryAAC
+ * @package   astarOT
  * @author    Lucas Giovanni <lucasgiovannidesigner@gmail.com>
- * @copyright 2022 CanaryAAC
+ * @copyright 2022 astarOT
  */
 
 namespace App\Controller\Admin;
