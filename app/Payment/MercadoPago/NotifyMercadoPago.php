@@ -83,12 +83,14 @@ class NotifyMercadoPago {
             return;
         }
 
+        $finalCoins = $dbAccount->coins + $dbPayment->total_coins;
         $finalTransferableCoins = $dbAccount->coins_transferable + $dbPayment->total_coins;
 
         EntityPayments::updatePayment([ 'reference' => $reference], [
             'status' => 4,
         ]);
         EntityAccount::updateAccount([ 'id' => $dbPayment->account_id], [
+            'coins' => $finalCoins,
             'coins_transferable' => $finalTransferableCoins,
         ]);
     }
