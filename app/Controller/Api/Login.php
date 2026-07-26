@@ -110,7 +110,7 @@ class Login extends Api
 
             case 'getaccountcreationstatus':
                 return [
-                    'RecommendedWorld' => 'OTServBR-Global',
+                    'RecommendedWorld' => 'astarOT',
                     'IsCaptchaDeactivated' => true,
                     'Worlds' => FunctionServer::getWorlds(),
                 ];

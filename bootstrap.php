@@ -137,7 +137,7 @@ if (!table_exists($pdo, 'account_authentication')) {
 sync_world_endpoint($pdo);
 
 // Generate the .env file
-$siteUrl = runtime_env_value('URL', env_value('CANARYAAC_SITE_URL', env_value('MYAAC_SITE_URL', 'http://localhost:8080')));
+$siteUrl = runtime_env_value('URL', env_value('CANARYAAC_SITE_URL', env_value('MYAAC_SITE_URL', 'https://astarot.online')));
 $redisUrl = runtime_env_value('REDIS_URL', env_value('REDIS_URL', ''));
 $dbHost = runtime_env_value('CANARY_DB_HOST', 'db');
 $dbPort = runtime_env_value('CANARY_DB_PORT', '3306');
@@ -173,28 +173,6 @@ ENV;
 
 file_put_contents('/var/www/html/.env', $envContent);
 echo ".env file generated successfully.\n";
-
-// Patch includes/app.php for dynamic request host routing when URL is localhost/empty
-$appFile = '/var/www/html/includes/app.php';
-if (file_exists($appFile)) {
-	$appCode = file_get_contents($appFile);
-	$target = "define('URL', \$_ENV['URL']);";
-	$replacement = <<<'PHP'
-$detectedUrl = $_ENV['URL'] ?? '';
-if (empty($detectedUrl) || $detectedUrl === 'http://localhost:8080' || $detectedUrl === 'http://127.0.0.1' || $detectedUrl === 'http://localhost') {
-	$protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off' || ($_SERVER['HTTP_X_FORWARDED_PROTO'] ?? '') === 'https' || ($_SERVER['SERVER_PORT'] ?? 80) == 443) ? "https" : "http";
-	if (!empty($_SERVER['HTTP_HOST'])) {
-		$detectedUrl = $protocol . '://' . $_SERVER['HTTP_HOST'];
-	}
-}
-define('URL', $detectedUrl ?: 'http://localhost:8080');
-PHP;
-	if (strpos($appCode, 'define(\'URL\', $_ENV[\'URL\']);') !== false) {
-		$appCode = str_replace($target, $replacement, $appCode);
-		file_put_contents($appFile, $appCode);
-		echo "includes/app.php patched successfully for dynamic URL resolution.\n";
-	}
-}
 
 // Ensure Twig cache directory exists and has correct permissions
 $cacheDir = '/var/www/html/resources/view/cache';

@@ -11,8 +11,22 @@ use App\Http\Middleware\Queue as MiddlewareQueue;
 // Load the .env files
 Dotenv::createImmutable(__DIR__.'/../')->load();
 
+function normalize_public_url(string $url): string
+{
+    $url = trim($url);
+    if ($url === '') {
+        return 'https://astarot.online';
+    }
+
+    if (!preg_match('#^https?://#i', $url)) {
+        $url = 'https://' . ltrim($url, '/');
+    }
+
+    return rtrim($url, '/');
+}
+
 // Defines the URL constant
-define('URL', $_ENV['URL']);
+define('URL', normalize_public_url((string) ($_ENV['URL'] ?? '')));
 define('OUTFITS_FOLDER', $_ENV['OUTFITS_FOLDER']);
 define('SITE_NAME', !empty($_ENV['SITE_NAME']) ? $_ENV['SITE_NAME'] : 'astarOT');
 

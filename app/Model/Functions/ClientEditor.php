@@ -37,8 +37,8 @@ class ClientEditor{
             '12611C6152AD3DBB3CFBEE7ADC142A75D3D75971509C321C5C24A5BD51FD460' .
             'F01B4E15BEB0DE1930528A5D3F15C1E3CBF5C401D6777E10ACAAB33DBE8D5B7FF5';
         $this->services = [
-            'loginWebService' => 'http://127.0.0.1/api/v1/login',
-            'clientWebService' => 'http://127.0.0.1/api/v1/login',
+            'loginWebService' => 'https://astarot.online/api/v1/login',
+            'clientWebService' => 'https://astarot.online/api/v1/login',
             'tibiaPageUrl' => '',
             'tibiaStoreGetCoinsUrl' => '',
             'getPremiumUrl' => '',

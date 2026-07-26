@@ -47,7 +47,7 @@ class CreateAccount extends Api
 
                 if (empty($worlds)) {
                     $worlds[] = [
-                        'Name' => 'OTServBR-Global',
+                        'Name' => 'astarOT',
                         'Region' => 'South America',
                         'PvPType' => 'Open PvP',
                         'PlayersOnline' => 0

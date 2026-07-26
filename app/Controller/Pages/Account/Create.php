@@ -42,7 +42,7 @@ class Create extends Base{
 
         return $worlds[0] ?? [
             'id' => 0,
-            'name' => 'OTServBR-Global',
+            'name' => 'astarOT',
             'location_initial' => 'USA',
             'pvp_type_initial' => 'open',
         ];
