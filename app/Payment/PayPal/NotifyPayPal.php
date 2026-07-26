@@ -11,35 +11,31 @@ namespace App\Payment\PayPal;
 
 use PayPal\Api\Payment;
 use PayPal\Api\PaymentExecution;
-use App\Model\Entity\Payments as EntityPayments;
-use App\Model\Entity\Account as EntityAccount;
+use App\Payment\PaymentCreditService;
 
 class NotifyPayPal {
 
     public static function ReturnPayPal()
     {
-        $payerId = filter_input(INPUT_GET, 'PayerID', FILTER_SANITIZE_STRING);
         $paymentId = filter_input(INPUT_GET, 'paymentId', FILTER_SANITIZE_STRING);
+        $payerId = filter_input(INPUT_GET, 'PayerID', FILTER_SANITIZE_STRING);
 
         $payment = Payment::get($paymentId, ApiPayPal::apiContext());
 
         $execution = new PaymentExecution();
+        if (!empty($payerId)) {
+            $execution->setPayerId($payerId);
+        }
         $response = $payment->execute($execution, ApiPayPal::apiContext());
         $arrayResponse = $response->toArray();
 
-        if($arrayResponse['status'] == 'PAID'){
-
-            $dbPayment = EntityPayments::getPayment([ 'preference' => $payment->preference_id])->fetchObject();
-            $dbAccount = EntityAccount::getAccount([ 'id' => $dbPayment->account_id])->fetchObject();
-            $finalcoins = $dbAccount->coins + $dbPayment->total_coins;
-
-            EntityPayments::updatePayment([ 'reference' => $payment->preference_id], [
-                'status' => 4,
-            ]);
-            EntityAccount::updateAccount([ 'id' => $dbPayment->account_id], [
-                'coins' => $finalcoins,
-            ]);
+        if (($arrayResponse['status'] ?? null) === 'PAID') {
+            $invoiceNumber = $arrayResponse['transactions'][0]['invoice_number'] ?? null;
+            if ($invoiceNumber) {
+                PaymentCreditService::markPaymentAsPaid('reference', $invoiceNumber);
+            }
         }
+
         return $arrayResponse;
     }
 }

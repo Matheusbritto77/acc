@@ -9,8 +9,7 @@
 
 namespace App\Payment\MercadoPago;
 
-use App\Model\Entity\Payments as EntityPayments;
-use App\Model\Entity\Account as EntityAccount;
+use App\Payment\PaymentCreditService;
 
 class NotifyMercadoPago {
 
@@ -64,7 +63,7 @@ class NotifyMercadoPago {
     public static function updatePayment($payment)
     {
         $status = is_array($payment) ? ($payment['status'] ?? null) : ($payment->status ?? null);
-        if($status !== 'approved'){
+        if ($status !== 'approved') {
             return;
         }
 
@@ -73,26 +72,7 @@ class NotifyMercadoPago {
             return;
         }
 
-        $dbPayment = EntityPayments::getPayment([ 'reference' => $reference])->fetchObject();
-        if (!$dbPayment || (int)$dbPayment->status === 4) {
-            return;
-        }
-
-        $dbAccount = EntityAccount::getAccount([ 'id' => $dbPayment->account_id])->fetchObject();
-        if (!$dbAccount) {
-            return;
-        }
-
-        $finalCoins = $dbAccount->coins + $dbPayment->total_coins;
-        $finalTransferableCoins = $dbAccount->coins_transferable + $dbPayment->total_coins;
-
-        EntityPayments::updatePayment([ 'reference' => $reference], [
-            'status' => 4,
-        ]);
-        EntityAccount::updateAccount([ 'id' => $dbPayment->account_id], [
-            'coins' => $finalCoins,
-            'coins_transferable' => $finalTransferableCoins,
-        ]);
+        PaymentCreditService::markPaymentAsPaid('reference', $reference, true);
     }
 
 }

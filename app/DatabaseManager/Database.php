@@ -114,6 +114,56 @@ class Database
     }
 
     /**
+     * Executa uma query e propaga a exceção para que o chamador possa tratar rollback.
+     * @param string $query
+     * @param array $params
+     * @return \PDOStatement
+     * @throws \PDOException
+     */
+    public function executeOrFail($query, $params = [])
+    {
+        $statement = $this->connection->prepare($query);
+        $statement->execute($params);
+        return $statement;
+    }
+
+    /**
+     * Inicia transação.
+     * @return bool
+     */
+    public function beginTransaction()
+    {
+        return $this->connection->beginTransaction();
+    }
+
+    /**
+     * Confirma transação.
+     * @return bool
+     */
+    public function commit()
+    {
+        return $this->connection->commit();
+    }
+
+    /**
+     * Desfaz transação.
+     * @return bool
+     */
+    public function rollBack()
+    {
+        return $this->connection->rollBack();
+    }
+
+    /**
+     * Verifica se existe transação ativa.
+     * @return bool
+     */
+    public function inTransaction()
+    {
+        return $this->connection->inTransaction();
+    }
+
+    /**
      * Método responsável por inserir dados no banco
      * @param  array $values [ field => value ]
      * @return integer ID inserido
