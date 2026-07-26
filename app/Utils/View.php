@@ -18,6 +18,26 @@ class View{
 
     private static $vars = [];
 
+    private static function resolveViewDirectories($view)
+    {
+        $directories = [
+            __DIR__.'/../../resources/view/' . trim($view, '/') . '/',
+            __DIR__.'/../../resources/view/base/',
+            __DIR__.'/../../resources/view/pagination/',
+            __DIR__.'/../../resources/view/admin/',
+            __DIR__.'/../../resources/view/admin/alert/',
+            __DIR__.'/../../resources/view/themeboxes/',
+        ];
+
+        $directories = array_map(function ($directory) {
+            $resolved = realpath($directory);
+
+            return $resolved !== false && is_dir($resolved) ? $resolved : null;
+        }, $directories);
+
+        return array_values(array_filter($directories));
+    }
+
     public static function init($vars = [])
     {
         self::$vars = $vars;
@@ -25,14 +45,7 @@ class View{
 
     public static function getContentView($view)
     {
-        $loader = new FilesystemLoader([
-            __DIR__.'/../../resources/view/' . $view . '/',
-            __DIR__.'/../../resources/view/base/',
-            __DIR__.'/../../resources/view/pagination/',
-            __DIR__.'/../../resources/view/admin/',
-            __DIR__.'/../../resources/view/admin/alert',
-            __DIR__.'/../../resources/view/themeboxes/',
-        ]);
+        $loader = new FilesystemLoader(self::resolveViewDirectories($view));
         if($_ENV['DEV_MODE'] == true){
             $twig = new Environment($loader, [
                 'debug' => true,
