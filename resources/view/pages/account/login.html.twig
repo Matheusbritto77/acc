@@ -6,18 +6,18 @@
 	<div class="Border_2">
 		<div class="Border_3">
 			<div class="BoxContent" style="background-image:url({{IMAGE_PATH}}/global/content/scroll.gif);">
-				{% if status == true %}
+				{% if status %}
 				<div class="SmallBox">
 					<div class="MessageContainer">
 						<div class="BoxFrameHorizontal" style="background-image:url({{IMAGE_PATH}}/global/content/box-frame-horizontal.gif);"></div>
 						<div class="BoxFrameEdgeLeftTop" style="background-image:url({{IMAGE_PATH}}/global/content/box-frame-edge.gif);"></div>
 						<div class="BoxFrameEdgeRightTop" style="background-image:url({{IMAGE_PATH}}/global/content/box-frame-edge.gif);"></div>
-						<div class="ErrorMessage">
+							<div class="ErrorMessage">
 							<div class="BoxFrameVerticalLeft" style="background-image:url({{IMAGE_PATH}}/global/content/box-frame-vertical.gif);"></div>
 							<div class="BoxFrameVerticalRight" style="background-image:url({{IMAGE_PATH}}/global/content/box-frame-vertical.gif);"></div>
 							<div class="AttentionSign" style="background-image:url({{IMAGE_PATH}}/global/content/attentionsign.gif);"></div>
 							<b>The following error has occurred:</b><br>
-							You have entered a wrong password or email address.<br>
+							{{ status_message }}<br>
 							</div>
 							<div class="BoxFrameHorizontal" style="background-image:url({{IMAGE_PATH}}/global/content/box-frame-horizontal.gif);"></div>
 							<div class="BoxFrameEdgeRightBottom" style="background-image:url({{IMAGE_PATH}}/global/content/box-frame-edge.gif);"></div>

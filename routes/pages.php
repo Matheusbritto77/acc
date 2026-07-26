@@ -69,11 +69,20 @@ $obRouter->get('/language/{lang}', [
         if (in_array($lang, ['en', 'pt', 'es'])) {
             setcookie('lang', $lang, time() + 3600 * 24 * 30, '/');
         }
-        $referer = $_SERVER['HTTP_REFERER'] ?? URL;
-        if (strpos($referer, '/language/') !== false) {
-            $referer = URL;
+        $referer = $_SERVER['HTTP_REFERER'] ?? '';
+        $target = URL;
+        $refererParts = $referer !== '' ? parse_url($referer) : false;
+        $urlParts = parse_url(URL);
+
+        if (
+            is_array($refererParts)
+            && isset($refererParts['host'], $urlParts['host'])
+            && strcasecmp($refererParts['host'], $urlParts['host']) === 0
+            && strpos($refererParts['path'] ?? '', '/language/') === false
+        ) {
+            $target = $referer;
         }
-        header("Location: " . $referer);
+        header("Location: " . $target);
         exit;
     }
 ]);

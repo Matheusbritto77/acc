@@ -17,8 +17,9 @@ class RolePermission{
     public static function handle($request, $next)
     {
         $select_account = Account::getAccount(['id' => SessionAdminLogin::idLogged()], null, 1, 'page_access')->fetchObject();
-        if($select_account->page_access == 0){
-            $request->getRouter()->redirect('/admin/logout');
+        if(!$select_account || (int) $select_account->page_access <= 0){
+            SessionAdminLogin::logout();
+            $request->getRouter()->redirect('/admin/login');
         }
         return $next($request);
     }

@@ -21,16 +21,13 @@ class ChangePassword extends Base{
     public static function updatePassword($request)
     {
         $postVars = $request->getPostVars();
-        
-        $newpassword = $postVars['newpassword'];
+
+        $newpassword = $postVars['newpassword'] ?? '';
         $filter_newpassword = filter_var($newpassword, FILTER_SANITIZE_SPECIAL_CHARS);
-        $convert_newpassword = Argon::generateArgonPassword($filter_newpassword);
-
-        $old_password = $postVars['oldpassword'];
+        $old_password = $postVars['oldpassword'] ?? '';
         $filter_oldpassword = filter_var($old_password, FILTER_SANITIZE_SPECIAL_CHARS);
-        $convert_oldpassword = Argon::generateArgonPassword($filter_oldpassword);
 
-        if(SessionAdminLogin::isLogged() == true){
+        if(SessionAdminLogin::isLogged() != true){
             return self::viewChangePassword($request, 'You are not logged in.');
         }
         if(empty($newpassword)){
@@ -41,16 +38,17 @@ class ChangePassword extends Base{
         }
         $AccountId = SessionAdminLogin::idLogged();
         $account = EntityPlayer::getAccount([ 'id' => $AccountId])->fetchObject();
-        if (!Argon::checkPassword($convert_oldpassword, $account->password, $account->id)) {
+        if (!$account) {
+            return self::viewChangePassword($request, 'Account not found.');
+        }
+        if (!Argon::checkPassword($filter_oldpassword, $account->password, $account->id)) {
             return self::viewChangePassword($request, 'Invalid password.');
         }
-        if(Argon::checkPassword($convert_oldpassword, $account->password, $account->id)){
-            EntityAccount::updateAccount([ 'id' => $AccountId], [
-                'password' => $convert_newpassword,
-            ]);
-            $request->getRouter()->redirect('/account/logout');
-        }
-        return self::viewChangePassword($request);
+
+        EntityAccount::updateAccount([ 'id' => $AccountId], [
+            'password' => Argon::generateArgonPassword($filter_newpassword),
+        ]);
+        $request->getRouter()->redirect('/account/logout');
     }
 
     public static function viewChangePassword($request, $status = null)

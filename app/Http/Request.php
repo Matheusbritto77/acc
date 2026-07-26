@@ -92,4 +92,26 @@
         {
             return $this->postFiles;
         }
+
+        public function getClientIp()
+        {
+            $candidates = [
+                $this->headers['CF-Connecting-IP'] ?? null,
+                $this->headers['X-Forwarded-For'] ?? null,
+                $_SERVER['REMOTE_ADDR'] ?? null,
+            ];
+
+            foreach ($candidates as $candidate) {
+                if (!is_string($candidate) || trim($candidate) === '') {
+                    continue;
+                }
+
+                $firstIp = trim(explode(',', $candidate)[0]);
+                if (filter_var($firstIp, FILTER_VALIDATE_IP)) {
+                    return $firstIp;
+                }
+            }
+
+            return '0.0.0.0';
+        }
     }

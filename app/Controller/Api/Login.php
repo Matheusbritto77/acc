@@ -19,6 +19,7 @@ use App\Model\Functions\Player as FunctionPlayer;
 use App\Model\Functions\Server as FunctionServer;
 use PragmaRX\Google2FA\Google2FA;
 use App\Utils\Argon;
+use App\Security\LoginRateLimiter;
 
 define('SESSION_DURATION', 3600);
 
@@ -124,14 +125,23 @@ class Login extends Api
             case 'login':
                 $email = $postVars['email'] ?? '';
                 $password = $postVars['password'] ?? '';
+                $ipAddress = $request->getClientIp();
+                $retryAfter = LoginRateLimiter::getRetryAfter('client-api', $email, $ipAddress);
+
+                if ($retryAfter > 0) {
+                    return self::sendError(LoginRateLimiter::formatRetryMessage($retryAfter), 3);
+                }
+
                 $account = EntityAccount::getAccount(['email' => $email])->fetchObject();
                 if (empty($account)) {
                     $account = EntityAccount::getAccount(['name' => $email])->fetchObject();
                 }
                 if (empty($account)) {
+                    LoginRateLimiter::registerFailure('client-api', $email, $ipAddress);
                     return self::sendError('Email or password is not correct.', 3);
                 }
                 if (!Argon::checkPassword($password, $account->password, $account->id)) {
+                    LoginRateLimiter::registerFailure('client-api', $email, $ipAddress);
                     return self::sendError('Password is not correct.', 3);
                 }
 
@@ -139,6 +149,7 @@ class Login extends Api
                 if (!empty($authentication) and $authentication->status == 1) {
                     if (Argon::checkPassword($password, $account->password)) {
                         if (empty($postVars['token'])) {
+                            LoginRateLimiter::registerFailure('client-api', $email, $ipAddress);
                             return self::sendError('Two-factor token required for authentication.', 6);
                         }
                         $token = $postVars['token'];
@@ -146,6 +157,7 @@ class Login extends Api
                         $google2fa = new Google2FA();
                         $auth = $google2fa->verifyKey($authentication->secret, $token);
                         if ($auth != 1) {
+                            LoginRateLimiter::registerFailure('client-api', $email, $ipAddress);
                             return self::sendError('', 6);
                         }
                     }
@@ -157,6 +169,8 @@ class Login extends Api
                     $banned_by = EntityPlayer::getPlayer(['id' => $account_banned->banned_by])->fetchObject();
                     return self::sendError('Your account has been banned until ' . $expires_at . ' by ' . $banned_by->name, 3);
                 }
+
+                LoginRateLimiter::clear('client-api', $email, $ipAddress);
 
                 $sessionId = bin2hex(random_bytes(20));
                 $hashedSessionId = hash('sha256', $sessionId);

@@ -75,6 +75,9 @@ class Manage extends Base{
             $admin = SessionAdminLogin::idLogged();
 
             $account = EntityPlayer::getAccount([ 'id' => $admin])->fetchObject();
+            if (!$account) {
+                return $logged;
+            }
             $playerMain = EntityPlayer::getPlayer([ 'account_id' => $account->id, 'main' => "1"])->fetchObject();
             $playerNoMain = EntityPlayer::getPlayer([ 'account_id' => $account->id, 'main' => "0"]);
 

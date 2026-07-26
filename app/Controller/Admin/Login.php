@@ -15,6 +15,7 @@ use App\Utils\View;
 use App\Http\Request;
 use App\Session\Admin\Login as SessionAdminLogin;
 use App\Controller\Admin\Alert;
+use App\Security\LoginRateLimiter;
 
 class Login extends Base{
 
@@ -49,24 +50,34 @@ class Login extends Base{
         $postVars = $request->getPostVars();
         $email = $postVars['login-email'] ?? '';
         $pass = $postVars['login-password'] ?? '';
+        $ipAddress = $request->getClientIp();
+        $retryAfter = LoginRateLimiter::getRetryAfter('admin-web', $email, $ipAddress);
+
+        if ($retryAfter > 0) {
+            return self::getLogin($request, LoginRateLimiter::formatRetryMessage($retryAfter));
+        }
 
         $obAccount = EntityLogin::getLoginbyEmail($email);
 
         // Verify email
         if(!$obAccount instanceof EntityLogin){
+            LoginRateLimiter::registerFailure('admin-web', $email, $ipAddress);
             return self::getLogin($request, 'Email inválidos.');
         }
 
         // Password verify by sha1
         if(!Argon::checkPassword($pass, $obAccount->password, $obAccount->id)){
+            LoginRateLimiter::registerFailure('admin-web', $email, $ipAddress);
             return self::getLogin($request, 'Password inválidos.');
         }
 
         // Verify account access
         if(!($obAccount->page_access > 0)){
+            LoginRateLimiter::registerFailure('admin-web', $email, $ipAddress);
             return self::getLogin($request, 'Você não tem acesso.');
         }
-        
+
+        LoginRateLimiter::clear('admin-web', $email, $ipAddress);
         SessionAdminLogin::login($obAccount);
 
         $request->getRouter()->redirect('/admin');

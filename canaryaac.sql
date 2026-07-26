@@ -14,8 +14,6 @@ ALTER TABLE `accounts` DROP INDEX `accounts_unique`;
 
 -- Create administrative accounts explicitly after deployment.
 
-UPDATE `accounts` SET `id` = '1' WHERE `accounts`.`id` = 2;
-
 -- --------------------------------------------------------
 
 ALTER TABLE `players` ADD `main` int(11) NOT NULL DEFAULT 0;

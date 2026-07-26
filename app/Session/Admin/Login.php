@@ -11,11 +11,28 @@ namespace App\Session\Admin;
 
 class Login{
 
+    private static function isHttpsRequest(): bool
+    {
+        $https = $_SERVER['HTTPS'] ?? '';
+        $forwardedProto = $_SERVER['HTTP_X_FORWARDED_PROTO'] ?? '';
+        $requestScheme = $_SERVER['REQUEST_SCHEME'] ?? '';
+
+        return $https === 'on'
+            || $https === '1'
+            || strtolower((string) $forwardedProto) === 'https'
+            || strtolower((string) $requestScheme) === 'https';
+    }
+
     public static function init()
     {
         if(session_status() != PHP_SESSION_ACTIVE){
+            session_name(SITE_NAME);
             session_start([
-                'name' => SITE_NAME
+                'cookie_httponly' => true,
+                'cookie_secure' => self::isHttpsRequest(),
+                'cookie_samesite' => 'Lax',
+                'cookie_path' => '/',
+                'use_strict_mode' => true,
             ]);
         }
     }
@@ -23,6 +40,7 @@ class Login{
     public static function login($obAccount)
     {
         self::init();
+        session_regenerate_id(true);
         $_SESSION['account']['user'] = [
             'id' => $obAccount->id,
             'name' => $obAccount->name,
@@ -41,7 +59,6 @@ class Login{
                 unset($_SESSION['account']['user']);
                 return false;
             } else {
-                session_regenerate_id(true);
                 return isset($_SESSION['account']['user']['id']);
             }
         } else {
@@ -53,14 +70,28 @@ class Login{
     public static function idLogged()
     {
         self::init();
-        return $_SESSION['account']['user']['id'];
+        return $_SESSION['account']['user']['id'] ?? null;
     }
 
     public static function logout()
     {
         self::init();
-        unset($_SESSION['account']['user']);
-        unset($_SESSION['login_timeout']);
+        $_SESSION = [];
+
+        if (ini_get('session.use_cookies')) {
+            $params = session_get_cookie_params();
+            setcookie(
+                session_name(),
+                '',
+                time() - 42000,
+                $params['path'] ?? '/',
+                $params['domain'] ?? '',
+                (bool) ($params['secure'] ?? false),
+                (bool) ($params['httponly'] ?? true)
+            );
+        }
+
+        session_destroy();
         return true;
     }
 }
