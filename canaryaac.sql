@@ -220,20 +220,20 @@ INSERT INTO `canary_groups` (`id`, `group_id`, `name`) VALUES
 
 CREATE TABLE IF NOT EXISTS `canary_news` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `title` varchar(100) CHARACTER SET utf8 NOT NULL,
-  `body` text CHARACTER SET utf8 NOT NULL,
+  `title` varchar(100) CHARACTER SET utf8mb4 NOT NULL,
+  `body` text CHARACTER SET utf8mb4 NOT NULL,
   `type` tinyint(4) NOT NULL,
   `date` timestamp NOT NULL DEFAULT current_timestamp(),
   `category` tinyint(4) NOT NULL,
   `player_id` int(11) NOT NULL,
   `last_modified_by` int(11) NOT NULL DEFAULT 0,
   `last_modified_date` datetime DEFAULT current_timestamp(),
-  `comments` varchar(50) CHARACTER SET utf8 NOT NULL,
-  `article_text` varchar(300) CHARACTER SET utf8 NOT NULL,
-  `article_image` varchar(100) CHARACTER SET utf8 NOT NULL,
+  `comments` varchar(50) CHARACTER SET utf8mb4 NOT NULL,
+  `article_text` varchar(300) CHARACTER SET utf8mb4 NOT NULL,
+  `article_image` varchar(100) CHARACTER SET utf8mb4 NOT NULL,
   `hidden` tinyint(4) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- --------------------------------------------------------
 

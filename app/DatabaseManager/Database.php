@@ -89,7 +89,11 @@ class Database
     private function setConnection()
     {
         try {
-            $this->connection = new PDO('mysql:host=' . self::$host . ';dbname=' . self::$name . ';port=' . self::$port, self::$user, self::$pass);
+            $this->connection = new PDO(
+                'mysql:host=' . self::$host . ';dbname=' . self::$name . ';port=' . self::$port . ';charset=utf8mb4',
+                self::$user,
+                self::$pass
+            );
             $this->connection->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
         } catch (PDOException $e) {
             die('ERROR: ' . $e->getMessage());
@@ -181,6 +185,23 @@ class Database
         $this->execute($query, array_values($values));
 
         //RETORNA O ID INSERIDO
+        return $this->connection->lastInsertId();
+    }
+
+    /**
+     * Método responsável por inserir dados no banco e propagar falhas.
+     * @param array $values [ field => value ]
+     * @return string ID inserido
+     * @throws \PDOException
+     */
+    public function insertOrFail($values)
+    {
+        $fields = array_keys($values);
+        $binds = array_pad([], count($fields), '?');
+        $query = 'INSERT INTO ' . $this->table . ' (' . implode(',', $fields) . ') VALUES (' . implode(',', $binds) . ')';
+
+        $this->executeOrFail($query, array_values($values));
+
         return $this->connection->lastInsertId();
     }
 

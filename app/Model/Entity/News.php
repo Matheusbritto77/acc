@@ -21,6 +21,10 @@ class News{
         return (new Database('canary_news'))->insert($values);
     }
 
+    public static function insertNewsOrFail($values = null){
+        return (new Database('canary_news'))->insertOrFail($values);
+    }
+
     public static function updateNews($values = null){
         return (new Database('canary_news'))->update('', $values);
     }

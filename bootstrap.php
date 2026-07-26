@@ -80,6 +80,36 @@ function execute_sql_script(PDO $pdo, string $sqlPath): void
 	}
 }
 
+function ensure_astarot_utf8mb4(PDO $pdo): void
+{
+	$statement = $pdo->query(
+		"SELECT table_name
+		 FROM information_schema.tables
+		 WHERE table_schema = DATABASE()
+		   AND table_name LIKE 'canary\\_%'
+		   AND (table_collation IS NULL OR table_collation NOT LIKE 'utf8mb4%')"
+	);
+
+	if (!$statement) {
+		return;
+	}
+
+	$tables = $statement->fetchAll(PDO::FETCH_COLUMN);
+	foreach ($tables as $table) {
+		try {
+			$pdo->exec(
+				sprintf(
+					'ALTER TABLE `%s` CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci',
+					str_replace('`', '``', (string) $table)
+				)
+			);
+			echo "Updated {$table} to utf8mb4.\n";
+		} catch (Throwable $error) {
+			echo "Charset migration info for {$table}: {$error->getMessage()}\n";
+		}
+	}
+}
+
 function normalize_world_location(string $location): int
 {
 	$location = trim($location);
@@ -133,6 +163,8 @@ if (!table_exists($pdo, 'account_authentication')) {
 } else {
 	echo "astarOT schema already imported.\n";
 }
+
+ensure_astarot_utf8mb4($pdo);
 
 sync_world_endpoint($pdo);
 

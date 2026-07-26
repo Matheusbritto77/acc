@@ -14,9 +14,24 @@ use App\Model\Entity\Player as EntityPlayer;
 use App\Utils\View;
 use App\Model\Functions\News;
 use App\Session\Admin\Login as SessionAdminLogin;
+use PDOException;
 
 class Publications extends Base
 {
+    private static function persistNews(array $payload): void
+    {
+        EntityNews::insertNewsOrFail($payload);
+    }
+
+    private static function getPersistenceError(PDOException $exception): string
+    {
+        if (str_contains($exception->getMessage(), 'Incorrect string value')) {
+            return 'O banco ainda nao aceita emojis nesse campo. Atualize o schema para utf8mb4 ou remova os emojis do titulo.';
+        }
+
+        return 'Nao foi possivel salvar a publicacao.';
+    }
+
     private static function getPlayersByLoggedAccount(): array
     {
         $idLogged = SessionAdminLogin::idLogged();
@@ -58,13 +73,19 @@ class Publications extends Base
         $filter_category = filter_var($postVars['news_category'], FILTER_SANITIZE_SPECIAL_CHARS);
         $filter_player = filter_var($postVars['news_player'], FILTER_SANITIZE_NUMBER_INT);
 
-        EntityNews::insertNews([
-            'title' => $filter_title,
-            'body' => $postVars['news_body'],
-            'category' => $filter_category,
-            'type' => 1,
-            'player_id' => $filter_player,
-        ]);
+        try {
+            self::persistNews([
+                'title' => $filter_title,
+                'body' => $postVars['news_body'],
+                'category' => $filter_category,
+                'type' => 1,
+                'player_id' => $filter_player,
+            ]);
+        } catch (PDOException $exception) {
+            $status = Alert::getError(self::getPersistenceError($exception));
+            return self::viewPublishNews($request, $status);
+        }
+
         $status = Alert::getSuccess('Publicado com sucesso.');
         return self::viewPublishNews($request, $status);
     }
@@ -103,13 +124,19 @@ class Publications extends Base
         $filter_category = filter_var($postVars['newsticker_category'], FILTER_SANITIZE_SPECIAL_CHARS);
         $filter_player = filter_var($postVars['newsticker_author'], FILTER_SANITIZE_NUMBER_INT);
 
-        EntityNews::insertNews([
-            'title' => $filter_title,
-            'body' => $postVars['newsticker_body'],
-            'category' => $filter_category,
-            'type' => 2,
-            'player_id' => $filter_player,
-        ]);
+        try {
+            self::persistNews([
+                'title' => $filter_title,
+                'body' => $postVars['newsticker_body'],
+                'category' => $filter_category,
+                'type' => 2,
+                'player_id' => $filter_player,
+            ]);
+        } catch (PDOException $exception) {
+            $status = Alert::getError(self::getPersistenceError($exception));
+            return self::viewPublishNewsticker($request, $status);
+        }
+
         $status = Alert::getSuccess('Publicado com sucesso.');
         return self::viewPublishNewsticker($request, $status);
     }
@@ -148,13 +175,19 @@ class Publications extends Base
         $filter_category = filter_var($postVars['featuredarticle_category'], FILTER_SANITIZE_SPECIAL_CHARS);
         $filter_player = filter_var($postVars['featuredarticle_author'], FILTER_SANITIZE_NUMBER_INT);
 
-        EntityNews::insertNews([
-            'title' => $filter_title,
-            'body' => $postVars['featuredarticle_body'],
-            'category' => $filter_category,
-            'type' => 3,
-            'player_id' => $filter_player,
-        ]);
+        try {
+            self::persistNews([
+                'title' => $filter_title,
+                'body' => $postVars['featuredarticle_body'],
+                'category' => $filter_category,
+                'type' => 3,
+                'player_id' => $filter_player,
+            ]);
+        } catch (PDOException $exception) {
+            $status = Alert::getError(self::getPersistenceError($exception));
+            return self::viewPublishFeaturedArticle($request, $status);
+        }
+
         $status = Alert::getSuccess('Publicado com sucesso.');
         return self::viewPublishFeaturedArticle($request, $status);
     }
