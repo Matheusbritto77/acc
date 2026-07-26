@@ -46,12 +46,10 @@ class Upload extends Base
         if (isset($postVars['file']['name'])) {
             $upload = FunctionsUpload::createMultiUpload($postVars['file']);
             foreach ($upload as $key => $value) {
-                //$value->generateNewName();
-                $value->setName('upload-admin');
-                if ($value->getExtension() != 'png') {
+                $value->generateNewName();
+                if (!$value->isPng()) {
                     $status = SweetAlert::Types('Error!', 'Invalid file extension.', 'error', 'btn btn-danger');
                     return self::viewUpload($request, $status);
-                    exit;
                 }
                 $success = $value->upload('upload', false);
                 if ($success) {
@@ -61,7 +59,6 @@ class Upload extends Base
             }
             $status = SweetAlert::Types('Success!', $message, 'success', 'btn btn-success');
             return self::viewUpload($request, $status);
-            exit;
         }
         $status = SweetAlert::Types('Error!', 'You need to select some file.', 'error', 'btn btn-danger');
         return self::viewUpload($request, $status);

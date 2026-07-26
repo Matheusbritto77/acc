@@ -9,7 +9,9 @@
 
 namespace App\Utils;
 
+use App\Security\Csrf;
 use Twig\Environment;
+use Twig\Error\LoaderError;
 use Twig\Loader\FilesystemLoader;
 use App\Utils\ViewFunctions;
 use App\Utils\ViewFilters;
@@ -18,7 +20,7 @@ class View{
 
     private static $vars = [];
 
-    private static function resolveViewDirectories()
+    private static function resolveViewDirectories($view = null)
     {
         $directories = [
             __DIR__.'/../../resources/view/',
@@ -28,6 +30,10 @@ class View{
             __DIR__.'/../../resources/view/admin/alert/',
             __DIR__.'/../../resources/view/themeboxes/',
         ];
+
+        if (is_string($view) && trim($view, '/') !== '') {
+            $directories[] = __DIR__.'/../../resources/view/' . trim($view, '/') . '/';
+        }
 
         $directories = array_map(function ($directory) {
             $resolved = realpath($directory);
@@ -43,9 +49,9 @@ class View{
         self::$vars = $vars;
     }
 
-    public static function getContentView()
+    public static function getContentView($view = null)
     {
-        $loader = new FilesystemLoader(self::resolveViewDirectories());
+        $loader = new FilesystemLoader(self::resolveViewDirectories($view));
         if($_ENV['DEV_MODE'] == true){
             $twig = new Environment($loader, [
                 'debug' => true,
@@ -71,12 +77,42 @@ class View{
         return $twig;
     }
 
+    private static function injectAdminCsrfFields($view, $html)
+    {
+        if (strpos(trim($view, '/'), 'admin/') !== 0) {
+            return $html;
+        }
+
+        return preg_replace_callback('/<form\b([^>]*)>/i', function ($matches) {
+            $attributes = $matches[1] ?? '';
+
+            if (!preg_match('/\bmethod\s*=\s*([\"\']?)(post|put|delete)\1/i', $attributes)) {
+                return $matches[0];
+            }
+
+            return $matches[0] . Csrf::getField();
+        }, $html);
+    }
+
     public static function render($view, $vars = [])
     {
         $vars = array_merge(self::$vars, $vars);
 
-        $contentView = self::getContentView();
-        $html = $contentView->render(trim($view, '/').'.html.twig', $vars);
+        $normalizedView = trim($view, '/');
+        $contentView = self::getContentView(dirname($normalizedView));
+        $loader = $contentView->getLoader();
+        $template = $normalizedView.'.html.twig';
+
+        try {
+            if ($loader instanceof FilesystemLoader && !$loader->exists($template)) {
+                $template = basename($template);
+            }
+        } catch (LoaderError) {
+            $template = basename($template);
+        }
+
+        $html = $contentView->render($template, $vars);
+        $html = self::injectAdminCsrfFields($normalizedView, $html);
         return \App\Utils\Translator::translateHtml($html);
     }
 

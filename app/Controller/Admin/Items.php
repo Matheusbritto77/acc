@@ -10,6 +10,7 @@
 namespace App\Controller\Admin;
 
 use App\Model\Entity\Items as EntityItems;
+use App\Session\Admin\Login as SessionAdminLogin;
 use App\Utils\View;
 use App\DatabaseManager\Pagination;
 use App\Controller\Api\Characters;
@@ -17,16 +18,18 @@ use DOMDocument;
 
 class Items extends Base
 {
-    public static function importItems()
+    public static function importItems($request)
     {
         $items_path = $_ENV['SERVER_PATH'] . 'data/items/items.xml';
+        $items = null;
+
         if (file_exists($items_path)) {
             $items = new DOMDocument();
             $items->load($items_path);
         }
+
         if (!$items) {
-            echo 'Error: cannot load <b>items.xml</b>!';
-            return;
+            return self::viewItems($request, Alert::getError('Erro ao carregar o arquivo items.xml.'));
         }
 
         $insertData = [];
@@ -52,15 +55,9 @@ class Items extends Base
             EntityItems::insertItems($insertData);
         }
 
-        // Inicie a sessão se ainda não foi iniciada
-        if (session_status() == PHP_SESSION_NONE) {
-            session_start();
-        }
-
-        // Defina a mensagem de sucesso na sessão após a importação bem-sucedida
+        SessionAdminLogin::init();
         $_SESSION['success_message'] = "Items importados com sucesso!";
-        header('Location: ' . URL . '/admin/items');
-        exit;
+        $request->getRouter()->redirect('/admin/items');
     }
 
 
@@ -171,14 +168,9 @@ class Items extends Base
     {
         EntityItems::deleteItems('canary_items');
 
-        // Inicie a sessão se ainda não foi iniciada
-        if (session_status() == PHP_SESSION_NONE) {
-            session_start();
-        }
-
-        // Defina a mensagem de sucesso na sessão após a importação bem-sucedida
+        SessionAdminLogin::init();
         $_SESSION['success_message'] = "Items deletados com sucesso!";
-        return self::viewItems($request, 'Success!');
+        $request->getRouter()->redirect('/admin/items');
     }
 
     public static function viewItems($request, $errorMessage = null)

@@ -58,6 +58,7 @@ View::init([
 // Defines middleware mapping
 MiddlewareQueue::setMap([
     'maintenance' => \App\Http\Middleware\Maintenance::class,
+    'admin-csrf' => \App\Http\Middleware\Csrf::class,
     'required-logout' => \App\Http\Middleware\RequireLogout::class,
     'required-login' => \App\Http\Middleware\RequireLogin::class,
     'required-admin-logout' => \App\Http\Middleware\RequireAdminLogout::class,
@@ -69,4 +70,5 @@ MiddlewareQueue::setMap([
 // Defines default middleware mapping (runs on all routes)
 MiddlewareQueue::setDefault([
     'maintenance',
+    'admin-csrf',
 ]);

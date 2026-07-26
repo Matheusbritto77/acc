@@ -52,6 +52,17 @@ class Upload
         return $this->extension;
     }
 
+    public function isPng()
+    {
+        if (strtolower((string) $this->extension) !== 'png') {
+            return false;
+        }
+
+        $imageInfo = @getimagesize($this->tmpName);
+
+        return is_array($imageInfo) && ($imageInfo['mime'] ?? '') === 'image/png';
+    }
+
     public function getUrl()
     {
         return $this->web_url;
@@ -84,12 +95,23 @@ class Upload
     {
         if ($this->error != 0) return false;
         $dirob = __DIR__ . '/../../../resources/' . $dir;
-        $path = __DIR__ . '/../../../resources/' . $dir . '/' . $this->getPossibleBasename($dirob, $overwrite);
-        $url = URL . '/resources/' . $dir . '/' . $this->getPossibleBasename($dirob, $overwrite);
+        $basename = $this->getPossibleBasename($dirob, $overwrite);
+        $path = __DIR__ . '/../../../resources/' . $dir . '/' . $basename;
+        $url = URL . '/resources/' . $dir . '/' . $basename;
+
+        if (!is_dir($dirob)) {
+            mkdir($dirob, 0777, true);
+        }
 
         $this->web_url = $url;
-        self::insertUpload($this->getPossibleBasename($dirob, $overwrite), $url);
-        return move_uploaded_file($this->tmpName, $path);
+
+        if (!move_uploaded_file($this->tmpName, $path)) {
+            return false;
+        }
+
+        self::insertUpload($basename, $url);
+
+        return true;
     }
 
     public static function createMultiUpload($files)

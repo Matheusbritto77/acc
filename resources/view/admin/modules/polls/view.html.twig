@@ -80,9 +80,9 @@
                             <div class="card-body">
                                 <div class="row">
                                     <div class="col-md-12 col-lg-6">
-                                        <a href="{{ URL }}/admin/polls/{{ poll.id }}/delete">
-                                            <input type="button" class="btn btn-danger" value="Delete Poll">
-                                        </a>
+                                        <form action="{{ URL }}/admin/polls/{{ poll.id }}/delete" method="post" class="d-inline">
+                                            <input type="submit" class="btn btn-danger" value="Delete Poll" onclick="return confirm('Tem certeza que deseja deletar esta poll?');">
+                                        </form>
                                     </div>
                                 </div>
                             </div>

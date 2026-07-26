@@ -303,7 +303,7 @@ $obRouter->post('/admin/worlds/{id}/edit', [
     }
 ]);
 
-$obRouter->get('/admin/worlds/{id}/delete', [
+$obRouter->post('/admin/worlds/{id}/delete', [
     'middlewares' => [
         'required-admin-login',
         'role-permission'
@@ -353,7 +353,7 @@ $obRouter->get('/admin/polls/{id}/view', [
     }
 ]);
 
-$obRouter->get('/admin/polls/{id}/delete', [
+$obRouter->post('/admin/polls/{id}/delete', [
     'middlewares' => [
         'required-admin-login',
         'role-permission'
@@ -488,8 +488,8 @@ $obRouter->post('/admin/items/import', [
         'required-admin-login',
         'role-permission'
     ],
-    function () {
-        return new Response(200, Items::importItems());
+    function ($request) {
+        return new Response(200, Items::importItems($request));
     }
 ]);
 

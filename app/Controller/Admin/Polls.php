@@ -57,23 +57,29 @@ class Polls extends Base
             return self::viewInsertNewPoll($request, $status);
         }
 
+        $pollTitle = trim((string) filter_var($postVars['poll_title'], FILTER_SANITIZE_SPECIAL_CHARS));
+        $pollDescription = trim((string) filter_var($postVars['poll_description'] ?? '', FILTER_SANITIZE_SPECIAL_CHARS));
+
         $return_poll_id = EntityPolls::insertPoll([
-            'title' => $postVars['poll_title'],
-            'description' => $postVars['poll_description'],
+            'title' => $pollTitle,
+            'description' => $pollDescription,
             'date_start' => strtotime(date('Y-m-d')),
             'date_end' => strtotime($postVars['poll_date_end'] . ' 23:59:59'),
         ]);
 
         foreach ($postVars['questions'] as $key => $value) {
-            if (empty($value['question_title'])) {
+            $questionTitle = trim((string) filter_var($value['question_title'] ?? '', FILTER_SANITIZE_SPECIAL_CHARS));
+            $questionDescription = trim((string) filter_var($value['question_description'] ?? '', FILTER_SANITIZE_SPECIAL_CHARS));
+
+            if ($questionTitle === '') {
                 $status = SweetAlert::Types('Error!', '', 'danger', 'btn btn-danger');
                 return self::viewInsertNewPoll($request, $status);
             }
 
             EntityPolls::insertPollQuestions([
                 'poll_id' => $return_poll_id,
-                'question' => $value['question_title'],
-                'description' => $value['question_description'],
+                'question' => $questionTitle,
+                'description' => $questionDescription,
                 'votes' => 0
             ]);
         }
