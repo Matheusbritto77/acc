@@ -4,8 +4,8 @@ services:
       context: .
       dockerfile: Dockerfile
     restart: unless-stopped
-    ports:
-      - "${CANARYAAC_HTTP_PORT:-8080}:80"
+    expose:
+      - "80"
     environment:
       URL: ${URL}
       REDIS_URL: ${REDIS_URL}
