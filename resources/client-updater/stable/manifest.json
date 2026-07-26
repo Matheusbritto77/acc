@@ -1,6 +1,6 @@
 {
     "channel": "stable",
-    "generatedAt": "2026-07-26T18:24:59+00:00",
+    "generatedAt": "2026-07-26T18:32:36+00:00",
     "url": "https://astarot.online/resources/client-updater/stable/files",
     "files": {
         "/OTClient.exe": "3ff8b8bb",
@@ -9807,6 +9807,14 @@
         "WIN32-EGL-GCC": {
             "file": "/OTClient.exe",
             "checksum": "3ff8b8bb"
+        }
+    },
+    "packages": {
+        "windows": {
+            "file": "OTClient-windows-x64.zip",
+            "url": "https://astarot.online/resources/client-updater/stable/packages/OTClient-windows-x64.zip",
+            "checksum": "d4837244",
+            "size": 279280889
         }
     },
     "keepFiles": false
