@@ -3,7 +3,7 @@
  * Validator class
  *
  * @package   astarOT
- * @author    Lucas Giovanni <lucasgiovannidesigner@gmail.com>
+ * @author    britto dev <lucasgiovannidesigner@gmail.com>
  * @copyright 2022 astarOT
  */
 
@@ -24,7 +24,7 @@ class Api{
         return [
             'name' => 'API astarOT',
             'version' => 'v1.0.0',
-            'author' => 'Lucas Giovanni',
+            'author' => 'britto dev',
             'email' => 'contato@lucasgiovanni.com'
         ];
     }

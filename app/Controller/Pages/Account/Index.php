@@ -3,7 +3,7 @@
  * Index Class
  *
  * @package   astarOT
- * @author    Lucas Giovanni <lucasgiovannidesigner@gmail.com>
+ * @author    britto dev <lucasgiovannidesigner@gmail.com>
  * @copyright 2022 astarOT
  */
 
