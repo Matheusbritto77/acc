@@ -14,6 +14,8 @@ RUN apt-get update \
 		unzip \
 	&& docker-php-ext-install -j"$(nproc)" gd intl mysqli opcache pdo_mysql zip bcmath mbstring xml \
 	&& a2enmod headers rewrite \
+	&& echo "ServerName astarot.online" > /etc/apache2/conf-available/servername.conf \
+	&& a2enconf servername \
 	&& rm -rf /var/lib/apt/lists/*
 
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
