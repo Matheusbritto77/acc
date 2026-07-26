@@ -89,3 +89,275 @@ a.BigButtonText:hover {
     color: #ffd18c;
     text-decoration: none
 }
+
+html,
+body {
+    width: 100%;
+    min-height: 100%;
+    overflow-x: hidden;
+}
+
+img {
+    max-width: 100%;
+    height: auto;
+}
+
+table {
+    max-width: 100%;
+}
+
+.main-site-container,
+.main-header,
+.main-menu,
+.main-content,
+.Content,
+.Box,
+.BoxContent,
+.TableContainer,
+.InnerTableContainer {
+    box-sizing: border-box;
+}
+
+.main-site-container {
+    width: 100%;
+}
+
+.main-content {
+    max-width: 100%;
+}
+
+.BoxContent {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+.TableContainer,
+.InnerTableContainer {
+    max-width: 100%;
+}
+
+.Table5 {
+    width: 100%;
+    table-layout: auto;
+    word-break: break-word;
+}
+
+.InfoBar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    width: 100%;
+    flex-wrap: wrap;
+}
+
+.InfoBar a {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    max-width: 100%;
+}
+
+.InfoBarNumbers {
+    display: inline-flex;
+    align-items: center;
+    white-space: normal;
+}
+
+.MobileMenuItems {
+    max-width: 100%;
+}
+
+.MobileNavigationLinkContainer,
+.Level1Block,
+.Level2Block {
+    max-width: 100%;
+}
+
+@media (max-width: 980px) {
+    body {
+        background-attachment: scroll;
+        background-size: cover;
+    }
+
+    .main-site-container,
+    .main-header,
+    .main-content,
+    .Content,
+    .Box,
+    .BoxContent {
+        width: 100%;
+    }
+
+    .main-menu {
+        display: none;
+    }
+
+    #MenuColumn,
+    #Menu,
+    #LeftArtwork {
+        width: 100%;
+        max-width: 100%;
+    }
+
+    #LeftArtwork {
+        text-align: center;
+    }
+
+    .SmallMenuBox,
+    .SmallMenuBorder,
+    .SmallBoxTop,
+    .SmallBoxBorder,
+    .SmallBoxButtonContainer,
+    .Loginstatus,
+    #MenuTop {
+        width: 100%;
+        max-width: 100%;
+        background-size: 100% 100%;
+    }
+
+    .InfoBar {
+        justify-content: center;
+        row-gap: 8px;
+        padding: 4px 8px 0;
+    }
+
+    .InfoBarBlock {
+        min-width: 0;
+        flex: 1 1 92px;
+        justify-content: center;
+        text-align: center;
+    }
+
+    .InfoBarBigLogo,
+    .NotOnMobile {
+        display: none !important;
+    }
+
+    .InfoBarSmallLogo {
+        display: inline-block !important;
+    }
+
+    .InfoBarNumbers {
+        font-size: 12px;
+        line-height: 1.2;
+    }
+
+    .LanguageSwitcher {
+        position: static !important;
+        transform: none !important;
+        left: auto !important;
+        top: auto !important;
+        width: 100%;
+        justify-content: center;
+        margin-bottom: 6px;
+    }
+
+    .main-content {
+        padding: 0 8px 16px;
+    }
+
+    .BoxContent {
+        padding-left: 8px;
+        padding-right: 8px;
+    }
+
+    .BigButton,
+    .BigButtonOver,
+    .ButtonText,
+    .BigButtonText {
+        width: 100%;
+        max-width: 100%;
+    }
+
+    .BigButton,
+    .BigButtonOver,
+    .ButtonText,
+    .BigButtonText {
+        background-size: 100% 100%;
+    }
+
+    .BigButton {
+        height: 28px;
+    }
+
+    .BigButtonOver,
+    .ButtonText,
+    .BigButtonText {
+        height: 28px;
+    }
+
+    .BigButtonText {
+        font-size: 11px;
+    }
+
+    .MenuButton,
+    .Button,
+    .Submenu,
+    .Submenuitem {
+        max-width: 100%;
+    }
+
+    .SubmenuitemLabel {
+        word-break: break-word;
+    }
+}
+
+@media (max-width: 640px) {
+    body {
+        background-position: top center;
+        background-size: cover;
+    }
+
+    .InfoBar {
+        gap: 6px;
+    }
+
+    .InfoBarBlock {
+        flex-basis: calc(50% - 6px);
+    }
+
+    .TableContainer,
+    .InnerTableContainer {
+        display: block;
+        width: 100%;
+    }
+
+    .Table5,
+    .Table5 tr,
+    .Table5 td,
+    .Table5 th {
+        max-width: 100%;
+    }
+
+    #MobileMenu {
+        display: block;
+        width: 100%;
+        margin: 0 auto;
+        padding: 6px 8px 0;
+        box-sizing: border-box;
+    }
+
+    #MobileMenu nav {
+        width: 100%;
+    }
+
+    .MobileTibiaLogo {
+        display: flex;
+        justify-content: center;
+        margin-bottom: 8px;
+    }
+
+    .MobileMenuItems {
+        width: 100%;
+        box-sizing: border-box;
+    }
+
+    .MobileShortMenuItems {
+        margin-bottom: 8px;
+    }
+
+    .MobileNavigationMainElement {
+        transform: scale(0.95);
+    }
+}
