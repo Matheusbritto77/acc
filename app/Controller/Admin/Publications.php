@@ -17,6 +17,21 @@ use App\Session\Admin\Login as SessionAdminLogin;
 
 class Publications extends Base
 {
+    private static function getPlayersByLoggedAccount(): array
+    {
+        $idLogged = SessionAdminLogin::idLogged();
+        $selectPlayers = EntityPlayer::getPlayer([ 'account_id' => $idLogged]);
+        $players = [];
+
+        while ($player = $selectPlayers->fetchObject()) {
+            $players[] = [
+                'id' => $player->id,
+                'name' => $player->name,
+            ];
+        }
+
+        return $players;
+    }
 
     public static function insertNews($request)
     {
@@ -56,18 +71,9 @@ class Publications extends Base
 
     public static function viewPublishNews($request, $status = null)
     {
-        $idLogged = SessionAdminLogin::idLogged();
-        $select_players = EntityPlayer::getPlayer([ 'account_id' => $idLogged]);
-
-        while($player = $select_players->fetchObject()){
-            $players[] = [
-                'id' => $player->id,
-                'name' => $player->name,
-            ];
-        }
         $content = View::render('admin/modules/publications/news', [
             'status' => $status,
-            'players' => $players,
+            'players' => self::getPlayersByLoggedAccount(),
         ]);
         return parent::getPanel('Publications', $content, 'publications');
     }
@@ -110,18 +116,9 @@ class Publications extends Base
 
     public static function viewPublishNewsticker($request, $status = null)
     {
-        $idLogged = SessionAdminLogin::idLogged();
-        $select_players = EntityPlayer::getPlayer([ 'account_id' => $idLogged]);
-
-        while($player = $select_players->fetchObject()){
-            $players[] = [
-                'id' => $player->id,
-                'name' => $player->name,
-            ];
-        }
         $content = View::render('admin/modules/publications/newsticker', [
             'status' => $status,
-            'players' => $players,
+            'players' => self::getPlayersByLoggedAccount(),
         ]);
         return parent::getPanel('Publications', $content, 'publications');
     }
@@ -164,18 +161,9 @@ class Publications extends Base
 
     public static function viewPublishFeaturedArticle($request, $status = null)
     {
-        $idLogged = SessionAdminLogin::idLogged();
-        $select_players = EntityPlayer::getPlayer([ 'account_id' => $idLogged]);
-
-        while($player = $select_players->fetchObject()){
-            $players[] = [
-                'id' => $player->id,
-                'name' => $player->name,
-            ];
-        }
         $content = View::render('admin/modules/publications/featuredarticle', [
             'status' => $status,
-            'players' => $players,
+            'players' => self::getPlayersByLoggedAccount(),
         ]);
         return parent::getPanel('Publications', $content, 'publications');
     }

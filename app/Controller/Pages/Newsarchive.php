@@ -15,6 +15,23 @@ use App\Model\Functions\News as FunctionsNews;
 use \App\Utils\View;
 
 class Newsarchive extends Base{
+    private static function appendNews(array &$items, $news): void
+    {
+        $items[] = [
+            'id' => $news->id,
+            'title' => $news->title,
+            'body' => $news->body,
+            'type' => FunctionsNews::convertTypeName($news->type),
+            'date' => date('M d Y', strtotime($news->date)),
+            'time' => date('H:i', strtotime($news->date)),
+            'category' => FunctionsNews::convertCategoryName($news->category),
+            'category_img' => FunctionsNews::convertCategoryImage($news->category),
+            'player_id' => $news->player_id,
+            'article_text' => $news->article_text,
+            'article_image' => $news->article_image,
+            'hidden' => $news->hidden,
+        ];
+    }
 
     public static function viewNewsArchiveById($request, $id)
     {
@@ -72,72 +89,34 @@ class Newsarchive extends Base{
             $postVars['filter_ticker'] = null;
         }
         if ($postVars['filter_ticker'] == 'ticker') {
-            $active_type_ticker = 3;
+            $active_type_ticker = FunctionsNews::TYPE_NEWS_TICKER;
         }
         $active_type_article = 0;
         if (empty($postVars['filter_article'])) {
             $postVars['filter_article'] = null;
         }
         if ($postVars['filter_article'] == 'article') {
-            $active_type_article = 2;
+            $active_type_article = FunctionsNews::TYPE_FEATURED_ARTICLE;
         }
         $active_type_news = 0;
         if (empty($postVars['filter_news'])) {
             $postVars['filter_news'] = null;
         }
         if ($postVars['filter_news'] == 'news') {
-            $active_type_news = 1;
+            $active_type_news = FunctionsNews::TYPE_NEWS;
         }
 
-        $selectNews = EntityNews::getNews(['date BETWEEN' => [$begin_date, $end_date]], 'date ASC');
+        $arrayNews = [];
+        $selectNews = EntityNews::getNews(['date BETWEEN' => [$begin_date, $end_date]], 'date DESC');
         while ($news = $selectNews->fetchObject()) {
             if ($news->type == $active_type_ticker) {
-                $arrayNews[] = [
-                    'id' => $news->id,
-                    'title' => $news->title,
-                    'body' => $news->body,
-                    'type' => FunctionsNews::convertTypeName($news->type),
-                    'date' => date('M d Y', strtotime($news->date)),
-                    'time' => date('H:i', strtotime($news->date)),
-                    'category' => FunctionsNews::convertCategoryName($news->category),
-                    'category_img' => FunctionsNews::convertCategoryImage($news->category),
-                    'player_id' => $news->player_id,
-                    'article_text' => $news->article_text,
-                    'article_image' => $news->article_image,
-                    'hidden' => $news->hidden,
-                ];
+                self::appendNews($arrayNews, $news);
             }
             if ($news->type == $active_type_article) {
-                $arrayNews[] = [
-                    'id' => $news->id,
-                    'title' => $news->title,
-                    'body' => $news->body,
-                    'type' => FunctionsNews::convertTypeName($news->type),
-                    'date' => date('M d Y', strtotime($news->date)),
-                    'time' => date('H:i', strtotime($news->date)),
-                    'category' => FunctionsNews::convertCategoryName($news->category),
-                    'category_img' => FunctionsNews::convertCategoryImage($news->category),
-                    'player_id' => $news->player_id,
-                    'article_text' => $news->article_text,
-                    'article_image' => $news->article_image,
-                    'hidden' => $news->hidden,
-                ];
+                self::appendNews($arrayNews, $news);
             }
             if ($news->type == $active_type_news) {
-                $arrayNews[] = [
-                    'id' => $news->id,
-                    'title' => $news->title,
-                    'body' => $news->body,
-                    'type' => FunctionsNews::convertTypeName($news->type),
-                    'date' => date('M d Y', strtotime($news->date)),
-                    'time' => date('H:i', strtotime($news->date)),
-                    'category' => FunctionsNews::convertCategoryName($news->category),
-                    'category_img' => FunctionsNews::convertCategoryImage($news->category),
-                    'player_id' => $news->player_id,
-                    'article_text' => $news->article_text,
-                    'article_image' => $news->article_image,
-                    'hidden' => $news->hidden,
-                ];
+                self::appendNews($arrayNews, $news);
             }
         }
         $filters = [
@@ -152,7 +131,7 @@ class Newsarchive extends Base{
         ];
         $returnNews = [
             'filters' => $filters,
-            'news' => $arrayNews ?? '',
+            'news' => $arrayNews,
             'date' => [
                 'to_day' => $postVars['filter_end_day'] ?? date('d'),
                 'to_month' => $postVars['filter_end_month'] ?? date('m'),

@@ -14,6 +14,9 @@ use App\Model\Entity\Player;
 
 class News
 {
+    public const TYPE_NEWS = 1;
+    public const TYPE_NEWS_TICKER = 2;
+    public const TYPE_FEATURED_ARTICLE = 3;
 
     public static function convertCategoryImage($category_id)
     {
@@ -77,16 +80,12 @@ class News
         {
             case 0:
                 return 'None';
-                exit;
-            case 1:
+            case self::TYPE_NEWS:
                 return 'News';
-                exit;
-            case 2:
-                return 'Featured Article';
-                exit;
-            case 3:
+            case self::TYPE_NEWS_TICKER:
                 return 'News Ticker';
-                exit;
+            case self::TYPE_FEATURED_ARTICLE:
+                return 'Featured Article';
             default:
                 return 'None';
         }
@@ -128,7 +127,7 @@ class News
 
     public static function getNewsTicker()
     {
-        $selectNewsTicker = EntityNews::getNews([ 'type' => 2]);
+        $selectNewsTicker = EntityNews::getNews([ 'type' => self::TYPE_NEWS_TICKER], 'id DESC');
         $newsarticle = [];
         while($NewsTicker = $selectNewsTicker->fetchObject()){
             $newsarticle[] = [
@@ -139,8 +138,8 @@ class News
                 'date' => date('M d Y', strtotime($NewsTicker->date)),
                 'time' => date('H:i', strtotime($NewsTicker->date)),
                 'category' => $NewsTicker->category,
-                'category_img' => self::convertCategoryImage($NewsTicker->id),
-                'category_name' => self::convertCategoryName($NewsTicker->id),
+                'category_img' => self::convertCategoryImage($NewsTicker->category),
+                'category_name' => self::convertCategoryName($NewsTicker->category),
                 'player_id' => $NewsTicker->player_id,
                 'player_name' => self::getPlayerName($NewsTicker->player_id),
                 'article_text' => $NewsTicker->article_text,
@@ -153,7 +152,7 @@ class News
 
     public static function getFeaturedArticle()
     {
-        $selectFeaturedArticle = EntityNews::getNews([ 'type' => 3]);
+        $selectFeaturedArticle = EntityNews::getNews([ 'type' => self::TYPE_FEATURED_ARTICLE], 'id DESC');
         $featuredarticle = [];
         while($FeaturedArticle = $selectFeaturedArticle->fetchObject()){
             $featuredarticle[] = [
@@ -164,8 +163,8 @@ class News
                 'date' => date('M d Y', strtotime($FeaturedArticle->date)),
                 'time' => date('H:i', strtotime($FeaturedArticle->date)),
                 'category' => $FeaturedArticle->category,
-                'category_img' => self::convertCategoryImage($FeaturedArticle->id),
-                'category_name' => self::convertCategoryName($FeaturedArticle->id),
+                'category_img' => self::convertCategoryImage($FeaturedArticle->category),
+                'category_name' => self::convertCategoryName($FeaturedArticle->category),
                 'player_id' => $FeaturedArticle->player_id,
                 'player_name' => self::getPlayerName($FeaturedArticle->player_id),
                 'article_text' => $FeaturedArticle->article_text,
@@ -178,7 +177,7 @@ class News
 
     public static function getNews()
     {
-        $selectForum = EntityNews::getNews([ 'type' => 1]);
+        $selectForum = EntityNews::getNews([ 'type' => self::TYPE_NEWS], 'id DESC');
         $news = [];
         while($ForumNews = $selectForum->fetchObject()){
             $news[] = [
@@ -189,8 +188,8 @@ class News
                 'date' => date('M d Y', strtotime($ForumNews->date)),
                 'time' => date('H:i', strtotime($ForumNews->date)),
                 'category' => $ForumNews->category,
-                'category_img' => self::convertCategoryImage($ForumNews->id),
-                'category_name' => self::convertCategoryName($ForumNews->id),
+                'category_img' => self::convertCategoryImage($ForumNews->category),
+                'category_name' => self::convertCategoryName($ForumNews->category),
                 'player_id' => $ForumNews->player_id,
                 'player_name' => self::getPlayerName($ForumNews->player_id),
                 'article_text' => $ForumNews->article_text,
