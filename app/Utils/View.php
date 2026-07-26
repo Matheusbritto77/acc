@@ -18,10 +18,10 @@ class View{
 
     private static $vars = [];
 
-    private static function resolveViewDirectories($view)
+    private static function resolveViewDirectories()
     {
         $directories = [
-            __DIR__.'/../../resources/view/' . trim($view, '/') . '/',
+            __DIR__.'/../../resources/view/',
             __DIR__.'/../../resources/view/base/',
             __DIR__.'/../../resources/view/pagination/',
             __DIR__.'/../../resources/view/admin/',
@@ -43,9 +43,9 @@ class View{
         self::$vars = $vars;
     }
 
-    public static function getContentView($view)
+    public static function getContentView()
     {
-        $loader = new FilesystemLoader(self::resolveViewDirectories($view));
+        $loader = new FilesystemLoader(self::resolveViewDirectories());
         if($_ENV['DEV_MODE'] == true){
             $twig = new Environment($loader, [
                 'debug' => true,
@@ -74,14 +74,9 @@ class View{
     public static function render($view, $vars = [])
     {
         $vars = array_merge(self::$vars, $vars);
-        
-        $array = explode('/', $view);
-        $view_file = end($array);
-        $remove_file = array_pop($array);
-        $view_path = implode('/', $array);
 
-        $contentView = self::getContentView($view_path);
-        $html = $contentView->render($view_file.'.html.twig', $vars);
+        $contentView = self::getContentView();
+        $html = $contentView->render(trim($view, '/').'.html.twig', $vars);
         return \App\Utils\Translator::translateHtml($html);
     }
 
