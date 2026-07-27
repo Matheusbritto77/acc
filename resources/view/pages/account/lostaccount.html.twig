@@ -6,6 +6,26 @@
 	<div class="Border_2">
 		<div class="Border_3">
 			<div class="BoxContent" style="background-image:url({{IMAGE_PATH}}/global/content/scroll.gif);">
+				{% if status %}
+				<div class="SmallBox">
+					<div class="MessageContainer">
+						<div class="BoxFrameHorizontal" style="background-image:url({{IMAGE_PATH}}/global/content/box-frame-horizontal.gif);"></div>
+						<div class="BoxFrameEdgeLeftTop" style="background-image:url({{IMAGE_PATH}}/global/content/box-frame-edge.gif);"></div>
+						<div class="BoxFrameEdgeRightTop" style="background-image:url({{IMAGE_PATH}}/global/content/box-frame-edge.gif);"></div>
+							<div class="ErrorMessage">
+							<div class="BoxFrameVerticalLeft" style="background-image:url({{IMAGE_PATH}}/global/content/box-frame-vertical.gif);"></div>
+							<div class="BoxFrameVerticalRight" style="background-image:url({{IMAGE_PATH}}/global/content/box-frame-vertical.gif);"></div>
+							<div class="AttentionSign" style="background-image:url({{IMAGE_PATH}}/global/content/attentionsign.gif);"></div>
+							<b>The following error has occurred:</b><br>
+							{{ status }}<br>
+							</div>
+							<div class="BoxFrameHorizontal" style="background-image:url({{IMAGE_PATH}}/global/content/box-frame-horizontal.gif);"></div>
+							<div class="BoxFrameEdgeRightBottom" style="background-image:url({{IMAGE_PATH}}/global/content/box-frame-edge.gif);"></div>
+							<div class="BoxFrameEdgeLeftBottom" style="background-image:url({{IMAGE_PATH}}/global/content/box-frame-edge.gif);"></div>
+						</div>
+					</div>
+				<br>
+				{% endif %}
 				<h2>Welcome to the Lost Account Interface!</h2>
 				<p>If you have lost access to your account, this interface can help you. Of course, you need to prove that your claim to the account is justified. Enter the requested data and follow the instructions carefully. Please understand there is no way to get access to your lost account if the interface cannot help you. Further options to change account data are available if you have a registered account.</p>
 				<p>By using the Lost Account Interface you can</p>
@@ -52,7 +72,7 @@
 																		<tr>
 																			<td>
 																				<div class="ThreeColumnsForm">
-																					<div class="LabelV ThreeColumnsFormCell">Email Address:</div>
+																					<div class="LabelV ThreeColumnsFormCell">Email Address or Character Name:</div>
 																					<div class="ThreeColumnsFormCell ThreeColumnsFormInputCell"><input name="email" maxlength="50"></div>
 																					<div class="ThreeColumnsFormCell ThreeColumnsFormButton"><div class="BigButton" style="background-image:url({{IMAGE_PATH}}/global/buttons/button_blue.gif)">
 																							<div onmouseover="MouseOverBigButton(this);" onmouseout="MouseOutBigButton(this);"><div class="BigButtonOver" style="background-image:url({{IMAGE_PATH}}/global/buttons/button_blue_over.gif);"></div><input class="BigButtonText" type="submit" value="Submit"></div>

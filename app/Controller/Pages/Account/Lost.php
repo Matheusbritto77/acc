@@ -12,10 +12,33 @@ namespace App\Controller\Pages\Account;
 use App\Controller\Pages\Base;
 use App\Utils\View;
 use App\Model\Entity\Account as EntityAccount;
+use App\Model\Entity\Player as EntityPlayer;
 use App\Utils\Argon;
 use App\Model\Functions\FunMailer;
 
 class Lost extends Base{
+
+    private static function resolveAccountByIdentifier(string $identifier)
+    {
+        $identifier = trim($identifier);
+        if ($identifier === '') {
+            return null;
+        }
+
+        if (filter_var($identifier, FILTER_VALIDATE_EMAIL)) {
+            $account = EntityAccount::getAccount(['email' => $identifier])->fetchObject();
+            if ($account) {
+                return $account;
+            }
+        }
+
+        $player = EntityPlayer::getPlayer(['name' => $identifier])->fetchObject();
+        if ($player) {
+            return EntityAccount::getAccount(['id' => $player->account_id])->fetchObject();
+        }
+
+        return EntityAccount::getAccount(['name' => $identifier])->fetchObject();
+    }
 
     public static function viewRecoveryKey($request)
     {
@@ -33,9 +56,14 @@ class Lost extends Base{
             $request->getRouter()->redirect('/account/lostaccount');
         }
         $filter_email = filter_var($postVars['email'], FILTER_SANITIZE_SPECIAL_CHARS);
-        $account = EntityAccount::getAccount([ 'email' => $filter_email])->fetchObject();
+        $account = self::resolveAccountByIdentifier($filter_email);
         if($account == false){
             $request->getRouter()->redirect('/account/lostaccount');
+        }
+
+        $account_recoverykey = EntityAccount::getAccountRegistration(['account_id' => $account->id])->fetchObject();
+        if (empty($account_recoverykey) || empty($account_recoverykey->recovery)) {
+            return self::getLostAccount($request, 'This account does not have a recovery key registered.');
         }
 
         if (empty($postVars['newpassword'])) {
@@ -51,9 +79,8 @@ class Lost extends Base{
         }
         $new_password = Argon::generateArgonPassword($filter_password);
 
-        $account_recoverykey = EntityAccount::getAccountRegistration(['account_id' => $account->id])->fetchObject();
-        if($account_recoverykey->recovery == $recoverykey){
-            EntityAccount::updateAccount([ 'email' => $filter_email], [
+        if (strtoupper((string) $account_recoverykey->recovery) === strtoupper($recoverykey)) {
+            EntityAccount::updateAccount([ 'id' => $account->id], [
                 'password' => $new_password
             ]);
             FunMailer::sendRecoverySuccess(
@@ -62,32 +89,34 @@ class Lost extends Base{
             );
             $request->getRouter()->redirect('/account/login');
         }
-        $request->getRouter()->redirect('/account/lostaccount');
+        return self::getLostAccount($request, 'The recovery key you entered is invalid.');
     }
 
     public static function selectAccount($request)
     {
         $postVars = $request->getPostVars();
-        $email = $postVars['email'];
-        $filter_email = filter_var($email, FILTER_SANITIZE_EMAIL);
-        if(!filter_var($filter_email, FILTER_VALIDATE_EMAIL)){
-            return self::getLostAccount($request);
+        $identifier = $postVars['email'] ?? '';
+        $filter_identifier = filter_var($identifier, FILTER_SANITIZE_SPECIAL_CHARS);
+        if ($filter_identifier === '') {
+            return self::getLostAccount($request, 'You need to enter a character name or email address.');
         }
 
-        $account = EntityAccount::getAccount([ 'email' => $filter_email])->fetchObject();
+        $account = self::resolveAccountByIdentifier($filter_identifier);
         if($account == false){
-            return self::getLostAccount($request);
+            return self::getLostAccount($request, 'Account not found.');
         }
         
         $content = View::render('pages/account/lostaccount_first', [
             'email' => $account->email,
+            'account_name' => $account->name ?? $account->email,
         ]);
         return parent::getBase('Lost Account', $content, 'lostaccount');
     }
 
-    public static function getLostAccount($request)
+    public static function getLostAccount($request, $status = null)
     {
         $content = View::render('pages/account/lostaccount', [
+            'status' => $status,
         ]);
         return parent::getBase('Lost Account', $content, 'lostaccount');
     }

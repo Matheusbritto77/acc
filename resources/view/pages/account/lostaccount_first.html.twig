@@ -6,13 +6,14 @@
 	<div class="Border_2">
 		<div class="Border_3">
 			<div class="BoxContent" style="background-image:url({{IMAGE_PATH}}/global/content/scroll.gif);">
-				<h2 style="text-align: center;">Email Address: {{ email }}</h2><br>
+				<h2 style="text-align: center;">Account: {{ account_name }}</h2><br>
                 <p>The Lost Account Interface can help you to solve all problems listed below. Please select your problem and click on "Submit".</p>
 				<p>If your problem is not listed here, you might be able to find the answer on our website. Answers to the most common questions about Tibia can be found in the
 					FAQ. You can also consult the
 					manual. If you have questions concerning the security of your account, please take a look at the
 					security hints.</p>
 				<form action="{{URL}}/account/lostaccount/recoverykey" method="post">
+					<input type="hidden" name="email" value="{{ email }}">
 					<div class="TableContainer">
 						<div class="CaptionContainer">
 							<div class="CaptionInnerContainer">
@@ -53,12 +54,12 @@
 																			<td>
 																				<b>New Password</b><br>
 																				<hr class="InnerTableSeparator">
-																				<input type="text" name="newpassword" size="30" maxlength="29">
+																				<input type="password" name="newpassword" size="30" maxlength="29">
 																			</td>
 																			<td>
 																				<b>Confirm Password</b><br>
 																				<hr class="InnerTableSeparator">
-																				<input type="text" name="newpasswordconfirm" size="30" maxlength="29">
+																				<input type="password" name="newpasswordconfirm" size="30" maxlength="29">
 																			</td>
 																		</tr>
 																	</tbody>
