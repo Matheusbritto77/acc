@@ -15,6 +15,7 @@ set -euo pipefail
 : "${CANARY_STATUS_PORT:=7173}"
 : "${CANARY_STATUS_TIMEOUT:=5000}"
 : "${CANARY_DATA_PACK:=data-otservbr-global}"
+: "${TZ:=America/Sao_Paulo}"
 
 escape_lua() {
 	printf '%s' "$1" | sed 's/\\/\\\\/g; s/"/\\"/g'
@@ -35,10 +36,13 @@ CANARY_GAME_PORT=$CANARY_GAME_PORT
 CANARY_STATUS_PORT=$CANARY_STATUS_PORT
 CANARY_STATUS_TIMEOUT=$CANARY_STATUS_TIMEOUT
 CANARY_DATA_PACK=$CANARY_DATA_PACK
+APP_TIMEZONE=${APP_TIMEZONE:-$TZ}
+TZ=$TZ
 REDIS_URL=$REDIS_URL
 URL=${URL:-https://astarot.online}
 EOF
 export CANARY_RUNTIME_ENV_FILE="$runtime_env_file"
+export TZ
 
 require_uint() {
 	local name="$1"

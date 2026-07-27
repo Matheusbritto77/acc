@@ -11,6 +11,23 @@ use App\Http\Middleware\Queue as MiddlewareQueue;
 // Load the .env files
 Dotenv::createImmutable(__DIR__.'/../')->load();
 
+function normalize_timezone(string $timezone, string $default = 'America/Sao_Paulo'): string
+{
+    $timezone = trim($timezone);
+    if ($timezone === '') {
+        return $default;
+    }
+
+    return in_array($timezone, \DateTimeZone::listIdentifiers(), true) ? $timezone : $default;
+}
+
+$appTimezone = normalize_timezone(
+    (string) ($_ENV['APP_TIMEZONE'] ?? getenv('APP_TIMEZONE') ?? $_ENV['TZ'] ?? getenv('TZ') ?? ''),
+    'America/Sao_Paulo'
+);
+date_default_timezone_set($appTimezone);
+putenv('TZ=' . $appTimezone);
+
 function normalize_public_url(string $url): string
 {
     $url = trim($url);

@@ -9,6 +9,26 @@ function env_value(string $name, string $default = ''): string
 	return $value === false || $value === '' ? $default : $value;
 }
 
+function resolve_timezone(PDO $pdo): string
+{
+	$envTimezone = trim(runtime_env_value('APP_TIMEZONE', runtime_env_value('CANARY_TIMEZONE', '')));
+	if ($envTimezone !== '' && in_array($envTimezone, DateTimeZone::listIdentifiers(), true)) {
+		return $envTimezone;
+	}
+
+	try {
+		$statement = $pdo->query('SELECT timezone FROM canary_website ORDER BY id ASC LIMIT 1');
+		$databaseTimezone = $statement ? trim((string) $statement->fetchColumn()) : '';
+		if ($databaseTimezone !== '' && in_array($databaseTimezone, DateTimeZone::listIdentifiers(), true)) {
+			return $databaseTimezone;
+		}
+	} catch (Throwable $error) {
+		echo "Timezone lookup info: {$error->getMessage()}\n";
+	}
+
+	return 'America/Sao_Paulo';
+}
+
 function wait_for_database(): PDO
 {
 	$host = runtime_env_value('CANARY_DB_HOST', 'db');
@@ -157,6 +177,11 @@ function sync_world_endpoint(PDO $pdo): void
 $pdo = wait_for_database();
 wait_for_canary_schema($pdo);
 
+$websiteTimezone = resolve_timezone($pdo);
+date_default_timezone_set($websiteTimezone);
+putenv('TZ=' . $websiteTimezone);
+echo "Timezone resolved as {$websiteTimezone}.\n";
+
 if (!table_exists($pdo, 'account_authentication')) {
 	echo "Importing astarOT database schema...\n";
 	execute_sql_script($pdo, '/var/www/html/canaryaac.sql');
@@ -193,6 +218,8 @@ DB_PORT='{$dbPort}'
 M_COST='1<<16'
 T_COST='2'
 PARALLELISM='2'
+APP_TIMEZONE='{$websiteTimezone}'
+TZ='{$websiteTimezone}'
 
 # Website configs
 SITE_NAME='astarOT'

@@ -9,6 +9,8 @@
 
 namespace App\DatabaseManager;
 
+use DateTimeImmutable;
+use DateTimeZone;
 use PDO;
 use PDOException;
 
@@ -95,8 +97,25 @@ class Database
                 self::$pass
             );
             $this->connection->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+            $this->applySessionTimezone();
         } catch (PDOException $e) {
             die('ERROR: ' . $e->getMessage());
+        }
+    }
+
+    /**
+     * Alinha a sessão do MySQL com o timezone da aplicação.
+     */
+    private function applySessionTimezone(): void
+    {
+        $timezone = getenv('APP_TIMEZONE') ?: getenv('CANARY_TIMEZONE') ?: getenv('TZ') ?: 'America/Sao_Paulo';
+        try {
+            $dateTimeZone = new DateTimeZone($timezone);
+            $offset = (new DateTimeImmutable('now', $dateTimeZone))->format('P');
+            $statement = $this->connection->prepare('SET time_zone = ?');
+            $statement->execute([$offset]);
+        } catch (\Throwable $error) {
+            // Keep the connection usable even if the server rejects the timezone string.
         }
     }
 
