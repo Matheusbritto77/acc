@@ -18,6 +18,7 @@ use App\Controller\Pages\LastDeaths;
 use App\Controller\Pages\Newsarchive;
 use App\Controller\Pages\Polls;
 use App\Controller\Pages\Support;
+use App\Controller\Pages\Seo;
 use App\Model\Functions\Signature;
 
 include __DIR__.'/pages/account.php';
@@ -31,6 +32,16 @@ include __DIR__.'/pages/outfit.php';
 $obRouter->get('', [
     function(){
         return new Response(200, Lastnews::getLastnews());
+    }
+]);
+$obRouter->get('/robots.txt', [
+    function(){
+        return new Response(200, Seo::robots(), 'text/plain; charset=UTF-8');
+    }
+]);
+$obRouter->get('/sitemap.xml', [
+    function(){
+        return new Response(200, Seo::sitemap(), 'application/xml; charset=UTF-8');
     }
 ]);
 $obRouter->get('/latestnews', [

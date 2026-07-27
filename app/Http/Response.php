@@ -57,6 +57,9 @@
                 case 'application/json':
                     echo json_encode($this->content, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
                     exit;
+                default:
+                    echo $this->content;
+                    exit;
             }
         }
     }

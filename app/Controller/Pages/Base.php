@@ -16,6 +16,122 @@ use App\Model\Functions\Server as FunctionsServer;
 use App\Model\Functions\ThemeBox as FunctionsThemeBox;
 
 class Base{
+    private static function getCanonicalUrl(): string
+    {
+        $path = parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH) ?: '/';
+        $path = '/' . ltrim($path, '/');
+
+        return $path === '/' ? rtrim(URL, '/') . '/' : rtrim(URL, '/') . $path;
+    }
+
+    private static function getCurrentLang(): string
+    {
+        return strtolower((string) ($_COOKIE['lang'] ?? 'pt'));
+    }
+
+    private static function getSeoDescription(string $currentPage, string $title): string
+    {
+        $siteName = SITE_NAME;
+        $map = [
+            'latestnews' => sprintf('%s latest news, announcements and updates for the community.', $siteName),
+            'newsarchive' => sprintf('Browse the %s news archive, articles and announcements.', $siteName),
+            'eventschedule' => sprintf('Check the event calendar and scheduled events on %s.', $siteName),
+            'eventcalendar' => sprintf('Check the event calendar and scheduled events on %s.', $siteName),
+            'creatures' => sprintf('Browse the creature library for %s.', $siteName),
+            'boostablebosses' => sprintf('See the daily boosted bosses and hunting targets on %s.', $siteName),
+            'achievements' => sprintf('Explore the achievements available on %s.', $siteName),
+            'experiencetable' => sprintf('Check the experience table for %s up to level 3500.', $siteName),
+            'characters' => sprintf('Search and view characters on %s.', $siteName),
+            'worlds' => sprintf('Review the game worlds and server status on %s.', $siteName),
+            'highscores' => sprintf('View the highscores and leaderboards on %s.', $siteName),
+            'lastdeaths' => sprintf('Browse the latest deaths on %s.', $siteName),
+            'houses' => sprintf('Search houses and auctions on %s.', $siteName),
+            'guilds' => sprintf('Discover guilds, members and guild features on %s.', $siteName),
+            'polls' => sprintf('Vote in active community polls on %s.', $siteName),
+            'downloads' => sprintf('Download the official client and game files for %s.', $siteName),
+            'rules' => sprintf('Read the rules and community guidelines for %s.', $siteName),
+            'team' => sprintf('Meet the staff and support team behind %s.', $siteName),
+            'premiumfeatures' => sprintf('Review the premium features and benefits available in %s.', $siteName),
+        ];
+
+        return $map[$currentPage] ?? sprintf('%s - %s', $title, $siteName);
+    }
+
+    private static function isNoIndexPage(string $currentPage): bool
+    {
+        return in_array($currentPage, ['account', 'accountmanagement', 'createaccount', 'lostaccount', 'payment'], true);
+    }
+
+    private static function getRobotsDirective(string $currentPage): string
+    {
+        if (self::isNoIndexPage($currentPage)) {
+            return 'noindex,nofollow,noarchive';
+        }
+
+        return 'index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1';
+    }
+
+    private static function getOgType(string $currentPage): string
+    {
+        return $currentPage === 'newsarchive' ? 'article' : 'website';
+    }
+
+    private static function getLocale(): string
+    {
+        return match (self::getCurrentLang()) {
+            'en' => 'en_US',
+            'es' => 'es_ES',
+            default => 'pt_BR',
+        };
+    }
+
+    private static function getHtmlLang(): string
+    {
+        return match (self::getCurrentLang()) {
+            'en' => 'en',
+            'es' => 'es',
+            default => 'pt-BR',
+        };
+    }
+
+    private static function getStructuredData(string $title, string $description, string $canonicalUrl): string
+    {
+        $data = [
+            [
+                '@context' => 'https://schema.org',
+                '@type' => 'WebSite',
+                'name' => SITE_NAME,
+                'url' => rtrim(URL, '/') . '/',
+                'description' => $description,
+                'inLanguage' => self::getLocale(),
+                'publisher' => [
+                    '@type' => 'Organization',
+                    'name' => SITE_NAME,
+                    'url' => rtrim(URL, '/') . '/',
+                    'logo' => [
+                        '@type' => 'ImageObject',
+                        'url' => URL . '/resources/images/global/general/favicon.ico',
+                    ],
+                ],
+                'image' => URL . '/resources/images/global/header/background-artwork-astarot.jpg',
+            ],
+            [
+                '@context' => 'https://schema.org',
+                '@type' => 'WebPage',
+                'name' => $title,
+                'url' => $canonicalUrl,
+                'description' => $description,
+                'isPartOf' => [
+                    '@type' => 'WebSite',
+                    'name' => SITE_NAME,
+                    'url' => rtrim(URL, '/') . '/',
+                ],
+            ],
+        ];
+
+        return json_encode($data, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
+    }
+
     public static function getPagination($request, $obPagination)
     {
         $pages = $obPagination->getPages();
@@ -257,12 +373,23 @@ class Base{
     public static function getBase($title, $content, $currentPage = 'latestnews')
     {
         $websiteInfo = EntityServerConfig::getInfoWebsite()->fetchObject();
+        $canonicalUrl = self::getCanonicalUrl();
+        $seoDescription = self::getSeoDescription($currentPage, $title);
+        $seoRobots = self::getRobotsDirective($currentPage);
+        $seoJsonLd = self::getStructuredData($title, $seoDescription, $canonicalUrl);
 
         return View::render('pages/base', [
             'title' => $title . ' - ' . $websiteInfo->title . '',
             'content' => $content,
             'menu' => self::getMenu($currentPage),
             'activemenu' => $currentPage,
+            'seo_description' => $seoDescription,
+            'seo_canonical' => $canonicalUrl,
+            'seo_robots' => $seoRobots,
+            'seo_type' => self::getOgType($currentPage),
+            'seo_lang' => self::getHtmlLang(),
+            'seo_locale' => self::getLocale(),
+            'seo_json_ld' => $seoJsonLd,
             'loginStatus' => self::getLogged(),
             'discord' => $websiteInfo->discord,
             'boostedcreature' => FunctionsServer::getBoostedCreature(),
