@@ -1,6 +1,6 @@
 {
     "channel": "stable",
-    "generatedAt": "2026-07-26T18:32:36+00:00",
+    "generatedAt": "2026-07-27T19:31:16+00:00",
     "url": "https://astarot.online/resources/client-updater/stable/files",
     "files": {
         "/OTClient.exe": "3ff8b8bb",
@@ -9813,8 +9813,8 @@
         "windows": {
             "file": "OTClient-windows-urlfix-1785170836.zip",
             "url": "https://github.com/Matheusbritto77/client/releases/download/v4.2.3/OTClient-windows-urlfix-1785170836.zip",
-            "checksum": "19f17744",
-            "size": 293454054
+            "checksum": "fddc4964",
+            "size": 282859328
         },
         "macos": {
             "file": "OTClient-macos-arm64.zip",
