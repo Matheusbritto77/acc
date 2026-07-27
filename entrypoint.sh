@@ -8,7 +8,7 @@ set -euo pipefail
 : "${CANARY_DB_PASSWORD:=canary}"
 : "${REDIS_URL:=}"
 : "${CANARY_SERVER_NAME:=astarOT}"
-: "${CANARY_SERVER_IP:=astarot.online}"
+: "${CANARY_SERVER_IP:=play.astarot.online}"
 : "${CANARY_SERVER_LOCATION:=BRA}"
 : "${CANARY_LOGIN_PORT:=7171}"
 : "${CANARY_GAME_PORT:=7172}"

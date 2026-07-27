@@ -1,16 +1,17 @@
 -- this is the first file executed when the application starts
 -- we have to load the first modules form here
 
-local SERVER_IP = "209.126.81.68"
-local WEB_BASE_URL = "http://209.126.81.68:8080"
+local SERVER_IP = "play.astarot.online"
+local WEB_BASE_URL = "https://astarot.online"
+local API_BASE_URL = "https://api.astarot.online"
 DEFAULT_CLIENT_VERSION = 1525
 
 -- updater
 Services = {
-    updater = "",
-    status = WEB_BASE_URL .. "/api/v1/login",
+    updater = API_BASE_URL .. "/api/v1/client_updater",
+    status = API_BASE_URL .. "/api/v1/login",
     websites = WEB_BASE_URL,
-    createAccount = WEB_BASE_URL .. "/api/v1/create_account",
+    createAccount = API_BASE_URL .. "/api/v1/create_account",
     createAccountPage = WEB_BASE_URL .. "/createaccount",
     getCoinsUrl = WEB_BASE_URL,
     clientAssets = {
