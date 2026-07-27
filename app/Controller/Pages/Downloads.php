@@ -15,7 +15,7 @@ use App\Model\Entity\ServerConfig as EntityServerConfig;
 class Downloads extends Base{
     private const DEFAULT_WINDOWS_DOWNLOAD = 'https://github.com/Matheusbritto77/client/releases/download/v4.2.2/OTClient-windows-x64.zip';
     private const DEFAULT_LINUX_DOWNLOAD = 'https://github.com/Matheusbritto77/client/releases/tag/v4.2.2';
-    private const DEFAULT_MACOS_DOWNLOAD = 'https://github.com/Matheusbritto77/client/releases/download/v4.2.2/OTClient-macos-prod.dmg';
+    private const DEFAULT_MACOS_DOWNLOAD = 'https://astarot.online/resources/client-updater/stable/packages/OTClient-macos-arm64.zip';
 
     public static function viewDownloads()
     {

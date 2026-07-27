@@ -23,6 +23,13 @@ class ClientUpdater extends Api
         'WIN32-EGL-GCC' => ['OTClient.exe', 'otclient_x64.exe', 'otclient.exe'],
         'X11-GLX' => ['otclient_linux', 'otclient'],
         'X11-EGL' => ['otclient_linux', 'otclient'],
+        'MACOS' => [
+            'OTClient.app/Contents/MacOS/OTClient',
+            'OTClient.app/Contents/MacOS/otclient',
+            'Contents/MacOS/OTClient',
+            'Contents/MacOS/otclient',
+            'OTClient',
+        ],
         'ANDROID-EGL' => [],
         'ANDROID64-EGL' => [],
     ];
@@ -32,18 +39,26 @@ class ClientUpdater extends Api
         $postVars = $request->getPostVars();
         $args = is_array($postVars['args'] ?? null) ? $postVars['args'] : [];
         $platform = is_string($postVars['platform'] ?? null) ? $postVars['platform'] : '';
+        $os = is_string($postVars['os'] ?? null) ? $postVars['os'] : '';
         $channel = self::sanitizeChannel($args['channel'] ?? self::DEFAULT_CHANNEL);
         $manifest = self::loadManifest($channel);
+        $platformKey = self::normalizePlatformKey($platform, $os);
 
         $response = [
             'url' => is_string($manifest['url'] ?? null) ? $manifest['url'] : self::buildFilesUrl($channel),
             'files' => is_array($manifest['files'] ?? null) ? $manifest['files'] : [],
             'keepFiles' => !empty($manifest['keepFiles']),
+            'platform' => $platformKey,
         ];
 
-        $binary = self::resolveBinary($manifest, $platform);
+        $binary = self::resolveBinary($manifest, $platform, $os);
         if ($binary !== null) {
             $response['binary'] = $binary;
+        }
+
+        $package = self::resolvePackage($manifest, $platformKey);
+        if ($package !== null) {
+            $response['package'] = $package;
         }
 
         return $response;
@@ -155,26 +170,58 @@ class ClientUpdater extends Api
         return $binaries;
     }
 
-    private static function resolveBinary(array $manifest, string $platform): ?array
+    private static function resolveBinary(array $manifest, string $platform, string $os): ?array
     {
-        if ($platform === '') {
+        $platformKey = self::normalizePlatformKey($platform, $os);
+        if ($platformKey === '') {
             return null;
         }
 
-        $binary = $manifest['binaries'][$platform] ?? null;
-        if (!is_array($binary)) {
+        foreach (self::binaryLookupKeys($platformKey) as $candidateKey) {
+            $binary = $manifest['binaries'][$candidateKey] ?? null;
+            if (!is_array($binary)) {
+                continue;
+            }
+
+            $file = is_string($binary['file'] ?? null) ? $binary['file'] : '';
+            $checksum = is_string($binary['checksum'] ?? null) ? $binary['checksum'] : '';
+            if ($file === '' || $checksum === '') {
+                continue;
+            }
+
+            return [
+                'file' => $file,
+                'checksum' => $checksum,
+            ];
+        }
+
+        return null;
+    }
+
+    private static function resolvePackage(array $manifest, string $platformKey): ?array
+    {
+        if ($platformKey === '') {
             return null;
         }
 
-        $file = is_string($binary['file'] ?? null) ? $binary['file'] : '';
-        $checksum = is_string($binary['checksum'] ?? null) ? $binary['checksum'] : '';
-        if ($file === '' || $checksum === '') {
+        $package = $manifest['packages'][$platformKey] ?? null;
+        if (!is_array($package)) {
+            return null;
+        }
+
+        $file = is_string($package['file'] ?? null) ? $package['file'] : '';
+        $url = is_string($package['url'] ?? null) ? $package['url'] : '';
+        $checksum = is_string($package['checksum'] ?? null) ? $package['checksum'] : '';
+        $size = isset($package['size']) ? (int) $package['size'] : 0;
+        if ($file === '' || $url === '' || $checksum === '') {
             return null;
         }
 
         return [
             'file' => $file,
+            'url' => $url,
             'checksum' => $checksum,
+            'size' => $size,
         ];
     }
 
@@ -191,6 +238,38 @@ class ClientUpdater extends Api
     private static function buildFilesUrl(string $channel): string
     {
         return URL . '/resources/client-updater/' . rawurlencode($channel) . '/files';
+    }
+
+    private static function normalizePlatformKey(string $platform, string $os = ''): string
+    {
+        $value = strtolower(trim($platform !== '' ? $platform : $os));
+        if ($value === '') {
+            return '';
+        }
+
+        if (strpos($value, 'win') !== false) {
+            return 'windows';
+        }
+
+        if (strpos($value, 'linux') !== false || strpos($value, 'x11') !== false) {
+            return 'linux';
+        }
+
+        if (strpos($value, 'macos') !== false || strpos($value, 'osx') !== false || strpos($value, 'darwin') !== false || strpos($value, 'mac') !== false) {
+            return 'macos';
+        }
+
+        return '';
+    }
+
+    private static function binaryLookupKeys(string $platformKey): array
+    {
+        return match ($platformKey) {
+            'windows' => ['windows', 'WIN32-WGL', 'WIN32-EGL', 'WIN32-WGL-GCC', 'WIN32-EGL-GCC'],
+            'linux' => ['linux', 'X11-GLX', 'X11-EGL'],
+            'macos' => ['macos', 'MACOS'],
+            default => [$platformKey],
+        };
     }
 
     private static function getChannelRoot(string $channel): string

@@ -9815,6 +9815,12 @@
             "url": "https://astarot.online/resources/client-updater/stable/packages/OTClient-windows-x64.zip",
             "checksum": "d4837244",
             "size": 279280889
+        },
+        "macos": {
+            "file": "OTClient-macos-arm64.zip",
+            "url": "https://astarot.online/resources/client-updater/stable/packages/OTClient-macos-arm64.zip",
+            "checksum": "8837a6e9",
+            "size": 267989903
         }
     },
     "keepFiles": false
