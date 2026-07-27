@@ -194,6 +194,19 @@ class FunMailer{
         return self::sendMail($emailTo, $subject, implode("\n", $lines), self::buildHtml($subject, $lines));
     }
 
+    public static function sendRecoveryRequest(string $emailTo, string $accountName): bool
+    {
+        $subject = 'Lost account recovery request';
+        $lines = [
+            "Hello {$accountName},",
+            'A lost account recovery was requested for your account.',
+            'If you requested this, return to the recovery page and use your recovery key to set a new password.',
+            'If you did not request this, ignore this message.',
+        ];
+
+        return self::sendMail($emailTo, $subject, implode("\n", $lines), self::buildHtml($subject, $lines));
+    }
+
     public static function sendTwoFactorEnabled(string $emailTo, string $accountName): bool
     {
         $subject = 'Two-factor authentication enabled';

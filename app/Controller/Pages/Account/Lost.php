@@ -105,10 +105,23 @@ class Lost extends Base{
         if($account == false){
             return self::getLostAccount($request, 'Account not found.');
         }
+
+        $accountRegistration = EntityAccount::getAccountRegistration(['account_id' => $account->id])->fetchObject();
+        if (empty($accountRegistration) || empty($accountRegistration->recovery)) {
+            return self::getLostAccount($request, 'This account does not have a recovery key registered.');
+        }
+
+        if (!FunMailer::sendRecoveryRequest(
+            (string) $account->email,
+            (string) ($account->name ?? $account->email)
+        )) {
+            return self::getLostAccount($request, 'We could not send the recovery email. Please try again later.');
+        }
         
         $content = View::render('pages/account/lostaccount_first', [
             'email' => $account->email,
             'account_name' => $account->name ?? $account->email,
+            'status' => 'A recovery email was sent to your account email address.',
         ]);
         return parent::getBase('Lost Account', $content, 'lostaccount');
     }
