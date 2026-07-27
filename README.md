@@ -45,7 +45,7 @@ Install astarOT on Debian / Ubuntu
 - Import canaryaac.sql
 -  Configure .env
 - Set `RESEND_API_KEY` and `MAIL_WEB` to send site emails through Resend
-- If you already use `MAIL_SMTP`, you can keep it as a fallback transport
+- When `RESEND_API_KEY` is present, the generated mail transport prefers Resend
 - Resend requires a verified sender domain or authorized sender address
 ## Documentação da API
 

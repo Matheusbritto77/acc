@@ -235,7 +235,7 @@ $mailWeb = runtime_env_value('MAIL_WEB', env_value('MAIL_WEB', ''));
 $mailSmtp = runtime_env_value('MAIL_SMTP', env_value('MAIL_SMTP', ''));
 $resendApiKey = runtime_env_value('RESEND_API_KEY', env_value('RESEND_API_KEY', ''));
 
-if ($mailSmtp === '' && $resendApiKey !== '') {
+if ($resendApiKey !== '') {
 	$mailSmtp = sprintf(
 		'smtps://resend:%s@smtp.resend.com:465',
 		rawurlencode($resendApiKey)
