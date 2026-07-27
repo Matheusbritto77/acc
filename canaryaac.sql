@@ -414,13 +414,13 @@ CREATE TABLE IF NOT EXISTS `canary_worlds` (
   `transfer_type` int(11) NOT NULL DEFAULT 0,
   `battle_eye` int(11) NOT NULL DEFAULT 0,
   `world_type` int(11) NOT NULL DEFAULT 0,
-  `ip` varchar(18) NOT NULL,
+  `ip` varchar(255) NOT NULL,
   `port` int(11) NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 INSERT INTO `canary_worlds` (`id`, `name`, `creation`, `location`, `pvp_type`, `premium_type`, `transfer_type`, `battle_eye`, `world_type`, `ip`, `port`) VALUES
-(null, 'OTServBR-Global', '2022-09-01 06:00:00', 6, 0, 0, 0, 0, 0, '209.126.81.68', 7172);
+(null, 'OTServBR-Global', '2022-09-01 06:00:00', 6, 0, 0, 0, 0, 0, 'play.astarot.online', 7172);
 
 -- --------------------------------------------------------
 

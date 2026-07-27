@@ -130,6 +130,35 @@ function ensure_astarot_utf8mb4(PDO $pdo): void
 	}
 }
 
+function ensure_worlds_ip_supports_hostnames(PDO $pdo): void
+{
+	try {
+		$statement = $pdo->query(
+			"SELECT DATA_TYPE, CHARACTER_MAXIMUM_LENGTH
+			 FROM information_schema.columns
+			 WHERE table_schema = DATABASE()
+			   AND table_name = 'canary_worlds'
+			   AND column_name = 'ip'
+			 LIMIT 1"
+		);
+		$column = $statement ? $statement->fetch(PDO::FETCH_ASSOC) : false;
+		if (!is_array($column)) {
+			return;
+		}
+
+		$dataType = strtolower((string) ($column['DATA_TYPE'] ?? ''));
+		$maxLength = (int) ($column['CHARACTER_MAXIMUM_LENGTH'] ?? 0);
+		if ($dataType === 'varchar' && $maxLength >= 255) {
+			return;
+		}
+
+		$pdo->exec('ALTER TABLE `canary_worlds` MODIFY `ip` varchar(255) NOT NULL');
+		echo "Updated canary_worlds.ip to varchar(255).\n";
+	} catch (Throwable $error) {
+		echo "World IP migration info: {$error->getMessage()}\n";
+	}
+}
+
 function normalize_world_location(string $location): int
 {
 	$location = trim($location);
@@ -152,7 +181,7 @@ function normalize_world_location(string $location): int
 function sync_world_endpoint(PDO $pdo): void
 {
 	$worldName = runtime_env_value('CANARY_SERVER_NAME', 'OTServBR-Global');
-	$worldIp = runtime_env_value('CANARY_SERVER_IP', '127.0.0.1');
+	$worldIp = runtime_env_value('CANARY_SERVER_IP', 'play.astarot.online');
 	$worldPort = (int) runtime_env_value('CANARY_GAME_PORT', '7172');
 	$worldLocation = normalize_world_location(runtime_env_value('CANARY_SERVER_LOCATION', 'BRA'));
 
@@ -190,6 +219,7 @@ if (!table_exists($pdo, 'account_authentication')) {
 }
 
 ensure_astarot_utf8mb4($pdo);
+ensure_worlds_ip_supports_hostnames($pdo);
 
 sync_world_endpoint($pdo);
 
