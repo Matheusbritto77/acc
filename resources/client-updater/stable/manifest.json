@@ -9813,8 +9813,8 @@
         "windows": {
             "file": "OTClient-windows-urlfix-1785170836.zip",
             "url": "https://github.com/Matheusbritto77/client/releases/download/v4.2.3/OTClient-windows-urlfix-1785170836.zip",
-            "checksum": "77983093",
-            "size": 284669783
+            "checksum": "19f17744",
+            "size": 293454054
         },
         "macos": {
             "file": "OTClient-macos-arm64.zip",
