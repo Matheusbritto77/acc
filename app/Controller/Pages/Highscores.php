@@ -15,6 +15,11 @@ use App\Model\Functions\Player;
 use App\DatabaseManager\Pagination;
 
 class Highscores extends Base{
+    private const HIGH_SCORE_FILTER = [
+        'group_id <=' => 3,
+        'deletion =' => 0,
+        'hide =' => 0,
+    ];
 
     public static function convertCategory($category)
     {
@@ -74,20 +79,29 @@ class Highscores extends Base{
         
         
 
-        if($input_profession == 5){
-            $totaAmount = EntityHighscores::getHighscoresEntity(['group_id' <= 3], null, null, ['COUNT(*) as qtd'])->fetchObject()->qtd;
-        }else{
-            $totaAmount = EntityHighscores::getHighscoresEntity(['vocation' => $input_profession, 'group_id' <= 3], null, null, ['COUNT(*) as qtd'])->fetchObject()->qtd;
-
+        $baseFilter = self::HIGH_SCORE_FILTER;
+        if ($input_profession == 5) {
+            $totaAmount = EntityHighscores::getHighscoresEntity($baseFilter, null, null, ['COUNT(*) as qtd'])->fetchObject()->qtd;
+        } else {
+            $totaAmount = EntityHighscores::getHighscoresEntity(
+                array_merge(['vocation' => $input_profession], $baseFilter),
+                null,
+                null,
+                ['COUNT(*) as qtd']
+            )->fetchObject()->qtd;
         }
 
         $currentPage = $queryParams['page'] ?? 1;
         $obPagination = new Pagination($totaAmount, $currentPage, 50);
 
-        if($input_profession == 5){
-            $results = EntityHighscores::getHighscoresEntity(['group_id' <= 3], $input_category . ' DESC', $obPagination->getLimit());
-        }else{
-            $results = EntityHighscores::getHighscoresEntity(['vocation' => $input_profession, 'group_id' <= 3], $input_category . ' DESC', $obPagination->getLimit());
+        if ($input_profession == 5) {
+            $results = EntityHighscores::getHighscoresEntity($baseFilter, $input_category . ' DESC', $obPagination->getLimit());
+        } else {
+            $results = EntityHighscores::getHighscoresEntity(
+                array_merge(['vocation' => $input_profession], $baseFilter),
+                $input_category . ' DESC',
+                $obPagination->getLimit()
+            );
         }
         
         while($obRank = $results->fetchObject(EntityHighscores::class)){
