@@ -48,7 +48,23 @@ $obRouter->get('/status.json', [
 ]);
 $obRouter->get('/sitemap.xml', [
     function(){
-        return new Response(200, Seo::sitemap(), 'application/xml; charset=UTF-8');
+        $response = new Response(200, Seo::sitemapIndex(), 'application/xml; charset=UTF-8');
+        $response->addHeader('Cache-Control', 'public, max-age=300');
+        return $response;
+    }
+]);
+$obRouter->get('/sitemap-pages.xml', [
+    function(){
+        $response = new Response(200, Seo::sitemapPages(), 'application/xml; charset=UTF-8');
+        $response->addHeader('Cache-Control', 'public, max-age=300');
+        return $response;
+    }
+]);
+$obRouter->get('/sitemap-news.xml', [
+    function(){
+        $response = new Response(200, Seo::sitemapNews(), 'application/xml; charset=UTF-8');
+        $response->addHeader('Cache-Control', 'public, max-age=300');
+        return $response;
     }
 ]);
 $obRouter->get('/latestnews', [

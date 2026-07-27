@@ -7,19 +7,80 @@ use App\Model\Entity\News as EntityNews;
 
 class Seo
 {
-    private static function esc(string $value): string
-    {
-        return htmlspecialchars($value, ENT_XML1 | ENT_QUOTES, 'UTF-8');
-    }
-
-    private static function addUrl(array &$items, string $loc, string $changefreq = 'weekly', string $priority = '0.7', ?string $lastmod = null): void
+    private static function addUrl(array &$items, string $loc, ?string $lastmod = null): void
     {
         $items[] = [
             'loc' => rtrim(URL, '/') . '/' . ltrim($loc, '/'),
-            'changefreq' => $changefreq,
-            'priority' => $priority,
-            'lastmod' => $lastmod ?? date('c'),
+            'lastmod' => $lastmod,
         ];
+    }
+
+    private static function buildUrlset(array $items): string
+    {
+        usort($items, static function (array $left, array $right): int {
+            return strcmp($left['loc'], $right['loc']);
+        });
+
+        $writer = new \XMLWriter();
+        $writer->openMemory();
+        $writer->setIndent(true);
+        $writer->setIndentString('  ');
+        $writer->startDocument('1.0', 'UTF-8');
+        $writer->startElement('urlset');
+        $writer->writeAttribute('xmlns', 'http://www.sitemaps.org/schemas/sitemap/0.9');
+
+        foreach ($items as $item) {
+            $writer->startElement('url');
+            $writer->writeElement('loc', $item['loc']);
+
+            if (!empty($item['lastmod'])) {
+                $writer->writeElement('lastmod', $item['lastmod']);
+            }
+
+            $writer->endElement();
+        }
+
+        $writer->endElement();
+
+        return $writer->outputMemory();
+    }
+
+    private static function buildSitemapIndex(array $items): string
+    {
+        $writer = new \XMLWriter();
+        $writer->openMemory();
+        $writer->setIndent(true);
+        $writer->setIndentString('  ');
+        $writer->startDocument('1.0', 'UTF-8');
+        $writer->startElement('sitemapindex');
+        $writer->writeAttribute('xmlns', 'http://www.sitemaps.org/schemas/sitemap/0.9');
+
+        foreach ($items as $item) {
+            $writer->startElement('sitemap');
+            $writer->writeElement('loc', $item['loc']);
+
+            if (!empty($item['lastmod'])) {
+                $writer->writeElement('lastmod', $item['lastmod']);
+            }
+
+            $writer->endElement();
+        }
+
+        $writer->endElement();
+
+        return $writer->outputMemory();
+    }
+
+    private static function latestNewsLastmod(): ?string
+    {
+        $newsItems = EntityNews::getNews(['hidden' => 0], 'date DESC', '1', 'id, date');
+        $news = $newsItems->fetchObject();
+
+        if ($news === false || empty($news->date)) {
+            return null;
+        }
+
+        return date('c', strtotime((string) $news->date));
     }
 
     public static function robots(): string
@@ -41,33 +102,50 @@ class Seo
         return implode("\n", $lines) . "\n";
     }
 
-    public static function sitemap(): string
+    public static function sitemapIndex(): string
     {
         $items = [];
 
-        self::addUrl($items, '/', 'daily', '1.0');
-        self::addUrl($items, '/latestnews', 'hourly', '1.0');
-        self::addUrl($items, '/newsarchive', 'daily', '0.9');
-        self::addUrl($items, '/eventcalendar', 'daily', '0.8');
-        self::addUrl($items, '/downloads', 'weekly', '0.9');
-        self::addUrl($items, '/library/creatures', 'weekly', '0.6');
-        self::addUrl($items, '/library/boostablebosses', 'daily', '0.6');
-        self::addUrl($items, '/library/achievements', 'weekly', '0.6');
-        self::addUrl($items, '/library/experiencetable', 'monthly', '0.6');
-        self::addUrl($items, '/community/characters', 'daily', '0.8');
-        self::addUrl($items, '/community/worlds', 'daily', '0.8');
-        self::addUrl($items, '/community/highscores', 'hourly', '0.9');
-        self::addUrl($items, '/community/lastdeaths', 'hourly', '0.8');
-        self::addUrl($items, '/community/houses', 'daily', '0.8');
-        self::addUrl($items, '/community/guilds', 'daily', '0.7');
-        self::addUrl($items, '/community/polls', 'daily', '0.5');
-        self::addUrl($items, '/guildwars/active', 'hourly', '0.6');
-        self::addUrl($items, '/guildwars/pending', 'hourly', '0.5');
-        self::addUrl($items, '/guildwars/surrender', 'hourly', '0.5');
-        self::addUrl($items, '/guildwars/ended', 'hourly', '0.5');
-        self::addUrl($items, '/support/rules', 'monthly', '0.5');
-        self::addUrl($items, '/support/team', 'monthly', '0.5');
-        self::addUrl($items, '/premiumfeatures', 'monthly', '0.5');
+        self::addUrl($items, '/sitemap-pages.xml');
+        self::addUrl($items, '/sitemap-news.xml', self::latestNewsLastmod());
+
+        return self::buildSitemapIndex($items);
+    }
+
+    public static function sitemapPages(): string
+    {
+        $items = [];
+
+        self::addUrl($items, '/');
+        self::addUrl($items, '/latestnews');
+        self::addUrl($items, '/newsarchive');
+        self::addUrl($items, '/eventcalendar');
+        self::addUrl($items, '/downloads');
+        self::addUrl($items, '/library/creatures');
+        self::addUrl($items, '/library/boostablebosses');
+        self::addUrl($items, '/library/achievements');
+        self::addUrl($items, '/library/experiencetable');
+        self::addUrl($items, '/community/characters');
+        self::addUrl($items, '/community/worlds');
+        self::addUrl($items, '/community/highscores');
+        self::addUrl($items, '/community/lastdeaths');
+        self::addUrl($items, '/community/houses');
+        self::addUrl($items, '/community/guilds');
+        self::addUrl($items, '/community/polls');
+        self::addUrl($items, '/guildwars/active');
+        self::addUrl($items, '/guildwars/pending');
+        self::addUrl($items, '/guildwars/surrender');
+        self::addUrl($items, '/guildwars/ended');
+        self::addUrl($items, '/support/rules');
+        self::addUrl($items, '/support/team');
+        self::addUrl($items, '/premiumfeatures');
+
+        return self::buildUrlset($items);
+    }
+
+    public static function sitemapNews(): string
+    {
+        $items = [];
 
         $newsItems = EntityNews::getNews(['hidden' => 0], 'date DESC', '300', 'id, date');
         while ($news = $newsItems->fetchObject()) {
@@ -76,21 +154,9 @@ class Seo
                 $lastmod = date('c', strtotime((string) $news->date));
             }
 
-            self::addUrl($items, '/newsarchive/' . $news->id . '/view', 'monthly', '0.7', $lastmod);
+            self::addUrl($items, '/newsarchive/' . $news->id . '/view', $lastmod);
         }
 
-        $xml = '<?xml version="1.0" encoding="UTF-8"?>' . "\n";
-        $xml .= '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">' . "\n";
-        foreach ($items as $item) {
-            $xml .= "  <url>\n";
-            $xml .= '    <loc>' . self::esc($item['loc']) . "</loc>\n";
-            $xml .= '    <lastmod>' . self::esc($item['lastmod']) . "</lastmod>\n";
-            $xml .= '    <changefreq>' . self::esc($item['changefreq']) . "</changefreq>\n";
-            $xml .= '    <priority>' . self::esc($item['priority']) . "</priority>\n";
-            $xml .= "  </url>\n";
-        }
-        $xml .= "</urlset>\n";
-
-        return $xml;
+        return self::buildUrlset($items);
     }
 }
