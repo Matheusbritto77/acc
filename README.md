@@ -21,6 +21,7 @@ astarOT is a free and open-source Automatic Account Creator (AAC) written in MVC
     - PayPal
     - MercadoPago
     - Carbon
+    - Resend SMTP
 - Using .env to configure
 
 ## Instalação
@@ -43,6 +44,9 @@ Install astarOT on Debian / Ubuntu
 
 - Import canaryaac.sql
 -  Configure .env
+- Set `RESEND_API_KEY` and `MAIL_WEB` to send site emails through Resend
+- If you already use `MAIL_SMTP`, you can keep it as a fallback transport
+- Resend requires a verified sender domain or authorized sender address
 ## Documentação da API
 
 #### Search Characters
@@ -68,4 +72,3 @@ Install astarOT on Debian / Ubuntu
 ## Autor
 
 - [@lucasgiovannibr](https://www.github.com/lucasgiovannibr)
-

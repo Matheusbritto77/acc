@@ -201,6 +201,16 @@ $dbPort = runtime_env_value('CANARY_DB_PORT', '3306');
 $dbName = runtime_env_value('CANARY_DB_NAME', 'canary');
 $dbUser = runtime_env_value('CANARY_DB_USER', 'canary');
 $dbPassword = runtime_env_value('CANARY_DB_PASSWORD', 'canary');
+$mailWeb = runtime_env_value('MAIL_WEB', env_value('MAIL_WEB', ''));
+$mailSmtp = runtime_env_value('MAIL_SMTP', env_value('MAIL_SMTP', ''));
+$resendApiKey = runtime_env_value('RESEND_API_KEY', env_value('RESEND_API_KEY', ''));
+
+if ($mailSmtp === '' && $resendApiKey !== '') {
+	$mailSmtp = sprintf(
+		'smtps://resend:%s@smtp.resend.com:465',
+		rawurlencode($resendApiKey)
+	);
+}
 
 $envContent = <<<ENV
 URL='{$siteUrl}'
@@ -213,6 +223,9 @@ DB_NAME='{$dbName}'
 DB_USER='{$dbUser}'
 DB_PASS='{$dbPassword}'
 DB_PORT='{$dbPort}'
+MAIL_SMTP='{$mailSmtp}'
+MAIL_WEB='{$mailWeb}'
+RESEND_API_KEY='{$resendApiKey}'
 
 # Config argon2
 M_COST='1<<16'

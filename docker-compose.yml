@@ -39,3 +39,4 @@ services:
       PAYPAL_SECRET: ${PAYPAL_SECRET}
       MAIL_SMTP: ${MAIL_SMTP}
       MAIL_WEB: ${MAIL_WEB}
+      RESEND_API_KEY: ${RESEND_API_KEY}

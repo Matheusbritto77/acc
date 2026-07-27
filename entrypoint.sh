@@ -40,6 +40,9 @@ APP_TIMEZONE=${APP_TIMEZONE:-$TZ}
 TZ=$TZ
 REDIS_URL=$REDIS_URL
 URL=${URL:-https://astarot.online}
+MAIL_SMTP=${MAIL_SMTP:-}
+MAIL_WEB=${MAIL_WEB:-}
+RESEND_API_KEY=${RESEND_API_KEY:-}
 EOF
 export CANARY_RUNTIME_ENV_FILE="$runtime_env_file"
 export TZ
