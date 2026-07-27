@@ -35,6 +35,29 @@
 														<div class="TableContentContainer">
 															<table class="TableContent" width="100%" style="border:1px solid #faf0d7;">
 																<tbody>
+																	{% if pending_verification %}
+																	<tr>
+																		<td colspan="2">
+																			<div class="SmallBox" style="margin-bottom: 10px;">
+																				<div class="MessageContainer">
+																					<div class="BoxFrameHorizontal" style="background-image:url({{IMAGE_PATH}}/global/content/box-frame-horizontal.gif);"></div>
+																					<div class="BoxFrameEdgeLeftTop" style="background-image:url({{IMAGE_PATH}}/global/content/box-frame-edge.gif);"></div>
+																					<div class="BoxFrameEdgeRightTop" style="background-image:url({{IMAGE_PATH}}/global/content/box-frame-edge.gif);"></div>
+																					<div class="ErrorMessage">
+																						<div class="BoxFrameVerticalLeft" style="background-image:url({{IMAGE_PATH}}/global/content/box-frame-vertical.gif);"></div>
+																						<div class="BoxFrameVerticalRight" style="background-image:url({{IMAGE_PATH}}/global/content/box-frame-vertical.gif);"></div>
+																						<div class="AttentionSign" style="background-image:url({{IMAGE_PATH}}/global/content/attentionsign.gif);"></div>
+																						<b>Email verification required:</b><br>
+																						Check the inbox of {{ account.email }} and click the activation link before logging in.
+																					</div>
+																					<div class="BoxFrameHorizontal" style="background-image:url({{IMAGE_PATH}}/global/content/box-frame-horizontal.gif);"></div>
+																					<div class="BoxFrameEdgeRightBottom" style="background-image:url({{IMAGE_PATH}}/global/content/box-frame-edge.gif);"></div>
+																					<div class="BoxFrameEdgeLeftBottom" style="background-image:url({{IMAGE_PATH}}/global/content/box-frame-edge.gif);"></div>
+																				</div>
+																			</div>
+																		</td>
+																	</tr>
+																	{% endif %}
 																	<tr>
 																		<td><img class="AccountStatusImage" src="{{IMAGE_PATH}}/account/account-status_green.gif" alt="free account"></td>
 																		<td width="100%" valign="middle">

@@ -12,6 +12,7 @@ namespace App\Controller\Pages\Account;
 use App\Controller\Pages\Base;
 use App\Model\Entity\Worlds as EntityWorlds;
 use App\Model\Entity\CreateAccount as EntityCreateAccount;
+use App\Model\Entity\Account as EntityAccount;
 use App\Model\Entity\ServerConfig as EntityServerConfig;
 use App\Model\Entity\Player as EntityPlayer;
 use App\Model\Functions\Server as FunctionServer;
@@ -21,6 +22,37 @@ use App\Model\Functions\Player as FunctionsPlayer;
 use App\Model\Functions\FunMailer;
 
 class Create extends Base{
+    private static function buildVerificationUrl(string $token): string
+    {
+        $baseUrl = rtrim((string) (getenv('URL') ?: 'https://astarot.online'), '/');
+        return $baseUrl . '/account/verifyemail/' . rawurlencode($token);
+    }
+
+    private static function persistVerification(int $accountId, string $token): void
+    {
+        $existing = EntityAccount::getEmailVerification(['account_id' => $accountId])->fetchObject();
+        $payload = [
+            'account_id' => $accountId,
+            'token' => $token,
+            'status' => 0,
+            'created_at' => time(),
+            'verified_at' => 0,
+        ];
+
+        if ($existing) {
+            EntityAccount::updateEmailVerification(['account_id' => $accountId], $payload);
+            return;
+        }
+
+        EntityAccount::insertEmailVerification($payload);
+    }
+
+    private static function rollbackCreation(int $accountId): void
+    {
+        EntityPlayer::deletePlayer(['account_id' => $accountId]);
+        EntityAccount::deleteEmailVerification(['account_id' => $accountId]);
+        EntityAccount::deleteAccount(['id' => $accountId]);
+    }
     private static function normalizeVocation($vocation): int
     {
         $vocationId = (int) $vocation;
@@ -177,6 +209,9 @@ class Create extends Base{
             'recruiter' => '0',
         ];
         $accountId = EntityCreateAccount::createAccount($account);
+        if (empty($accountId)) {
+            return self::getCreateAccount($request, 'Unable to create the account.');
+        }
         $playerSample = EntityCreateAccount::getPlayerSamples([ 'vocation' => $filter_vocation])->fetchObject();
 
         $character = [
@@ -211,14 +246,25 @@ class Create extends Base{
             'istutorial' => '1',
             'conditions' => '',
         ];
-        EntityCreateAccount::createCharacter($character);
+        $characterId = EntityCreateAccount::createCharacter($character);
+        if (empty($characterId)) {
+            self::rollbackCreation((int) $accountId);
+            return self::getCreateAccount($request, 'Unable to create the character.');
+        }
 
-        FunMailer::sendAccountCreated(
+        $verificationToken = bin2hex(random_bytes(24));
+        self::persistVerification((int) $accountId, $verificationToken);
+
+        $verificationSent = FunMailer::sendEmailVerification(
             $filter_email,
             $filter_acc_name,
-            $filter_name,
-            $selectWorlds->name
+            self::buildVerificationUrl($verificationToken)
         );
+
+        if (!$verificationSent) {
+            self::rollbackCreation((int) $accountId);
+            return self::getCreateAccount($request, 'We could not send the verification email. Please try again later.');
+        }
 
         $confirmCharacter = [
             'name' => $filter_name,
@@ -230,6 +276,7 @@ class Create extends Base{
         $content = View::render('pages/account/createaccount_confirm', [
             'account' => $account,
             'character' => $confirmCharacter,
+            'pending_verification' => true,
         ]);
         return parent::getBase('Create Account', $content, 'createaccount');
     }

@@ -81,6 +81,11 @@ class Login extends Base{
             return self::getLogin($request, 'true');
         }
 
+        $emailVerification = Account::getEmailVerification(['account_id' => $obAccount->id])->fetchObject();
+        if (!empty($emailVerification) && (int) $emailVerification->status !== 1) {
+            return self::getLogin($request, 'Please verify your email address before logging in.');
+        }
+
         $authentication = Account::getAuthentication([ 'account_id' => $obAccount->id])->fetchObject();
         if (!empty($authentication)) {
             if ($authentication->status == 1) {

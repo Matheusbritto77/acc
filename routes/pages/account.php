@@ -80,6 +80,12 @@ $obRouter->post('/account/registration', [
     }
 ]);
 
+$obRouter->get('/account/verifyemail/{token}', [
+    function($request, $token){
+        return new Response(200, Account\VerifyEmail::verifyEmail($request, $token));
+    }
+]);
+
 $obRouter->get('/account/lostaccount', [
     'middlewares' => [
         'required-logout'

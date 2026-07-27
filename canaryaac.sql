@@ -50,6 +50,20 @@ CREATE TABLE IF NOT EXISTS `account_authentication` (
 
 -- --------------------------------------------------------
 
+CREATE TABLE IF NOT EXISTS `account_email_verification` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `account_id` int(11) NOT NULL,
+  `token` varchar(128) NOT NULL,
+  `status` int(11) NOT NULL DEFAULT 0,
+  `created_at` int(11) NOT NULL DEFAULT 0,
+  `verified_at` int(11) NOT NULL DEFAULT 0,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `account_email_verification_account_id_unique` (`account_id`),
+  UNIQUE KEY `account_email_verification_token_unique` (`token`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- --------------------------------------------------------
+
 CREATE TABLE IF NOT EXISTS `account_registration` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `account_id` int(11) NOT NULL,

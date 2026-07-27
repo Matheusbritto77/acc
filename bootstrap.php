@@ -159,6 +159,32 @@ function ensure_worlds_ip_supports_hostnames(PDO $pdo): void
 	}
 }
 
+function ensure_account_email_verification_table(PDO $pdo): void
+{
+	if (table_exists($pdo, 'account_email_verification')) {
+		return;
+	}
+
+	try {
+		$pdo->exec(
+			'CREATE TABLE `account_email_verification` (
+				`id` int(11) NOT NULL AUTO_INCREMENT,
+				`account_id` int(11) NOT NULL,
+				`token` varchar(128) NOT NULL,
+				`status` int(11) NOT NULL DEFAULT 0,
+				`created_at` int(11) NOT NULL DEFAULT 0,
+				`verified_at` int(11) NOT NULL DEFAULT 0,
+				PRIMARY KEY (`id`),
+				UNIQUE KEY `account_email_verification_account_id_unique` (`account_id`),
+				UNIQUE KEY `account_email_verification_token_unique` (`token`)
+			) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4'
+		);
+		echo "Created account_email_verification table.\n";
+	} catch (Throwable $error) {
+		echo "Email verification migration info: {$error->getMessage()}\n";
+	}
+}
+
 function normalize_world_location(string $location): int
 {
 	$location = trim($location);
@@ -220,6 +246,7 @@ if (!table_exists($pdo, 'account_authentication')) {
 
 ensure_astarot_utf8mb4($pdo);
 ensure_worlds_ip_supports_hostnames($pdo);
+ensure_account_email_verification_table($pdo);
 
 sync_world_endpoint($pdo);
 

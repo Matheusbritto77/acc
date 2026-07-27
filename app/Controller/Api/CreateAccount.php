@@ -3,11 +3,13 @@
 namespace App\Controller\Api;
 
 use App\Model\Entity\CreateAccount as EntityCreateAccount;
+use App\Model\Entity\Account as EntityAccount;
 use App\Model\Entity\Player as EntityPlayer;
 use App\Model\Entity\Worlds as EntityWorlds;
 use App\Model\Entity\ServerConfig as EntityServerConfig;
 use App\Model\Functions\Server as FunctionServer;
 use App\Utils\Argon;
+use App\Model\Functions\FunMailer;
 
 class CreateAccount extends Api
 {
@@ -20,6 +22,38 @@ class CreateAccount extends Api
         }
 
         return $vocationId;
+    }
+
+    private static function buildVerificationUrl(string $token): string
+    {
+        $baseUrl = rtrim((string) (getenv('URL') ?: 'https://astarot.online'), '/');
+        return $baseUrl . '/account/verifyemail/' . rawurlencode($token);
+    }
+
+    private static function persistVerification(int $accountId, string $token): void
+    {
+        $existing = EntityAccount::getEmailVerification(['account_id' => $accountId])->fetchObject();
+        $payload = [
+            'account_id' => $accountId,
+            'token' => $token,
+            'status' => 0,
+            'created_at' => time(),
+            'verified_at' => 0,
+        ];
+
+        if ($existing) {
+            EntityAccount::updateEmailVerification(['account_id' => $accountId], $payload);
+            return;
+        }
+
+        EntityAccount::insertEmailVerification($payload);
+    }
+
+    private static function rollbackCreation(int $accountId): void
+    {
+        EntityPlayer::deletePlayer(['account_id' => $accountId]);
+        EntityAccount::deleteEmailVerification(['account_id' => $accountId]);
+        EntityAccount::deleteAccount(['id' => $accountId]);
     }
 
     public static function handle($request)
@@ -189,6 +223,9 @@ class CreateAccount extends Api
                 ];
 
                 $accountId = EntityCreateAccount::createAccount($account);
+                if (empty($accountId)) {
+                    return ['Success' => false, 'errorMessage' => 'Unable to create the account.'];
+                }
 
                 // Map client gender values (usually 1 = male, 0 = female or standard 1/0)
                 // In Canary: 1 = male, 0 = female
@@ -227,9 +264,27 @@ class CreateAccount extends Api
                     'conditions' => '',
                 ];
 
-                EntityCreateAccount::createCharacter($character);
+                $characterId = EntityCreateAccount::createCharacter($character);
+                if (empty($characterId)) {
+                    self::rollbackCreation((int) $accountId);
+                    return ['Success' => false, 'errorMessage' => 'Unable to create the character.'];
+                }
 
-                return ['Success' => true];
+                $verificationToken = bin2hex(random_bytes(24));
+                self::persistVerification((int) $accountId, $verificationToken);
+
+                $verificationSent = FunMailer::sendEmailVerification(
+                    $filter_email,
+                    $accName,
+                    self::buildVerificationUrl($verificationToken)
+                );
+
+                if (!$verificationSent) {
+                    self::rollbackCreation((int) $accountId);
+                    return ['Success' => false, 'errorMessage' => 'We could not send the verification email. Please try again later.'];
+                }
+
+                return ['Success' => true, 'emailVerificationRequired' => true];
 
             default:
                 return ['Success' => false, 'errorMessage' => 'Invalid action type.'];

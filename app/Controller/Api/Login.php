@@ -145,6 +145,11 @@ class Login extends Api
                     return self::sendError('Password is not correct.', 3);
                 }
 
+                $emailVerification = EntityAccount::getEmailVerification(['account_id' => $account->id])->fetchObject();
+                if (!empty($emailVerification) && (int) $emailVerification->status !== 1) {
+                    return self::sendError('Please verify your email address before logging in.', 8);
+                }
+
                 $authentication = EntityAccount::getAuthentication(['account_id' => $account->id])->fetchObject();
                 if (!empty($authentication) and $authentication->status == 1) {
                     if (Argon::checkPassword($password, $account->password)) {

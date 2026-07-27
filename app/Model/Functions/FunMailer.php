@@ -123,6 +123,19 @@ class FunMailer{
         return self::sendMail($emailTo, $subject, $text, $html);
     }
 
+    public static function sendEmailVerification(string $emailTo, string $accountName, string $verificationUrl): bool
+    {
+        $subject = 'Verify your email address';
+        $lines = [
+            "Hello {$accountName},",
+            'Your account was created and is waiting for email verification.',
+            'Open the link below to activate your account:',
+            $verificationUrl,
+        ];
+
+        return self::sendMail($emailTo, $subject, implode("\n", $lines), self::buildHtml($subject, $lines));
+    }
+
     public static function sendCharacterCreated(string $emailTo, string $accountName, string $characterName, string $worldName): bool
     {
         $subject = 'Character created';
