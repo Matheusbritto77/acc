@@ -16,13 +16,24 @@ use App\Model\Functions\Player as FunctionsPlayer;
 
 class Team extends Base{
 
+    private const OWNER_NAME = 'Sethdev';
+    private const OWNER_ROLE = 'Server Owner';
+
     public static function getTeam()
     {
         $select_players = EntityPlayer::getPlayer(['group_id >=' => 2]);
         while ($player = $select_players->fetchObject()) {
+            $displayName = $player->name;
+            $displayGroup = FunctionsPlayer::convertGroup($player->group_id);
+
+            if (strcasecmp($player->name, self::OWNER_NAME) === 0) {
+                $displayName = self::OWNER_NAME;
+                $displayGroup = self::OWNER_ROLE;
+            }
+
             $arrayTeam[] = [
-                'name' => $player->name,
-                'group' => FunctionsPlayer::convertGroup($player->group_id),
+                'name' => $displayName,
+                'group' => $displayGroup,
             ];
         }
         return $arrayTeam ?? [];
