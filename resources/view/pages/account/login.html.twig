@@ -54,89 +54,57 @@
 																<tbody>
 																	<tr>
 																		<td>
-																			<table style="float: left; width: 100%; " cellpadding="0" cellspacing="0">
-																				<tbody>
-																					<tr>
-                                                                                        <form action="" method="post">
-																						<td>
-																							<table style="float: left; width: 100%; " cellpadding="0" cellspacing="0">
-																								<tbody>
-																									<tr>
-																										<td class="LabelV120">
-																											<span {% if status == true %}class="red"{% endif %}>Email Address:</span>
-																										</td>
-																										<td><input type="text" name="loginemail" maxlength="50" style="width: 100%;"></td>
-																									</tr>
-																									<tr>
-																										<td class="LabelV120">
-																											<span {% if status == true %}class="red"{% endif %}>Tibia Password:</span>
-																										</td>
-																										<td><input type="password" name="loginpassword" maxlength="29" size="30" style="width: 100%;"></td>
-																									</tr>
-																									<tr id="inpauthenticator" style="{% if not show_authenticator %}display: none;{% else %}display: table-row;{% endif %}">
-																										<td class="LabelV120">
-																											<span {% if status == true %}class="red"{% endif %}>Authenticator:</span>
-																										</td>
-																										<td><input type="text" name="token" maxlength="8" size="30" style="width: 100%;"></td>
-																									</tr>
-																								</tbody>
-																							</table>
-																						</td>
-																						<td id="LoginFormButtonCell">
-																							<div style="float: right; font-size: 1px;">
-                                                                                                <div class="BigButton" style="background-image:url({{IMAGE_PATH}}/global/buttons/button_blue.gif)"><div onmouseover="MouseOverBigButton(this);" onmouseout="MouseOutBigButton(this);"><div class="BigButtonOver" style="background-image:url({{IMAGE_PATH}}/global/buttons/button_blue_over.gif);"></div><input class="BigButtonText" type="submit" value="Login"></div>
-																							</div>
-																							<div style="width: 2px; height: 2px;"></div>
-																							<a href="{{URL}}/account/lostaccount">
-																								<div class="BigButton" style="background-image:url({{IMAGE_PATH}}/global/buttons/button_blue.gif)"><div onmouseover="MouseOverBigButton(this);" onmouseout="MouseOutBigButton(this);"><div class="BigButtonOver" style="background-image:url({{IMAGE_PATH}}/global/buttons/button_blue_over.gif);"></div><input class="BigButtonText" type="button" value="Lost Account"></div>
-																							</a>
-																							</div>
-																							</div>
-																						</td>
-                                                                                        </form>
-																					</tr>
-																				</tbody>
-																			</table>
+																			<form action="" method="post">
+																				<table style="float: left; width: 100%; " cellpadding="0" cellspacing="0">
+																					<tbody>
+																						{% if show_authenticator %}
+																						<tr>
+																							<td class="LabelV120">
+																								<span class="red">Authenticator:</span>
+																							</td>
+																							<td><input type="text" name="token" maxlength="8" size="30" style="width: 100%;" autofocus></td>
+																						</tr>
+																						<tr>
+																							<td colspan="2">
+																								<div style="padding: 8px 0 0 0;">
+																									<b>{{ pending_account_name }}</b> has an authenticator enabled. Enter the token from your app to continue without retyping email or password.
+																								</div>
+																							</td>
+																						</tr>
+																						{% else %}
+																						<tr>
+																							<td class="LabelV120">
+																								<span {% if status == true %}class="red"{% endif %}>Email Address:</span>
+																							</td>
+																							<td><input type="text" name="loginemail" maxlength="50" style="width: 100%;"></td>
+																						</tr>
+																						<tr>
+																							<td class="LabelV120">
+																								<span {% if status == true %}class="red"{% endif %}>Tibia Password:</span>
+																							</td>
+																							<td><input type="password" name="loginpassword" maxlength="29" size="30" style="width: 100%;"></td>
+																						</tr>
+																						{% endif %}
+																					</tbody>
+																				</table>
+																				<table style="width: 100%; margin-top: 8px;" cellpadding="0" cellspacing="0">
+																					<tbody>
+																						<tr>
+																							<td id="LoginFormButtonCell">
+																								<div style="float: right; font-size: 1px;">
+																									<div class="BigButton" style="background-image:url({{IMAGE_PATH}}/global/buttons/button_blue.gif)"><div onmouseover="MouseOverBigButton(this);" onmouseout="MouseOutBigButton(this);"><div class="BigButtonOver" style="background-image:url({{IMAGE_PATH}}/global/buttons/button_blue_over.gif);"></div><input class="BigButtonText" type="submit" value="{{ submit_label }}"></div></div>
+																								</div>
+																								<div style="width: 2px; height: 2px;"></div>
+																								<a href="{{URL}}/account/lostaccount">
+																									<div class="BigButton" style="background-image:url({{IMAGE_PATH}}/global/buttons/button_blue.gif)"><div onmouseover="MouseOverBigButton(this);" onmouseout="MouseOutBigButton(this);"><div class="BigButtonOver" style="background-image:url({{IMAGE_PATH}}/global/buttons/button_blue_over.gif);"></div><input class="BigButtonText" type="button" value="Lost Account"></div>
+																								</a>
+																								</div>
+																							</td>
+																						</tr>
+																					</tbody>
+																				</table>
+																			</form>
 																		</td>
-																	</tr>
-																</tbody>
-															</table>
-														</div>
-													</td>
-												</tr>
-												<tr>
-													<td>
-														<div class="TableContentContainer">
-															<table class="TableContent" width="100%" style="border:1px solid #faf0d7;">
-																<tbody>
-																	<tr>
-																		<td>
-																			<div class="InnerTableRightTopButtons">
-																			<div class="BigButton" style="background-image:url({{IMAGE_PATH}}/global/buttons/button_blue.gif)"><div onmouseover="MouseOverBigButton(this);" onmouseout="MouseOutBigButton(this);"><div class="BigButtonOver" style="background-image:url({{IMAGE_PATH}}/global/buttons/button_blue_over.gif);"></div><input class="BigButtonText" onClick="useAuthenticator()" id="btnauthenticator" type="button" value="Use Authenticator"></div></div>
-																			</div>
-																			If your account is not connected to an authenticator app, you can hide the field for the authenticator app token by clicking on "No Authenticator". Alternatively, you can simply leave it blank.<p>An authenticator app is a security feature which helps to prevent any unauthorised access to your Tibia account! You can connect your account to an authenticator app via your account management page.
-																			</p>
-																		</td>
-																		<script>
-																		(function(){
-																			var inputauthenticator = document.getElementById('inpauthenticator');
-																			var btnauthenticator = document.getElementById('btnauthenticator');
-																			if (inputauthenticator && btnauthenticator && inputauthenticator.style.display !== 'none') {
-																				btnauthenticator.value = 'No Authenticator';
-																			}
-																		})();
-																		function useAuthenticator(){
-																			var inputauthenticator = document.getElementById('inpauthenticator');
-																			var btnauthenticator = document.getElementById('btnauthenticator');
-																			if(inputauthenticator.style.display == 'none'){
-																				inputauthenticator.style.display = 'contents';
-																				btnauthenticator.value = 'No Authenticator';
-																			}else{
-																				inputauthenticator.style.display = 'none';
-																				btnauthenticator.value = 'Use Authenticator';
-																			}
-																		}
-																		</script>
 																	</tr>
 																</tbody>
 															</table>
@@ -214,7 +182,7 @@
 				</div>
 				<script type="text/javascript">
 					var g_FormName = "AccountLoginForm";
-var g_FieldName = "loginemail";
+					var g_FieldName = "{% if show_authenticator %}token{% else %}loginemail{% endif %}";
 				</script>
 			</div>
 		</div>
