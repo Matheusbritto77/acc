@@ -113,7 +113,7 @@ class Base{
                         'url' => URL . '/resources/images/global/general/favicon.ico',
                     ],
                 ],
-                'image' => URL . '/resources/images/global/header/background-artwork-astarot-v2.jpg',
+                'image' => URL . '/resources/images/global/header/background-artwork-astarot-v3.jpg',
             ],
             [
                 '@context' => 'https://schema.org',
