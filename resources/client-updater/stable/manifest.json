@@ -1,6 +1,6 @@
 {
     "channel": "stable",
-    "generatedAt": "2026-07-27T19:31:16+00:00",
+    "generatedAt": "2026-07-27T20:01:19+00:00",
     "url": "https://astarot.online/resources/client-updater/stable/files",
     "files": {
         "/OTClient.exe": "fd453cc4",
@@ -8543,7 +8543,7 @@
         "/data/things/1525/subarea-0526-7b72dba8f5a1a2e45d402ff5b48e27052475a2f7a4d9e7b839b0b74cbc92ed4a.bmp.lzma": "2ad50d65",
         "/data/things/1525/subarea-0528-fc5c8c1081f5172ee79a3a8e3989f99f2d496f5406d005811a4279c458e535de.bmp.lzma": "3334f5c1",
         "/data/things/README.md": "45d9e6c9",
-        "/init.lua": "71eb080d",
+        "/init.lua": "2fbfa27",
         "/meta.lua": "5930e8be",
         "/mods/README.txt": "d0847694",
         "/mods/client_mods/mods.otmod": "fa7e18ef",
@@ -9813,8 +9813,8 @@
         "windows": {
             "file": "OTClient-windows-urlfix-1785170836.zip",
             "url": "https://github.com/Matheusbritto77/client/releases/download/v4.2.3/OTClient-windows-urlfix-1785170836.zip",
-            "checksum": "fddc4964",
-            "size": 282859328
+            "checksum": "8af4766c",
+            "size": 282859322
         },
         "macos": {
             "file": "OTClient-macos-arm64.zip",
