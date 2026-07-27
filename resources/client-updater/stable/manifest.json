@@ -9811,10 +9811,10 @@
     },
     "packages": {
         "windows": {
-            "file": "OTClient-windows-x64.zip",
-            "url": "https://astarot.online/resources/client-updater/stable/packages/OTClient-windows-x64.zip",
-            "checksum": "d4837244",
-            "size": 279280889
+            "file": "OTClient-windows-urlfix-1785170836.zip",
+            "url": "https://github.com/Matheusbritto77/client/releases/download/v4.2.3/OTClient-windows-urlfix-1785170836.zip",
+            "checksum": "77983093",
+            "size": 284669783
         },
         "macos": {
             "file": "OTClient-macos-arm64.zip",
