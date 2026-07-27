@@ -18,6 +18,7 @@ use App\Model\Functions\Server as FunctionServer;
 use App\Utils\Argon;
 use App\Utils\View;
 use App\Model\Functions\Player as FunctionsPlayer;
+use App\Model\Functions\FunMailer;
 
 class Create extends Base{
     private static function normalizeVocation($vocation): int
@@ -211,6 +212,13 @@ class Create extends Base{
             'conditions' => '',
         ];
         EntityCreateAccount::createCharacter($character);
+
+        FunMailer::sendAccountCreated(
+            $filter_email,
+            $filter_acc_name,
+            $filter_name,
+            $selectWorlds->name
+        );
 
         $confirmCharacter = [
             'name' => $filter_name,

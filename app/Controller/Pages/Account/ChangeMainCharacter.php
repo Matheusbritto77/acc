@@ -13,6 +13,7 @@ use \App\Utils\View;
 use App\Controller\Pages\Base;
 use App\Model\Entity\Player;
 use App\Model\Functions\Player as FunctionsPlayer;
+use App\Model\Functions\FunMailer;
 use App\Session\Admin\Login as SessionAdminLogin;
 
 class ChangeMainCharacter extends Base
@@ -46,6 +47,16 @@ class ChangeMainCharacter extends Base
         Player::updatePlayer([ 'id' => $select_character->id], [
             'main' => '1',
         ]);
+
+        $account = Player::getAccount([ 'id' => $idLogged])->fetchObject();
+        if ($account) {
+            FunMailer::sendMail(
+                (string) $account->email,
+                'Main character changed',
+                "Hello {$account->name},\n\nYour main character was changed to {$filter_main}.",
+                '<!doctype html><html><body><p>Your main character was changed to ' . htmlspecialchars($filter_main, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') . '.</p></body></html>'
+            );
+        }
 
         $content = View::render('pages/account/changemain_changed', [
             'selected' => $filter_main,

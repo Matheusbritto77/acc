@@ -15,6 +15,7 @@ use App\Model\Entity\Player as EntityPlayer;
 use App\Model\Entity\Account as EntityAccount;
 use App\Session\Admin\Login as SessionAdminLogin;
 use App\Utils\Argon;
+use App\Model\Functions\FunMailer;
 
 class ChangePassword extends Base{
 
@@ -48,6 +49,7 @@ class ChangePassword extends Base{
         EntityAccount::updateAccount([ 'id' => $AccountId], [
             'password' => Argon::generateArgonPassword($filter_newpassword),
         ]);
+        FunMailer::sendPasswordChanged((string) $account->email, (string) ($account->name ?? $account->email));
         $request->getRouter()->redirect('/account/logout');
     }
 

@@ -18,6 +18,7 @@ use App\Model\Entity\CreateAccount as EntityCreateAccount;
 use App\Model\Entity\Worlds as EntityWorlds;
 use App\Model\Entity\Player as EntityPlayer;
 use App\Model\Entity\ServerConfig as EntityServerConfig;
+use App\Model\Functions\FunMailer;
 
 class CreateCharacter extends Base{
     private static function normalizeVocation($vocation): int
@@ -63,6 +64,10 @@ class CreateCharacter extends Base{
         }
 
         $AccountId = SessionAdminLogin::idLogged();
+        $account = EntityPlayer::getAccount([ 'id' => $AccountId])->fetchObject();
+        if (!$account) {
+            return self::viewCreateCharacter($request, 'Account not found.');
+        }
         $ServerConfig = EntityServerConfig::getInfoWebsite()->fetchObject();
         $countPlayers = (int)EntityPlayer::getPlayer([ 'account_id' => $AccountId], null, null, ['COUNT(*) as qtd'])->fetchObject()->qtd;
         if($countPlayers >= $ServerConfig->player_max){
@@ -170,6 +175,13 @@ class CreateCharacter extends Base{
             'conditions' => '',
         ];
         EntityCreateAccount::createCharacter($character);
+
+        FunMailer::sendCharacterCreated(
+            (string) $account->email,
+            (string) $account->name,
+            $character_name,
+            $selectWorlds->name
+        );
 
         $content = View::render('pages/account/createcharacter_confirm', [
             'character_name' => $character_name,

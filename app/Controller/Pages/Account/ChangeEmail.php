@@ -15,6 +15,7 @@ use App\Model\Entity\Player as EntityPlayer;
 use App\Model\Entity\Account as EntityAccount;
 use App\Session\Admin\Login as SessionAdminLogin;
 use App\Utils\Argon;
+use App\Model\Functions\FunMailer;
 
 class ChangeEmail extends Base{
 
@@ -38,6 +39,10 @@ class ChangeEmail extends Base{
         }
         $AccountId = SessionAdminLogin::idLogged();
         $account = EntityPlayer::getAccount([ 'id' => $AccountId])->fetchObject();
+        if (!$account) {
+            return self::viewChangeEmail($request);
+        }
+        $oldEmail = (string) $account->email;
         
         $duplicateEmail = EntityPlayer::getAccount([ 'email' => $newemail])->fetchObject();
         if($duplicateEmail == true){
@@ -47,6 +52,7 @@ class ChangeEmail extends Base{
             EntityAccount::updateAccount([ 'id' => $account->id], [
                 'email' => $filter_newemail,
             ]);
+            FunMailer::sendEmailChanged($oldEmail, $filter_newemail, (string) ($account->name ?? $filter_newemail));
             $request->getRouter()->redirect('/account/logout');
         }
         return self::viewChangeEmail($request);

@@ -16,6 +16,7 @@ use App\Http\Request;
 use App\Session\Admin\Login as SessionAdminLogin;
 use App\Controller\Admin\Alert;
 use App\Security\LoginRateLimiter;
+use App\Model\Functions\FunMailer;
 
 class Login extends Base{
 
@@ -79,6 +80,11 @@ class Login extends Base{
 
         LoginRateLimiter::clear('admin-web', $email, $ipAddress);
         SessionAdminLogin::login($obAccount);
+        FunMailer::sendLoginNotification(
+            (string) $obAccount->email,
+            (string) ($obAccount->name ?? $obAccount->email),
+            (string) $ipAddress
+        );
 
         $request->getRouter()->redirect('/admin');
     }

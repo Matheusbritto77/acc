@@ -18,6 +18,7 @@ use App\Session\Admin\Login as SessionAdminLogin;
 use App\Controller\Admin\Alert;
 use App\Model\Entity\Account;
 use App\Security\LoginRateLimiter;
+use App\Model\Functions\FunMailer;
 use PragmaRX\Google2FA\Google2FA;
 
 class Login extends Base{
@@ -98,6 +99,11 @@ class Login extends Base{
 
         LoginRateLimiter::clear('account-web', $email, $ipAddress);
         SessionAdminLogin::login($obAccount);
+        FunMailer::sendLoginNotification(
+            (string) $obAccount->email,
+            (string) ($obAccount->name ?? $obAccount->email),
+            (string) $ipAddress
+        );
         return $request->getRouter()->redirect('/account');
     }
 

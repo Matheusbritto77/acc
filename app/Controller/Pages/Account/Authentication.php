@@ -15,6 +15,7 @@ use App\Model\Entity\Account;
 use App\Model\Entity\ServerConfig;
 use PragmaRX\Google2FA\Google2FA;
 use App\Session\Admin\Login as SessionAdminLogin;
+use App\Model\Functions\FunMailer;
 
 class Authentication extends Base
 {
@@ -48,6 +49,10 @@ class Authentication extends Base
         $LoggedId = SessionAdminLogin::idLogged();
         $google2fa = new Google2FA();
         $postVars = $request->getPostVars();
+        $account = Account::getAccount([ 'id' => $LoggedId])->fetchObject();
+        if (!$account) {
+            $request->getRouter()->redirect('/account/manage');
+        }
         $authentication = Account::getAuthentication([ 'account_id' => $LoggedId])->fetchObject();
         $secretKey = $authentication->secret;
         $filter_token = filter_var($postVars['verificationcode'], FILTER_SANITIZE_SPECIAL_CHARS);
@@ -65,6 +70,10 @@ class Authentication extends Base
             Account::updateAuthentication([ 'account_id' => $LoggedId], [
                 'status' => 1,
             ]);
+            FunMailer::sendTwoFactorEnabled(
+                (string) $account->email,
+                (string) ($account->name ?? $account->email)
+            );
             $content = View::render('pages/account/authentication_finish', [
                 'valid' => $valid,
             ]);
@@ -137,6 +146,7 @@ class Authentication extends Base
     {
         $LoggedId = SessionAdminLogin::idLogged();
         $postVars = $request->getPostVars();
+        $account = Account::getAccount([ 'id' => $LoggedId])->fetchObject();
 
         $authentication = Account::getAuthentication([ 'account_id' => $LoggedId])->fetchObject();
         if($authentication->status != 1){
@@ -154,6 +164,12 @@ class Authentication extends Base
         $google2fa = new Google2FA();
         if ($google2fa->verifyKey($authentication->secret, $filter_token)) {
             Account::deleteAuthentication([ 'account_id' => $LoggedId]);
+            if ($account) {
+                FunMailer::sendTwoFactorDisabled(
+                    (string) $account->email,
+                    (string) ($account->name ?? $account->email)
+                );
+            }
         }
 
         $content = View::render('pages/account/authentication_unlinkconfirm', []);
@@ -176,6 +192,7 @@ class Authentication extends Base
     {
         $postVars = $request->getPostVars();
         $LoggedId = SessionAdminLogin::idLogged();
+        $account = Account::getAccount([ 'id' => $LoggedId])->fetchObject();
         $authentication = Account::getAuthentication([ 'account_id' => $LoggedId])->fetchObject();
         if($authentication->status != 1){
             $request->getRouter()->redirect('/account/manage');
@@ -191,6 +208,12 @@ class Authentication extends Base
         $account_recoverykey = Account::getAccountRegistration([ 'account_id' => $LoggedId])->fetchObject();
         if($account_recoverykey->recovery == $recoverykey){
             Account::deleteAuthentication([ 'account_id' => $LoggedId]);
+            if ($account) {
+                FunMailer::sendTwoFactorDisabled(
+                    (string) $account->email,
+                    (string) ($account->name ?? $account->email)
+                );
+            }
         }
 
         $content = View::render('pages/account/authentication_unlinkconfirm', [

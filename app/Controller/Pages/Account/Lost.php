@@ -13,6 +13,7 @@ use App\Controller\Pages\Base;
 use App\Utils\View;
 use App\Model\Entity\Account as EntityAccount;
 use App\Utils\Argon;
+use App\Model\Functions\FunMailer;
 
 class Lost extends Base{
 
@@ -55,6 +56,10 @@ class Lost extends Base{
             EntityAccount::updateAccount([ 'email' => $filter_email], [
                 'password' => $new_password
             ]);
+            FunMailer::sendRecoverySuccess(
+                (string) $account->email,
+                (string) ($account->name ?? $account->email)
+            );
             $request->getRouter()->redirect('/account/login');
         }
         $request->getRouter()->redirect('/account/lostaccount');
