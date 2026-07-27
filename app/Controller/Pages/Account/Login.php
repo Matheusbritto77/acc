@@ -30,7 +30,7 @@ class Login extends Base{
      * @param string|null $errorMessage
      * @return string
      */
-    public static function getLogin(Request $request, ?string $errorMessage = null): string
+    public static function getLogin(Request $request, ?string $errorMessage = null, bool $showAuthenticator = false): string
     {
         $status = !is_null($errorMessage);
         $statusMessage = $errorMessage === 'true'
@@ -39,7 +39,8 @@ class Login extends Base{
 
         $content = View::render('pages/account/login', [
             'status' => $status,
-            'status_message' => $statusMessage
+            'status_message' => $statusMessage,
+            'show_authenticator' => $showAuthenticator,
         ]);
 
         return parent::getBase('Account Management', $content, 'account');
@@ -90,14 +91,12 @@ class Login extends Base{
         if (!empty($authentication)) {
             if ($authentication->status == 1) {
                 if (empty($postVars['token'])) {
-                    LoginRateLimiter::registerFailure('account-web', $email, $ipAddress);
-                    return self::getLogin($request, 'true');
+                    return self::getLogin($request, 'You need to enter your authenticator token.', true);
                 }
                 $google2fa = new Google2FA();
                 $auth = $google2fa->verifyKey($authentication->secret, $postVars['token']);
                 if ($auth != 1) {
-                    LoginRateLimiter::registerFailure('account-web', $email, $ipAddress);
-                    return self::getLogin($request, 'true');
+                    return self::getLogin($request, 'The authenticator token is invalid.', true);
                 }
             }
         }

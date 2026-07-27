@@ -73,7 +73,7 @@
 																										</td>
 																										<td><input type="password" name="loginpassword" maxlength="29" size="30" style="width: 100%;"></td>
 																									</tr>
-																									<tr id="inpauthenticator" style="display: none;">
+																									<tr id="inpauthenticator" style="{% if not show_authenticator %}display: none;{% else %}display: table-row;{% endif %}">
 																										<td class="LabelV120">
 																											<span {% if status == true %}class="red"{% endif %}>Authenticator:</span>
 																										</td>
@@ -118,6 +118,13 @@
 																			</p>
 																		</td>
 																		<script>
+																		(function(){
+																			var inputauthenticator = document.getElementById('inpauthenticator');
+																			var btnauthenticator = document.getElementById('btnauthenticator');
+																			if (inputauthenticator && btnauthenticator && inputauthenticator.style.display !== 'none') {
+																				btnauthenticator.value = 'No Authenticator';
+																			}
+																		})();
 																		function useAuthenticator(){
 																			var inputauthenticator = document.getElementById('inpauthenticator');
 																			var btnauthenticator = document.getElementById('btnauthenticator');

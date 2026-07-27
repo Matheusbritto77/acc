@@ -194,13 +194,15 @@ class FunMailer{
         return self::sendMail($emailTo, $subject, implode("\n", $lines), self::buildHtml($subject, $lines));
     }
 
-    public static function sendRecoveryRequest(string $emailTo, string $accountName): bool
+    public static function sendRecoveryRequest(string $emailTo, string $accountName, string $recoveryKey): bool
     {
         $subject = 'Lost account recovery request';
         $lines = [
             "Hello {$accountName},",
             'A lost account recovery was requested for your account.',
-            'If you requested this, return to the recovery page and use your recovery key to set a new password.',
+            'Your recovery key is:',
+            $recoveryKey,
+            'If you requested this, return to the recovery page and use this recovery key to set a new password.',
             'If you did not request this, ignore this message.',
         ];
 

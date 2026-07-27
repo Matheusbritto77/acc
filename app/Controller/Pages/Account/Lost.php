@@ -113,7 +113,8 @@ class Lost extends Base{
 
         if (!FunMailer::sendRecoveryRequest(
             (string) $account->email,
-            (string) ($account->name ?? $account->email)
+            (string) ($account->name ?? $account->email),
+            (string) $accountRegistration->recovery
         )) {
             return self::getLostAccount($request, 'We could not send the recovery email. Please try again later.');
         }
