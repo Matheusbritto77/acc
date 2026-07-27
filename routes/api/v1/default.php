@@ -12,3 +12,13 @@ $obRouter->get('/api/v1', [
         return new Response(200, Api\Api::getDetails($request), 'application/json');
     }
 ]);
+$obRouter->get('/api/v1/status', [
+    'middlewares' => [
+        'api'
+    ],
+    function(){
+        $response = new Response(200, Api\Api::getStatus(), 'application/json');
+        $response->addHeader('Cache-Control', 'public, max-age=30');
+        return $response;
+    }
+]);

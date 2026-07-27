@@ -39,6 +39,13 @@ $obRouter->get('/robots.txt', [
         return new Response(200, Seo::robots(), 'text/plain; charset=UTF-8');
     }
 ]);
+$obRouter->get('/status.json', [
+    function(){
+        $response = new Response(200, \App\Controller\Api\Api::getStatus(), 'application/json');
+        $response->addHeader('Cache-Control', 'public, max-age=30');
+        return $response;
+    }
+]);
 $obRouter->get('/sitemap.xml', [
     function(){
         return new Response(200, Seo::sitemap(), 'application/xml; charset=UTF-8');
