@@ -257,9 +257,9 @@ class Base{
             'charbazaar' => [
                 'name' => 'Char Bazaar',
                 'tag' => 'charbazaar',
-                'link' => 'community/char-bazaar',
+                'link' => 'charactertrade',
                 'color' => 'd7d7d7',
-                'category' => 'community',
+                'category' => 'charactertrade',
             ],
             'guilds' => [
                 'name' => 'Guilds',

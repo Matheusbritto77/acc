@@ -31,11 +31,11 @@
 						<div class="Message">
 							<div class="BoxFrameVerticalLeft" style="background-image:url({{IMAGE_PATH}}/global/content/box-frame-vertical.gif);"></div>
 							<div class="BoxFrameVerticalRight" style="background-image:url({{IMAGE_PATH}}/global/content/box-frame-vertical.gif);"></div>
-							<nobr>[<a href="{{URL}}/community/char-bazaar">Current Auctions</a>]</nobr>
-							<nobr>[<a href="{{URL}}/community/char-bazaar/history">Auction History</a>]</nobr>
+							<nobr>[<a href="{{URL}}/charactertrade">Current Auctions</a>]</nobr>
+							<nobr>[<a href="{{URL}}/charactertrade/history">Auction History</a>]</nobr>
 							<nobr>[<a href="{{URL}}/account/char-bazaar/my-bids">My Bids</a>]</nobr>
 							<nobr>[<a href="{{URL}}/account/char-bazaar/my-auctions">My Auctions</a>]</nobr>
-							<nobr>[<a href="{{URL}}/community/char-bazaar/watched">My Watched Auctions</a>]</nobr>
+							<nobr>[<a href="{{URL}}/charactertrade/watched">My Watched Auctions</a>]</nobr>
 						</div>
 						<div class="BoxFrameHorizontal" style="background-image:url({{IMAGE_PATH}}/global/content/box-frame-horizontal.gif);"></div>
 						<div class="BoxFrameEdgeRightBottom" style="background-image:url({{IMAGE_PATH}}/global/content/box-frame-edge.gif);"></div>
@@ -44,7 +44,7 @@
 				</div>
 				<br>
 
-				<form action="{{URL}}/community/char-bazaar/history" method="get">
+				<form action="{{URL}}/charactertrade/history" method="get">
 					<div class="SmallBox">
 						<div class="MessageContainer">
 							<div class="BoxFrameHorizontal" style="background-image:url({{IMAGE_PATH}}/global/content/box-frame-horizontal.gif);"></div>
@@ -146,7 +146,7 @@
 																	</tr>
 																	{% for auction in auctions %}
 																	<tr style="background-color:{% if loop.index is odd %}#F1E0C6{% else %}#D4C0A1{% endif %};">
-																		<td><a href="{{URL}}/community/char-bazaar/{{ auction.id }}">#{{ auction.id }}</a></td>
+																		<td><a href="{{URL}}/charactertrade/{{ auction.id }}">#{{ auction.id }}</a></td>
 																		<td>{{ auction.character_name }}</td>
 																		<td>{{ auction.final_status|capitalize }}</td>
 																		<td>{{ auction.current_price }}</td>

@@ -33,11 +33,11 @@
 						<div class="Message">
 							<div class="BoxFrameVerticalLeft" style="background-image:url({{IMAGE_PATH}}/global/content/box-frame-vertical.gif);"></div>
 							<div class="BoxFrameVerticalRight" style="background-image:url({{IMAGE_PATH}}/global/content/box-frame-vertical.gif);"></div>
-							<nobr>[<a href="{{URL}}/community/char-bazaar">Current Auctions</a>]</nobr>
-							<nobr>[<a href="{{URL}}/community/char-bazaar/history">Auction History</a>]</nobr>
+							<nobr>[<a href="{{URL}}/charactertrade">Current Auctions</a>]</nobr>
+							<nobr>[<a href="{{URL}}/charactertrade/history">Auction History</a>]</nobr>
 							<nobr>[<a href="{{URL}}/account/char-bazaar/my-bids">My Bids</a>]</nobr>
 							<nobr>[<a href="{{URL}}/account/char-bazaar/my-auctions">My Auctions</a>]</nobr>
-							<nobr>[<a href="{{URL}}/community/char-bazaar/watched">My Watched Auctions</a>]</nobr>
+							<nobr>[<a href="{{URL}}/charactertrade/watched">My Watched Auctions</a>]</nobr>
 						</div>
 						<div class="BoxFrameHorizontal" style="background-image:url({{IMAGE_PATH}}/global/content/box-frame-horizontal.gif);"></div>
 						<div class="BoxFrameEdgeRightBottom" style="background-image:url({{IMAGE_PATH}}/global/content/box-frame-edge.gif);"></div>
@@ -148,7 +148,7 @@
 							<tr>
 								<td>
 									<div class="InnerTableContainer">
-										<form action="{% if is_watching %}{{URL}}/community/char-bazaar/{{ auction.id }}/unwatch{% else %}{{URL}}/community/char-bazaar/{{ auction.id }}/watch{% endif %}" method="post">
+										<form action="{% if is_watching %}{{URL}}/charactertrade/{{ auction.id }}/unwatch{% else %}{{URL}}/charactertrade/{{ auction.id }}/watch{% endif %}" method="post">
 											<input type="hidden" name="return_to" value="{{ return_to }}">
 											<table style="width:100%;">
 												<tbody>
@@ -247,7 +247,7 @@
 							<tr>
 								<td>
 									<div class="InnerTableContainer">
-										<form action="{{URL}}/community/char-bazaar/{{ auction.id }}/bids" method="post">
+										<form action="{{URL}}/charactertrade/{{ auction.id }}/bids" method="post">
 											<table style="width:100%;">
 												<tbody>
 													<tr><td class="LabelV">Bid Character</td><td><select name="bidder_player_id">{% for character in bidder_characters %}<option value="{{ character.id }}">{{ character.name }} (Level {{ character.level }} {{ character.vocation }})</option>{% endfor %}</select></td></tr>

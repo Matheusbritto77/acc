@@ -17,7 +17,7 @@ class CharacterBazaar extends Base
         $status = self::getStatusFromRequest($request);
         $filters = self::getBazaarFilters($request, 25);
         $rawAuctions = EntityCharacterBazaar::getPublicAuctions('active', $filters['per_page'] + 1, $filters['offset'], $filters['search']);
-        [$auctions, $pagination] = self::paginateRows(array_map([self::class, 'mapPublicAuction'], $rawAuctions), $filters, '/community/char-bazaar');
+        [$auctions, $pagination] = self::paginateRows(array_map([self::class, 'mapPublicAuction'], $rawAuctions), $filters, '/charactertrade');
         $accountId = self::getLoggedAccountId();
 
         $content = View::render('pages/community/charbazaar', [
@@ -32,7 +32,7 @@ class CharacterBazaar extends Base
             'step_up_fresh' => $accountId > 0 ? StepUpAuthentication::isFresh($accountId) : false,
         ]);
 
-        return parent::getBase('Character Bazaar', $content, 'charbazaar');
+        return parent::getBase('Character Bazaar', $content, 'charactertrade');
     }
 
     public static function viewAuctionHistory($request)
@@ -40,7 +40,7 @@ class CharacterBazaar extends Base
         $status = self::getStatusFromRequest($request);
         $filters = self::getBazaarFilters($request, 25);
         $rawAuctions = EntityCharacterBazaar::getAuctionHistory($filters['per_page'] + 1, $filters['offset'], $filters['search']);
-        [$auctions, $pagination] = self::paginateRows(array_map([self::class, 'mapHistoryAuction'], $rawAuctions), $filters, '/community/char-bazaar/history');
+        [$auctions, $pagination] = self::paginateRows(array_map([self::class, 'mapHistoryAuction'], $rawAuctions), $filters, '/charactertrade/history');
         $accountId = self::getLoggedAccountId();
 
         $content = View::render('pages/community/charbazaar_history', [
@@ -55,7 +55,7 @@ class CharacterBazaar extends Base
             'step_up_fresh' => $accountId > 0 ? StepUpAuthentication::isFresh($accountId) : false,
         ]);
 
-        return parent::getBase('Character Bazaar', $content, 'charbazaar');
+        return parent::getBase('Character Bazaar', $content, 'charactertrade');
     }
 
     public static function viewAuction($request, $auctionId)
@@ -72,14 +72,14 @@ class CharacterBazaar extends Base
             'logged_account_id' => $accountId,
             'step_up_fresh' => $accountId > 0 ? StepUpAuthentication::isFresh($accountId) : false,
             'step_up_remaining' => $accountId > 0 ? StepUpAuthentication::getRemainingSeconds($accountId) : 0,
-            'return_to' => '/community/char-bazaar/' . (int) $auctionId,
+            'return_to' => '/charactertrade/' . (int) $auctionId,
             'bidder_characters' => $accountId > 0 ? self::getBidderCharacters($accountId) : [],
             'is_watching' => $accountId > 0 && is_array($auction)
                 ? EntityCharacterBazaar::isAuctionWatched($accountId, (int) $auctionId)
                 : false,
         ]);
 
-        return parent::getBase('Character Bazaar', $content, 'charbazaar');
+        return parent::getBase('Character Bazaar', $content, 'charactertrade');
     }
 
     public static function placeBid($request, $auctionId)
@@ -128,7 +128,7 @@ class CharacterBazaar extends Base
             : 'Your bid was recorded. Another bidder still leads this auction.';
 
         $request->getRouter()->redirect(
-            '/community/char-bazaar/' . (int) $auctionId . '?' . http_build_query([
+            '/charactertrade/' . (int) $auctionId . '?' . http_build_query([
                 'status_type' => 'success',
                 'status_message' => $message,
             ])
@@ -159,7 +159,7 @@ class CharacterBazaar extends Base
 
         $returnTo = self::normalizeReturnTo(
             (string) ($postVars['return_to'] ?? ''),
-            '/community/char-bazaar/' . (int) $auctionId
+            '/charactertrade/' . (int) $auctionId
         );
 
         $request->getRouter()->redirect(
@@ -190,7 +190,7 @@ class CharacterBazaar extends Base
 
         $returnTo = self::normalizeReturnTo(
             (string) ($postVars['return_to'] ?? ''),
-            '/community/char-bazaar/' . (int) $auctionId
+            '/charactertrade/' . (int) $auctionId
         );
 
         $request->getRouter()->redirect(
@@ -212,7 +212,7 @@ class CharacterBazaar extends Base
         $accountId = self::getLoggedAccountId();
         $filters = self::getBazaarFilters($request, 25);
         $rawAuctions = EntityCharacterBazaar::getWatchedAuctions($accountId, $filters['per_page'] + 1, $filters['offset'], $filters['search']);
-        [$watchedAuctions, $pagination] = self::paginateRows(array_map([self::class, 'mapWatchedAuction'], $rawAuctions), $filters, '/community/char-bazaar/watched');
+        [$watchedAuctions, $pagination] = self::paginateRows(array_map([self::class, 'mapWatchedAuction'], $rawAuctions), $filters, '/charactertrade/watched');
         [$activeWatched, $endedWatched] = self::splitWatchedAuctions($watchedAuctions);
 
         $content = View::render('pages/community/charbazaar_watched', [
@@ -226,10 +226,10 @@ class CharacterBazaar extends Base
             'is_logged_in' => $accountId > 0,
             'logged_account_id' => $accountId,
             'step_up_fresh' => $accountId > 0 ? StepUpAuthentication::isFresh($accountId) : false,
-            'return_to' => '/community/char-bazaar/watched',
+            'return_to' => '/charactertrade/watched',
         ]);
 
-        return parent::getBase('Character Bazaar', $content, 'charbazaar');
+        return parent::getBase('Character Bazaar', $content, 'charactertrade');
     }
 
     public static function previewListing($request)
@@ -403,7 +403,7 @@ class CharacterBazaar extends Base
 
     public static function viewMyWatchedAuctions($request)
     {
-        $request->getRouter()->redirect('/community/char-bazaar/watched');
+        $request->getRouter()->redirect('/charactertrade/watched');
     }
 
     public static function confirmStepUp($request)
@@ -475,12 +475,12 @@ class CharacterBazaar extends Base
             'logged_account_id' => $accountId,
             'step_up_fresh' => $accountId > 0 ? StepUpAuthentication::isFresh($accountId) : false,
             'step_up_remaining' => $accountId > 0 ? StepUpAuthentication::getRemainingSeconds($accountId) : 0,
-            'return_to' => '/community/char-bazaar/' . (int) $auction['id'],
+            'return_to' => '/charactertrade/' . (int) $auction['id'],
             'bidder_characters' => $accountId > 0 ? self::getBidderCharacters($accountId) : [],
             'is_watching' => $accountId > 0 ? EntityCharacterBazaar::isAuctionWatched($accountId, (int) $auction['id']) : false,
         ]);
 
-        return parent::getBase('Character Bazaar', $content, 'charbazaar');
+        return parent::getBase('Character Bazaar', $content, 'charactertrade');
     }
 
     private static function getLoggedAccountId(): int
