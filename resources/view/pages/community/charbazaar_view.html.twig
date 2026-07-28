@@ -25,27 +25,6 @@
 				<br>
 				{% endif %}
 
-				<div class="SmallBox">
-					<div class="MessageContainer">
-						<div class="BoxFrameHorizontal" style="background-image:url({{IMAGE_PATH}}/global/content/box-frame-horizontal.gif);"></div>
-						<div class="BoxFrameEdgeLeftTop" style="background-image:url({{IMAGE_PATH}}/global/content/box-frame-edge.gif);"></div>
-						<div class="BoxFrameEdgeRightTop" style="background-image:url({{IMAGE_PATH}}/global/content/box-frame-edge.gif);"></div>
-						<div class="Message">
-							<div class="BoxFrameVerticalLeft" style="background-image:url({{IMAGE_PATH}}/global/content/box-frame-vertical.gif);"></div>
-							<div class="BoxFrameVerticalRight" style="background-image:url({{IMAGE_PATH}}/global/content/box-frame-vertical.gif);"></div>
-							<nobr>[<a href="{{URL}}/community/char-bazaar">Current Auctions</a>]</nobr>
-							<nobr>[<a href="{{URL}}/community/char-bazaar/history">Auction History</a>]</nobr>
-							<nobr>[<a href="{{URL}}/account/char-bazaar/my-bids">My Bids</a>]</nobr>
-							<nobr>[<a href="{{URL}}/account/char-bazaar/my-auctions">My Auctions</a>]</nobr>
-							<nobr>[<a href="{{URL}}/community/char-bazaar/watched">My Watched Auctions</a>]</nobr>
-						</div>
-						<div class="BoxFrameHorizontal" style="background-image:url({{IMAGE_PATH}}/global/content/box-frame-horizontal.gif);"></div>
-						<div class="BoxFrameEdgeRightBottom" style="background-image:url({{IMAGE_PATH}}/global/content/box-frame-edge.gif);"></div>
-						<div class="BoxFrameEdgeLeftBottom" style="background-image:url({{IMAGE_PATH}}/global/content/box-frame-edge.gif);"></div>
-					</div>
-				</div>
-				<br>
-
 				{% if auction is empty %}
 				<div class="SmallBox">
 					<div class="MessageContainer">
@@ -111,77 +90,6 @@
 					</table>
 				</div>
 				<br>
-
-				{% if auction is not empty and is_logged_in and logged_account_id != auction.seller_account_id %}
-				<div class="SmallBox">
-					<div class="MessageContainer">
-						<div class="BoxFrameHorizontal" style="background-image:url({{IMAGE_PATH}}/global/content/box-frame-horizontal.gif);"></div>
-						<div class="BoxFrameEdgeLeftTop" style="background-image:url({{IMAGE_PATH}}/global/content/box-frame-edge.gif);"></div>
-						<div class="BoxFrameEdgeRightTop" style="background-image:url({{IMAGE_PATH}}/global/content/box-frame-edge.gif);"></div>
-						<div class="Message">
-							<div class="BoxFrameVerticalLeft" style="background-image:url({{IMAGE_PATH}}/global/content/box-frame-vertical.gif);"></div>
-							<div class="BoxFrameVerticalRight" style="background-image:url({{IMAGE_PATH}}/global/content/box-frame-vertical.gif);"></div>
-							Keep this auction in your watchlist for quick access later.
-						</div>
-						<div class="BoxFrameHorizontal" style="background-image:url({{IMAGE_PATH}}/global/content/box-frame-horizontal.gif);"></div>
-						<div class="BoxFrameEdgeRightBottom" style="background-image:url({{IMAGE_PATH}}/global/content/box-frame-edge.gif);"></div>
-						<div class="BoxFrameEdgeLeftBottom" style="background-image:url({{IMAGE_PATH}}/global/content/box-frame-edge.gif);"></div>
-					</div>
-				</div>
-				<br>
-				<div class="TableContainer">
-					<div class="CaptionContainer">
-						<div class="CaptionInnerContainer">
-							<span class="CaptionEdgeLeftTop" style="background-image:url({{IMAGE_PATH}}/global/content/box-frame-edge.gif);"></span>
-							<span class="CaptionEdgeRightTop" style="background-image:url({{IMAGE_PATH}}/global/content/box-frame-edge.gif);"></span>
-							<span class="CaptionBorderTop" style="background-image:url({{IMAGE_PATH}}/global/content/table-headline-border.gif);"></span>
-							<span class="CaptionVerticalLeft" style="background-image:url({{IMAGE_PATH}}/global/content/box-frame-vertical.gif);"></span>
-							<div class="Text">Watchlist</div>
-							<span class="CaptionVerticalRight" style="background-image:url({{IMAGE_PATH}}/global/content/box-frame-vertical.gif);"></span>
-							<span class="CaptionBorderBottom" style="background-image:url({{IMAGE_PATH}}/global/content/table-headline-border.gif);"></span>
-							<span class="CaptionEdgeLeftBottom" style="background-image:url({{IMAGE_PATH}}/global/content/box-frame-edge.gif);"></span>
-							<span class="CaptionEdgeRightBottom" style="background-image:url({{IMAGE_PATH}}/global/content/box-frame-edge.gif);"></span>
-						</div>
-					</div>
-					<table class="Table1" cellpadding="0" cellspacing="0">
-						<tbody>
-							<tr>
-								<td>
-									<div class="InnerTableContainer">
-										<form action="{% if is_watching %}{{URL}}/community/char-bazaar/{{ auction.id }}/unwatch{% else %}{{URL}}/community/char-bazaar/{{ auction.id }}/watch{% endif %}" method="post">
-											<input type="hidden" name="return_to" value="{{ return_to }}">
-											<table style="width:100%;">
-												<tbody>
-													<tr>
-														<td>
-															{% if is_watching %}
-															This auction is already in your watchlist.
-															{% else %}
-															Add this auction to your watchlist to follow it from the dedicated page.
-															{% endif %}
-														</td>
-													</tr>
-													<tr>
-														<td style="text-align:center;">
-															<div class="BigButton" style="background-image:url({{IMAGE_PATH}}/global/buttons/{% if is_watching %}button_blue.gif{% else %}button_green.gif{% endif %})">
-																<div onmouseover="MouseOverBigButton(this);" onmouseout="MouseOutBigButton(this);">
-																	<div class="BigButtonOver" style="background-image:url({{IMAGE_PATH}}/global/buttons/{% if is_watching %}button_blue_over.gif{% else %}button_green_over.gif{% endif %});"></div>
-																	<input class="BigButtonText" type="submit" value="{% if is_watching %}Remove From Watchlist{% else %}Watch Auction{% endif %}">
-																</div>
-															</div>
-														</td>
-													</tr>
-												</tbody>
-											</table>
-										</form>
-									</div>
-								</td>
-							</tr>
-						</tbody>
-					</table>
-				</div>
-				<br>
-				{% endif %}
 
 				{% if is_logged_in and auction.status == 'active' and logged_account_id != auction.seller_account_id %}
 				{% if not step_up_fresh %}
@@ -295,7 +203,7 @@
 						<div class="Message">
 							<div class="BoxFrameVerticalLeft" style="background-image:url({{IMAGE_PATH}}/global/content/box-frame-vertical.gif);"></div>
 							<div class="BoxFrameVerticalRight" style="background-image:url({{IMAGE_PATH}}/global/content/box-frame-vertical.gif);"></div>
-							This listing belongs to your account. Manage it from <a href="{{URL}}/account/char-bazaar/my-auctions">My Auctions</a>.
+							This listing belongs to your account. Manage it from <a href="{{URL}}/account/char-bazaar/my-listings">My Listings</a>.
 						</div>
 						<div class="BoxFrameHorizontal" style="background-image:url({{IMAGE_PATH}}/global/content/box-frame-horizontal.gif);"></div>
 						<div class="BoxFrameEdgeRightBottom" style="background-image:url({{IMAGE_PATH}}/global/content/box-frame-edge.gif);"></div>

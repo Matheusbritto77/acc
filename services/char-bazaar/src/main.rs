@@ -19,8 +19,7 @@ use error::AppError;
 use models::{
     AuctionCreatedResponse, AuctionStateChangeResponse, AuctionViewResponse, CancelAuctionRequest,
     CreateAuctionRequest, EligibilityPreviewRequest, EligibilityPreviewResponse, HealthResponse,
-    PlaceBidRequest, PlaceBidResponse, SettleAuctionRequest, WatchlistAuctionResponse,
-    WatchlistMutationRequest, WatchlistMutationResponse,
+    PlaceBidRequest, PlaceBidResponse, SettleAuctionRequest,
 };
 use sqlx::{
     migrate::Migrator,
@@ -69,9 +68,6 @@ async fn main() -> Result<(), AppError> {
         .route("/v1/auctions/preview", post(preview_eligibility))
         .route("/v1/auctions", post(create_auction))
         .route("/v1/auctions/{auction_id}", get(get_auction))
-        .route("/v1/accounts/{account_id}/watchlist", get(get_watchlist))
-        .route("/v1/auctions/{auction_id}/watch", post(watch_auction))
-        .route("/v1/auctions/{auction_id}/unwatch", post(unwatch_auction))
         .route("/v1/auctions/{auction_id}/cancel", post(cancel_auction))
         .route("/v1/auctions/{auction_id}/bids", post(place_bid))
         .route("/v1/auctions/{auction_id}/settle", post(settle_auction))
@@ -298,147 +294,6 @@ async fn get_auction(
     authorize_internal(&headers, &state.config)?;
     let auction = fetch_auction(&state.pool, auction_id).await?;
     Ok(Json(auction))
-}
-
-async fn get_watchlist(
-    State(state): State<AppState>,
-    headers: HeaderMap,
-    Path(account_id): Path<u32>,
-) -> Result<Json<Vec<WatchlistAuctionResponse>>, AppError> {
-    authorize_internal(&headers, &state.config)?;
-    let watchlist = fetch_watchlist(&state.pool, account_id).await?;
-    Ok(Json(watchlist))
-}
-
-async fn watch_auction(
-    State(state): State<AppState>,
-    headers: HeaderMap,
-    Path(auction_id): Path<u64>,
-    Json(request): Json<WatchlistMutationRequest>,
-) -> Result<Json<WatchlistMutationResponse>, AppError> {
-    authorize_internal(&headers, &state.config)?;
-
-    let mut tx = state.pool.begin().await?;
-
-    if let Some(existing) = fetch_watchlist_by_request(&mut tx, request.request_id, auction_id).await? {
-        tx.commit().await?;
-        return Ok(Json(existing));
-    }
-
-    ensure_account_exists_and_lock(&mut tx, request.account_id).await?;
-
-    let auction_row = sqlx::query(
-        r#"
-        SELECT id, seller_account_id
-        FROM char_bazaar_auctions
-        WHERE id = ?
-        FOR UPDATE
-        "#,
-    )
-    .bind(auction_id)
-    .fetch_optional(&mut *tx)
-    .await?
-    .ok_or_else(|| AppError::not_found("auction not found"))?;
-
-    if auction_row.get::<u32, _>("seller_account_id") == request.account_id {
-        return Err(AppError::conflict("seller cannot watch own auction"));
-    }
-
-    sqlx::query(
-        r#"
-        INSERT INTO char_bazaar_watchlist (account_id, auction_id)
-        VALUES (?, ?)
-        ON DUPLICATE KEY UPDATE watched_at = CURRENT_TIMESTAMP
-        "#,
-    )
-    .bind(request.account_id)
-    .bind(auction_id)
-    .execute(&mut *tx)
-    .await?;
-
-    insert_audit_event(
-        &mut tx,
-        auction_id,
-        "auction_watched",
-        Some(request.account_id),
-        None,
-        Some(request.request_id),
-        serde_json::json!({
-            "account_id": request.account_id,
-            "watched": true
-        }),
-    )
-    .await?;
-
-    tx.commit().await?;
-
-    Ok(Json(WatchlistMutationResponse {
-        auction_id,
-        watched: true,
-    }))
-}
-
-async fn unwatch_auction(
-    State(state): State<AppState>,
-    headers: HeaderMap,
-    Path(auction_id): Path<u64>,
-    Json(request): Json<WatchlistMutationRequest>,
-) -> Result<Json<WatchlistMutationResponse>, AppError> {
-    authorize_internal(&headers, &state.config)?;
-
-    let mut tx = state.pool.begin().await?;
-
-    if let Some(existing) = fetch_watchlist_by_request(&mut tx, request.request_id, auction_id).await? {
-        tx.commit().await?;
-        return Ok(Json(existing));
-    }
-
-    ensure_account_exists_and_lock(&mut tx, request.account_id).await?;
-
-    sqlx::query(
-        r#"
-        SELECT id
-        FROM char_bazaar_auctions
-        WHERE id = ?
-        FOR UPDATE
-        "#,
-    )
-    .bind(auction_id)
-    .fetch_optional(&mut *tx)
-    .await?
-    .ok_or_else(|| AppError::not_found("auction not found"))?;
-
-    sqlx::query(
-        r#"
-        DELETE FROM char_bazaar_watchlist
-        WHERE account_id = ? AND auction_id = ?
-        "#,
-    )
-    .bind(request.account_id)
-    .bind(auction_id)
-    .execute(&mut *tx)
-    .await?;
-
-    insert_audit_event(
-        &mut tx,
-        auction_id,
-        "auction_unwatched",
-        Some(request.account_id),
-        None,
-        Some(request.request_id),
-        serde_json::json!({
-            "account_id": request.account_id,
-            "watched": false
-        }),
-    )
-    .await?;
-
-    tx.commit().await?;
-
-    Ok(Json(WatchlistMutationResponse {
-        auction_id,
-        watched: false,
-    }))
 }
 
 async fn place_bid(
@@ -1182,110 +1037,6 @@ async fn fetch_bid_by_request(
         auction_id: row.get::<u64, _>("auction_id"),
         current_price: row.get::<u64, _>("price_after_bid"),
         bidder_is_winner: row.get::<i8, _>("became_winner") != 0,
-    }))
-}
-
-async fn fetch_watchlist(
-    pool: &MySqlPool,
-    account_id: u32,
-) -> Result<Vec<WatchlistAuctionResponse>, AppError> {
-    let rows = sqlx::query(
-        r#"
-        SELECT
-            a.id,
-            a.player_id,
-            a.seller_name_snapshot,
-            a.status,
-            a.starting_bid,
-            a.bid_increment,
-            a.current_price,
-            a.current_winner_account_id,
-            a.ends_at,
-            w.watched_at
-        FROM char_bazaar_watchlist w
-        INNER JOIN char_bazaar_auctions a ON a.id = w.auction_id
-        WHERE w.account_id = ?
-        ORDER BY
-            CASE
-                WHEN a.status = 'active' AND a.ends_at > CURRENT_TIMESTAMP THEN 0
-                WHEN a.status = 'active' THEN 1
-                ELSE 2
-            END,
-            a.ends_at ASC,
-            w.watched_at DESC,
-            a.id DESC
-        "#,
-    )
-    .bind(account_id)
-    .fetch_all(pool)
-    .await?;
-
-    Ok(rows
-        .into_iter()
-        .map(|row| WatchlistAuctionResponse {
-            auction_id: row.get::<u64, _>("id"),
-            player_id: row.get::<u32, _>("player_id"),
-            character_name: row.get::<String, _>("seller_name_snapshot"),
-            status: row.get::<String, _>("status"),
-            starting_bid: row.get::<u64, _>("starting_bid"),
-            bid_increment: row.get::<u64, _>("bid_increment"),
-            current_price: row.get::<u64, _>("current_price"),
-            has_winner: row
-                .get::<Option<u32>, _>("current_winner_account_id")
-                .is_some(),
-            ends_at: DateTime::<Utc>::from_naive_utc_and_offset(
-                row.get::<chrono::NaiveDateTime, _>("ends_at"),
-                Utc,
-            ),
-            watched_at: DateTime::<Utc>::from_naive_utc_and_offset(
-                row.get::<chrono::NaiveDateTime, _>("watched_at"),
-                Utc,
-            ),
-        })
-        .collect())
-}
-
-async fn fetch_watchlist_by_request(
-    tx: &mut sqlx::Transaction<'_, sqlx::MySql>,
-    request_id: Uuid,
-    expected_auction_id: u64,
-) -> Result<Option<WatchlistMutationResponse>, AppError> {
-    let row = sqlx::query(
-        r#"
-        SELECT auction_id, event_type
-        FROM char_bazaar_audit_events
-        WHERE request_id = ?
-        ORDER BY id DESC
-        LIMIT 1
-        "#,
-    )
-    .bind(request_id.to_string())
-    .fetch_optional(&mut **tx)
-    .await?;
-
-    let Some(row) = row else {
-        return Ok(None);
-    };
-
-    if row.get::<u64, _>("auction_id") != expected_auction_id {
-        return Err(AppError::conflict(
-            "request_id already belongs to a different auction action",
-        ));
-    }
-
-    let watched = match row.get::<String, _>("event_type").as_str() {
-        "auction_watched" => true,
-        "auction_unwatched" => false,
-        _ => {
-            return Err(AppError::conflict(
-                "request_id already belongs to a different bazaar action",
-            ));
-        }
-    };
-
-    Ok(Some(WatchlistMutationResponse {
-        auction_id: expected_auction_id,
-        watched,
     }))
 }
 

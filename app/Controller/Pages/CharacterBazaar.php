@@ -15,39 +15,11 @@ class CharacterBazaar extends Base
     public static function viewMarketplace($request)
     {
         $status = self::getStatusFromRequest($request);
-        $filters = self::getBazaarFilters($request, 25);
-        $rawAuctions = EntityCharacterBazaar::getPublicAuctions('active', $filters['per_page'] + 1, $filters['offset'], $filters['search']);
-        [$auctions, $pagination] = self::paginateRows(array_map([self::class, 'mapPublicAuction'], $rawAuctions), $filters, '/community/char-bazaar');
+        $auctions = array_map([self::class, 'mapPublicAuction'], EntityCharacterBazaar::getPublicAuctions('active'));
         $accountId = self::getLoggedAccountId();
 
         $content = View::render('pages/community/charbazaar', [
             'auctions' => $auctions,
-            'pagination' => $pagination,
-            'search' => $filters['search'],
-            'per_page' => $filters['per_page'],
-            'status_type' => $status['type'],
-            'status_message' => $status['message'],
-            'is_logged_in' => $accountId > 0,
-            'logged_account_id' => $accountId,
-            'step_up_fresh' => $accountId > 0 ? StepUpAuthentication::isFresh($accountId) : false,
-        ]);
-
-        return parent::getBase('Character Bazaar', $content, 'charbazaar');
-    }
-
-    public static function viewAuctionHistory($request)
-    {
-        $status = self::getStatusFromRequest($request);
-        $filters = self::getBazaarFilters($request, 25);
-        $rawAuctions = EntityCharacterBazaar::getAuctionHistory($filters['per_page'] + 1, $filters['offset'], $filters['search']);
-        [$auctions, $pagination] = self::paginateRows(array_map([self::class, 'mapHistoryAuction'], $rawAuctions), $filters, '/community/char-bazaar/history');
-        $accountId = self::getLoggedAccountId();
-
-        $content = View::render('pages/community/charbazaar_history', [
-            'auctions' => $auctions,
-            'pagination' => $pagination,
-            'search' => $filters['search'],
-            'per_page' => $filters['per_page'],
             'status_type' => $status['type'],
             'status_message' => $status['message'],
             'is_logged_in' => $accountId > 0,
@@ -74,9 +46,6 @@ class CharacterBazaar extends Base
             'step_up_remaining' => $accountId > 0 ? StepUpAuthentication::getRemainingSeconds($accountId) : 0,
             'return_to' => '/community/char-bazaar/' . (int) $auctionId,
             'bidder_characters' => $accountId > 0 ? self::getBidderCharacters($accountId) : [],
-            'is_watching' => $accountId > 0 && is_array($auction)
-                ? EntityCharacterBazaar::isAuctionWatched($accountId, (int) $auctionId)
-                : false,
         ]);
 
         return parent::getBase('Character Bazaar', $content, 'charbazaar');
@@ -135,101 +104,9 @@ class CharacterBazaar extends Base
         );
     }
 
-    public static function watchAuction($request, $auctionId)
-    {
-        $accountId = self::getLoggedAccountId();
-        $auction = EntityCharacterBazaar::getPublicAuctionById((int) $auctionId);
-        if (!is_array($auction)) {
-            return self::viewAuction($request, $auctionId);
-        }
-
-        if ((int) ($auction['seller_account_id'] ?? 0) === $accountId) {
-            return self::renderAuctionPage($request, $auction, 'error', 'You cannot watch your own auction.');
-        }
-
-        $postVars = $request->getPostVars();
-        $response = CharacterBazaarClient::post('/v1/auctions/' . (int) $auctionId . '/watch', [
-            'request_id' => CharacterBazaarClient::createRequestId(),
-            'account_id' => $accountId,
-        ]);
-
-        if (!$response['ok']) {
-            return self::renderAuctionPage($request, $auction, 'error', (string) $response['error']);
-        }
-
-        $returnTo = self::normalizeReturnTo(
-            (string) ($postVars['return_to'] ?? ''),
-            '/community/char-bazaar/' . (int) $auctionId
-        );
-
-        $request->getRouter()->redirect(
-            $returnTo . '?' . http_build_query([
-                'status_type' => 'success',
-                'status_message' => 'Auction added to your watched auctions.',
-            ])
-        );
-    }
-
-    public static function unwatchAuction($request, $auctionId)
-    {
-        $accountId = self::getLoggedAccountId();
-        $auction = EntityCharacterBazaar::getPublicAuctionById((int) $auctionId);
-        if (!is_array($auction)) {
-            return self::viewAuction($request, $auctionId);
-        }
-
-        $postVars = $request->getPostVars();
-        $response = CharacterBazaarClient::post('/v1/auctions/' . (int) $auctionId . '/unwatch', [
-            'request_id' => CharacterBazaarClient::createRequestId(),
-            'account_id' => $accountId,
-        ]);
-
-        if (!$response['ok']) {
-            return self::renderAuctionPage($request, $auction, 'error', (string) $response['error']);
-        }
-
-        $returnTo = self::normalizeReturnTo(
-            (string) ($postVars['return_to'] ?? ''),
-            '/community/char-bazaar/' . (int) $auctionId
-        );
-
-        $request->getRouter()->redirect(
-            $returnTo . '?' . http_build_query([
-                'status_type' => 'success',
-                'status_message' => 'Auction removed from your watched auctions.',
-            ])
-        );
-    }
-
     public static function viewMyListings($request)
     {
         return self::renderMyListingsPage($request);
-    }
-
-    public static function viewWatchedAuctions($request)
-    {
-        $status = self::getStatusFromRequest($request);
-        $accountId = self::getLoggedAccountId();
-        $filters = self::getBazaarFilters($request, 25);
-        $rawAuctions = EntityCharacterBazaar::getWatchedAuctions($accountId, $filters['per_page'] + 1, $filters['offset'], $filters['search']);
-        [$watchedAuctions, $pagination] = self::paginateRows(array_map([self::class, 'mapWatchedAuction'], $rawAuctions), $filters, '/community/char-bazaar/watched');
-        [$activeWatched, $endedWatched] = self::splitWatchedAuctions($watchedAuctions);
-
-        $content = View::render('pages/community/charbazaar_watched', [
-            'active_watched' => $activeWatched,
-            'ended_watched' => $endedWatched,
-            'pagination' => $pagination,
-            'search' => $filters['search'],
-            'per_page' => $filters['per_page'],
-            'status_type' => $status['type'],
-            'status_message' => $status['message'],
-            'is_logged_in' => $accountId > 0,
-            'logged_account_id' => $accountId,
-            'step_up_fresh' => $accountId > 0 ? StepUpAuthentication::isFresh($accountId) : false,
-            'return_to' => '/community/char-bazaar/watched',
-        ]);
-
-        return parent::getBase('Character Bazaar', $content, 'charbazaar');
     }
 
     public static function previewListing($request)
@@ -305,7 +182,7 @@ class CharacterBazaar extends Base
         }
 
         $request->getRouter()->redirect(
-            '/account/char-bazaar/my-auctions?' . http_build_query([
+            '/account/char-bazaar/my-listings?' . http_build_query([
                 'status_type' => 'success',
                 'status_message' => 'Character listing created successfully.',
             ])
@@ -334,11 +211,8 @@ class CharacterBazaar extends Base
             ]);
         }
 
-        $postVars = $request->getPostVars();
-        $returnTo = self::normalizeReturnTo((string) ($postVars['return_to'] ?? ''), '/account/char-bazaar/my-auctions');
-
         $request->getRouter()->redirect(
-            $returnTo . '?' . http_build_query([
+            '/account/char-bazaar/my-listings?' . http_build_query([
                 'status_type' => 'success',
                 'status_message' => 'Listing cancelled and character returned from escrow.',
             ])
@@ -367,11 +241,8 @@ class CharacterBazaar extends Base
             ]);
         }
 
-        $postVars = $request->getPostVars();
-        $returnTo = self::normalizeReturnTo((string) ($postVars['return_to'] ?? ''), '/account/char-bazaar/my-auctions');
-
         $request->getRouter()->redirect(
-            $returnTo . '?' . http_build_query([
+            '/account/char-bazaar/my-listings?' . http_build_query([
                 'status_type' => 'success',
                 'status_message' => 'Listing settled successfully.',
             ])
@@ -382,15 +253,10 @@ class CharacterBazaar extends Base
     {
         $accountId = self::getLoggedAccountId();
         $status = self::getStatusFromRequest($request);
-        $filters = self::getBazaarFilters($request, 25);
-        $rawBids = EntityCharacterBazaar::getMyBids($accountId, $filters['per_page'] + 1, $filters['offset'], $filters['search']);
-        [$bids, $pagination] = self::paginateRows(array_map([self::class, 'mapBidRow'], $rawBids), $filters, '/account/char-bazaar/my-bids');
+        $bids = array_map([self::class, 'mapBidRow'], EntityCharacterBazaar::getMyBids($accountId));
 
         $content = View::render('pages/account/charbazaar_bids', [
             'bids' => $bids,
-            'pagination' => $pagination,
-            'search' => $filters['search'],
-            'per_page' => $filters['per_page'],
             'status_type' => $status['type'],
             'status_message' => $status['message'],
             'step_up_fresh' => StepUpAuthentication::isFresh($accountId),
@@ -401,18 +267,13 @@ class CharacterBazaar extends Base
         return parent::getBase('Account Management', $content, 'account');
     }
 
-    public static function viewMyWatchedAuctions($request)
-    {
-        $request->getRouter()->redirect('/community/char-bazaar/watched');
-    }
-
     public static function confirmStepUp($request)
     {
         $accountId = self::getLoggedAccountId();
         $postVars = $request->getPostVars();
         $returnTo = self::normalizeReturnTo(
             (string) ($postVars['return_to'] ?? ''),
-            '/account/char-bazaar/my-auctions'
+            '/account/char-bazaar/my-listings'
         );
 
         $error = StepUpAuthentication::verifyForAccount(
@@ -435,30 +296,19 @@ class CharacterBazaar extends Base
     {
         $accountId = self::getLoggedAccountId();
         $status = self::getStatusFromRequest($request);
-        $filters = self::getBazaarFilters($request, 25);
         $characters = array_map([self::class, 'mapCharacterRow'], EntityCharacterBazaar::getEligibleCharacters($accountId));
-        $rawListings = EntityCharacterBazaar::getMyListings($accountId, $filters['per_page'] + 1, $filters['offset'], $filters['search']);
-        [$listings, $pagination] = self::paginateRows(array_map([self::class, 'mapPrivateAuction'], $rawListings), $filters, '/account/char-bazaar/my-auctions');
-        $returnTo = self::buildBazaarPageUrl('/account/char-bazaar/my-auctions', [
-            'page' => $filters['page'],
-            'per_page' => $filters['per_page'],
-            'search' => $filters['search'],
-        ]);
+        $listings = array_map([self::class, 'mapPrivateAuction'], EntityCharacterBazaar::getMyListings($accountId));
 
         $content = View::render('pages/account/charbazaar_listings', [
             'characters' => $characters,
             'listings' => $listings,
-            'pagination' => $pagination,
-            'search' => $filters['search'],
-            'per_page' => $filters['per_page'],
-            'return_to' => $returnTo,
             'preview' => $overrides['preview'] ?? null,
             'selected_player_id' => (int) ($overrides['selected_player_id'] ?? 0),
             'status_type' => $overrides['status_type'] ?? $status['type'],
             'status_message' => $overrides['status_message'] ?? $status['message'],
             'step_up_fresh' => StepUpAuthentication::isFresh($accountId),
             'step_up_remaining' => StepUpAuthentication::getRemainingSeconds($accountId),
-            'return_to' => '/account/char-bazaar/my-auctions',
+            'return_to' => '/account/char-bazaar/my-listings',
         ]);
 
         return parent::getBase('Account Management', $content, 'account');
@@ -477,7 +327,6 @@ class CharacterBazaar extends Base
             'step_up_remaining' => $accountId > 0 ? StepUpAuthentication::getRemainingSeconds($accountId) : 0,
             'return_to' => '/community/char-bazaar/' . (int) $auction['id'],
             'bidder_characters' => $accountId > 0 ? self::getBidderCharacters($accountId) : [],
-            'is_watching' => $accountId > 0 ? EntityCharacterBazaar::isAuctionWatched($accountId, (int) $auction['id']) : false,
         ]);
 
         return parent::getBase('Character Bazaar', $content, 'charbazaar');
@@ -501,60 +350,6 @@ class CharacterBazaar extends Base
         return ['type' => $type, 'message' => $message];
     }
 
-    private static function getBazaarFilters($request, int $defaultPerPage): array
-    {
-        $queryParams = $request->getQueryParams();
-        $page = max(1, (int) ($queryParams['page'] ?? 1));
-        $perPage = (int) ($queryParams['per_page'] ?? $defaultPerPage);
-        $perPage = max(5, min($perPage, 50));
-        $search = trim((string) ($queryParams['search'] ?? ''));
-        if (mb_strlen($search) > 64) {
-            $search = mb_substr($search, 0, 64);
-        }
-
-        return [
-            'page' => $page,
-            'per_page' => $perPage,
-            'offset' => ($page - 1) * $perPage,
-            'search' => $search,
-        ];
-    }
-
-    private static function paginateRows(array $rows, array $filters, string $basePath): array
-    {
-        $perPage = (int) $filters['per_page'];
-        $page = (int) $filters['page'];
-        $hasNext = count($rows) > $perPage;
-        $items = array_slice($rows, 0, $perPage);
-
-        return [
-            $items,
-            [
-                'page' => $page,
-                'per_page' => $perPage,
-                'search' => (string) ($filters['search'] ?? ''),
-                'has_prev' => $page > 1,
-                'has_next' => $hasNext,
-                'prev_url' => self::buildBazaarPageUrl($basePath, [
-                    'page' => max(1, $page - 1),
-                    'per_page' => $perPage,
-                    'search' => (string) ($filters['search'] ?? ''),
-                ]),
-                'next_url' => self::buildBazaarPageUrl($basePath, [
-                    'page' => $page + 1,
-                    'per_page' => $perPage,
-                    'search' => (string) ($filters['search'] ?? ''),
-                ]),
-            ],
-        ];
-    }
-
-    private static function buildBazaarPageUrl(string $path, array $params): string
-    {
-        $query = array_filter($params, static fn($value) => $value !== null && $value !== '');
-        return $path . (empty($query) ? '' : '?' . http_build_query($query));
-    }
-
     private static function normalizeReturnTo(string $returnTo, string $fallback): string
     {
         if ($returnTo === '' || $returnTo[0] !== '/') {
@@ -566,23 +361,6 @@ class CharacterBazaar extends Base
         }
 
         return $returnTo;
-    }
-
-    private static function splitWatchedAuctions(array $auctions): array
-    {
-        $active = [];
-        $ended = [];
-
-        foreach ($auctions as $auction) {
-            if (!empty($auction['is_ended'])) {
-                $ended[] = $auction;
-                continue;
-            }
-
-            $active[] = $auction;
-        }
-
-        return [$active, $ended];
     }
 
     private static function getBidderCharacters(int $accountId): array
@@ -625,30 +403,6 @@ class CharacterBazaar extends Base
             'level' => (int) ($auction['level_snapshot'] ?? 0),
             'vocation' => PlayerFunctions::convertVocation((int) ($auction['vocation_snapshot'] ?? 0)),
         ];
-    }
-
-    private static function mapHistoryAuction(array $auction): array
-    {
-        $mapped = self::mapPublicAuction($auction);
-        $mapped['final_status'] = (string) ($auction['status'] ?? '');
-        $mapped['result_label'] = match ($mapped['final_status']) {
-            'settled' => 'Sold',
-            'cancelled' => 'Cancelled',
-            'ended' => $mapped['has_winner'] ? 'Ended with winner' : 'Ended without winner',
-            default => ucfirst($mapped['final_status']),
-        };
-        $mapped['settled_at'] = (string) ($auction['settled_at'] ?? '');
-        $mapped['cancelled_at'] = (string) ($auction['cancelled_at'] ?? '');
-
-        return $mapped;
-    }
-
-    private static function mapWatchedAuction(array $auction): array
-    {
-        $mapped = self::mapPrivateAuction($auction);
-        $mapped['watched_at'] = (string) ($auction['watched_at'] ?? '');
-
-        return $mapped;
     }
 
     private static function mapPrivateAuction(array $auction): array

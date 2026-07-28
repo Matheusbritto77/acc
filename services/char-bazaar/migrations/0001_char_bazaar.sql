@@ -53,19 +53,6 @@ CREATE TABLE IF NOT EXISTS `char_bazaar_bids` (
     FOREIGN KEY (`bidder_player_id`) REFERENCES `players` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
-CREATE TABLE IF NOT EXISTS `char_bazaar_watchlist` (
-  `account_id` INT(11) UNSIGNED NOT NULL,
-  `auction_id` BIGINT UNSIGNED NOT NULL,
-  `watched_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  PRIMARY KEY (`account_id`, `auction_id`),
-  KEY `idx_char_bazaar_watchlist_auction` (`auction_id`),
-  KEY `idx_char_bazaar_watchlist_account_watched` (`account_id`, `watched_at`),
-  CONSTRAINT `char_bazaar_watchlist_account_fk`
-    FOREIGN KEY (`account_id`) REFERENCES `accounts` (`id`) ON DELETE CASCADE,
-  CONSTRAINT `char_bazaar_watchlist_auction_fk`
-    FOREIGN KEY (`auction_id`) REFERENCES `char_bazaar_auctions` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-
 CREATE TABLE IF NOT EXISTS `char_bazaar_coin_reservations` (
   `account_id` INT(11) UNSIGNED NOT NULL,
   `reserved_transferable_coins` BIGINT UNSIGNED NOT NULL DEFAULT 0,

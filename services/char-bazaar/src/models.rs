@@ -54,12 +54,6 @@ pub struct SettleAuctionRequest {
     pub actor_account_id: Option<u32>,
 }
 
-#[derive(Debug, Deserialize)]
-pub struct WatchlistMutationRequest {
-    pub request_id: Uuid,
-    pub account_id: u32,
-}
-
 #[derive(Debug, Serialize)]
 pub struct PlaceBidResponse {
     pub auction_id: u64,
@@ -87,26 +81,6 @@ pub struct AuctionViewResponse {
     pub current_price: u64,
     pub has_winner: bool,
     pub ends_at: DateTime<Utc>,
-}
-
-#[derive(Debug, Serialize)]
-pub struct WatchlistMutationResponse {
-    pub auction_id: u64,
-    pub watched: bool,
-}
-
-#[derive(Debug, Serialize)]
-pub struct WatchlistAuctionResponse {
-    pub auction_id: u64,
-    pub player_id: u32,
-    pub character_name: String,
-    pub status: String,
-    pub starting_bid: u64,
-    pub bid_increment: u64,
-    pub current_price: u64,
-    pub has_winner: bool,
-    pub ends_at: DateTime<Utc>,
-    pub watched_at: DateTime<Utc>,
 }
 
 #[derive(Debug, Serialize)]
