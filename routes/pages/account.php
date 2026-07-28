@@ -68,10 +68,18 @@ $obRouter->get('/account/char-bazaar', [
         'required-login'
     ],
     function($request){
-        $request->getRouter()->redirect('/account/char-bazaar/my-listings');
+        $request->getRouter()->redirect('/account/char-bazaar/my-auctions');
     }
 ]);
 $obRouter->get('/account/char-bazaar/my-listings', [
+    'middlewares' => [
+        'required-login'
+    ],
+    function($request){
+        $request->getRouter()->redirect('/account/char-bazaar/my-auctions');
+    }
+]);
+$obRouter->get('/account/char-bazaar/my-auctions', [
     'middlewares' => [
         'required-login'
     ],
@@ -117,6 +125,14 @@ $obRouter->get('/account/char-bazaar/my-bids', [
     ],
     function($request){
         return new Response(200, \App\Controller\Pages\CharacterBazaar::viewMyBids($request));
+    }
+]);
+$obRouter->get('/account/char-bazaar/watched', [
+    'middlewares' => [
+        'required-login'
+    ],
+    function($request){
+        return new Response(200, \App\Controller\Pages\CharacterBazaar::viewMyWatchedAuctions($request));
     }
 ]);
 $obRouter->post('/account/char-bazaar/step-up', [

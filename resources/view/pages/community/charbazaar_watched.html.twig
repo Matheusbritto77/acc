@@ -1,4 +1,4 @@
-<div id="charbazaar" class="Box">
+<div id="charbazaarwatched" class="Box">
 	<div class="Corner-tl" style="background-image:url({{IMAGE_PATH}}/global/content/corner-tl.gif);"></div>
 	<div class="Corner-tr" style="background-image:url({{IMAGE_PATH}}/global/content/corner-tr.gif);"></div>
 	<div class="Border_1" style="background-image:url({{IMAGE_PATH}}/global/content/border-1.gif);"></div>
@@ -25,60 +25,28 @@
 				<br>
 				{% endif %}
 
-				<div class="TableContainer">
-					<div class="CaptionContainer">
-						<div class="CaptionInnerContainer">
-							<span class="CaptionEdgeLeftTop" style="background-image:url({{IMAGE_PATH}}/global/content/box-frame-edge.gif);"></span>
-							<span class="CaptionEdgeRightTop" style="background-image:url({{IMAGE_PATH}}/global/content/box-frame-edge.gif);"></span>
-							<span class="CaptionBorderTop" style="background-image:url({{IMAGE_PATH}}/global/content/table-headline-border.gif);"></span>
-							<span class="CaptionVerticalLeft" style="background-image:url({{IMAGE_PATH}}/global/content/box-frame-vertical.gif);"></span>
-							<div class="Text">Character Bazaar</div>
-							<span class="CaptionVerticalRight" style="background-image:url({{IMAGE_PATH}}/global/content/box-frame-vertical.gif);"></span>
-							<span class="CaptionBorderBottom" style="background-image:url({{IMAGE_PATH}}/global/content/table-headline-border.gif);"></span>
-							<span class="CaptionEdgeLeftBottom" style="background-image:url({{IMAGE_PATH}}/global/content/box-frame-edge.gif);"></span>
-							<span class="CaptionEdgeRightBottom" style="background-image:url({{IMAGE_PATH}}/global/content/box-frame-edge.gif);"></span>
+				<div class="SmallBox">
+					<div class="MessageContainer">
+						<div class="BoxFrameHorizontal" style="background-image:url({{IMAGE_PATH}}/global/content/box-frame-horizontal.gif);"></div>
+						<div class="BoxFrameEdgeLeftTop" style="background-image:url({{IMAGE_PATH}}/global/content/box-frame-edge.gif);"></div>
+						<div class="BoxFrameEdgeRightTop" style="background-image:url({{IMAGE_PATH}}/global/content/box-frame-edge.gif);"></div>
+						<div class="Message">
+							<div class="BoxFrameVerticalLeft" style="background-image:url({{IMAGE_PATH}}/global/content/box-frame-vertical.gif);"></div>
+							<div class="BoxFrameVerticalRight" style="background-image:url({{IMAGE_PATH}}/global/content/box-frame-vertical.gif);"></div>
+							<nobr>[<a href="{{URL}}/community/char-bazaar">Current Auctions</a>]</nobr>
+							<nobr>[<a href="{{URL}}/community/char-bazaar/history">Auction History</a>]</nobr>
+							<nobr>[<a href="{{URL}}/account/char-bazaar/my-bids">My Bids</a>]</nobr>
+							<nobr>[<a href="{{URL}}/account/char-bazaar/my-auctions">My Auctions</a>]</nobr>
+							<nobr>[<a href="{{URL}}/community/char-bazaar/watched">My Watched Auctions</a>]</nobr>
 						</div>
+						<div class="BoxFrameHorizontal" style="background-image:url({{IMAGE_PATH}}/global/content/box-frame-horizontal.gif);"></div>
+						<div class="BoxFrameEdgeRightBottom" style="background-image:url({{IMAGE_PATH}}/global/content/box-frame-edge.gif);"></div>
+						<div class="BoxFrameEdgeLeftBottom" style="background-image:url({{IMAGE_PATH}}/global/content/box-frame-edge.gif);"></div>
 					</div>
-					<table class="Table3" cellpadding="0" cellspacing="0">
-						<tbody>
-							<tr>
-								<td>
-									<div class="InnerTableContainer">
-										<table style="width:100%;">
-											<tbody>
-												<tr>
-													<td>
-														<div class="TableContentContainer">
-															<table class="TableContent" width="100%" style="border:1px solid #faf0d7;">
-																<tbody>
-																	<tr style="background-color:#D4C0A1;">
-																		<td>
-																			Browse active character auctions. Listing, cancelling and settlement are available in your account panel.
-																		</td>
-																		<td style="text-align:right; white-space:nowrap;">
-																			<a href="{{URL}}/community/char-bazaar">Current Auctions</a><br>
-																			<a href="{{URL}}/community/char-bazaar/history">Auction History</a><br>
-																			<a href="{{URL}}/account/char-bazaar/my-bids">My Bids</a><br>
-																			<a href="{{URL}}/account/char-bazaar/my-auctions">My Auctions</a><br>
-																			<a href="{{URL}}/community/char-bazaar/watched">My Watched Auctions</a>
-																		</td>
-																	</tr>
-																</tbody>
-															</table>
-														</div>
-													</td>
-												</tr>
-											</tbody>
-										</table>
-									</div>
-								</td>
-							</tr>
-						</tbody>
-					</table>
 				</div>
 				<br>
 
-				<form action="{{URL}}/community/char-bazaar" method="get">
+				<form action="{{URL}}/community/char-bazaar/watched" method="get">
 					<div class="SmallBox">
 						<div class="MessageContainer">
 							<div class="BoxFrameHorizontal" style="background-image:url({{IMAGE_PATH}}/global/content/box-frame-horizontal.gif);"></div>
@@ -87,7 +55,7 @@
 							<div class="Message">
 								<div class="BoxFrameVerticalLeft" style="background-image:url({{IMAGE_PATH}}/global/content/box-frame-vertical.gif);"></div>
 								<div class="BoxFrameVerticalRight" style="background-image:url({{IMAGE_PATH}}/global/content/box-frame-vertical.gif);"></div>
-								Search and paginate active auctions.
+								Search and paginate watched auctions.
 							</div>
 							<div class="BoxFrameHorizontal" style="background-image:url({{IMAGE_PATH}}/global/content/box-frame-horizontal.gif);"></div>
 							<div class="BoxFrameEdgeRightBottom" style="background-image:url({{IMAGE_PATH}}/global/content/box-frame-edge.gif);"></div>
@@ -144,6 +112,23 @@
 				</form>
 				<br>
 
+				<div class="SmallBox">
+					<div class="MessageContainer">
+						<div class="BoxFrameHorizontal" style="background-image:url({{IMAGE_PATH}}/global/content/box-frame-horizontal.gif);"></div>
+						<div class="BoxFrameEdgeLeftTop" style="background-image:url({{IMAGE_PATH}}/global/content/box-frame-edge.gif);"></div>
+						<div class="BoxFrameEdgeRightTop" style="background-image:url({{IMAGE_PATH}}/global/content/box-frame-edge.gif);"></div>
+						<div class="Message">
+							<div class="BoxFrameVerticalLeft" style="background-image:url({{IMAGE_PATH}}/global/content/box-frame-vertical.gif);"></div>
+							<div class="BoxFrameVerticalRight" style="background-image:url({{IMAGE_PATH}}/global/content/box-frame-vertical.gif);"></div>
+							These are the auctions you are following. Active auctions are grouped first, then ended auctions.
+						</div>
+						<div class="BoxFrameHorizontal" style="background-image:url({{IMAGE_PATH}}/global/content/box-frame-horizontal.gif);"></div>
+						<div class="BoxFrameEdgeRightBottom" style="background-image:url({{IMAGE_PATH}}/global/content/box-frame-edge.gif);"></div>
+						<div class="BoxFrameEdgeLeftBottom" style="background-image:url({{IMAGE_PATH}}/global/content/box-frame-edge.gif);"></div>
+					</div>
+				</div>
+				<br>
+
 				<div class="TableContainer">
 					<div class="CaptionContainer">
 						<div class="CaptionInnerContainer">
@@ -151,7 +136,7 @@
 							<span class="CaptionEdgeRightTop" style="background-image:url({{IMAGE_PATH}}/global/content/box-frame-edge.gif);"></span>
 							<span class="CaptionBorderTop" style="background-image:url({{IMAGE_PATH}}/global/content/table-headline-border.gif);"></span>
 							<span class="CaptionVerticalLeft" style="background-image:url({{IMAGE_PATH}}/global/content/box-frame-vertical.gif);"></span>
-							<div class="Text">Active Auctions</div>
+							<div class="Text">Active Watched Auctions</div>
 							<span class="CaptionVerticalRight" style="background-image:url({{IMAGE_PATH}}/global/content/box-frame-vertical.gif);"></span>
 							<span class="CaptionBorderBottom" style="background-image:url({{IMAGE_PATH}}/global/content/table-headline-border.gif);"></span>
 							<span class="CaptionEdgeLeftBottom" style="background-image:url({{IMAGE_PATH}}/global/content/box-frame-edge.gif);"></span>
@@ -171,28 +156,99 @@
 															<table class="TableContent" width="100%" style="border:1px solid #faf0d7;">
 																<tbody>
 																	<tr class="LabelV" style="background-color:#D4C0A1;">
-																		<td>Name</td>
-																		<td>Level</td>
-																		<td>Vocation</td>
-																		<td>Current Price</td>
-																		<td>Increment</td>
+																		<td>Auction</td>
+																		<td>Character</td>
+																		<td>Price</td>
 																		<td>Ends At</td>
+																		<td>Watched At</td>
 																		<td>Status</td>
+																		<td>Action</td>
 																	</tr>
-																	{% for auction in auctions %}
+																	{% for auction in active_watched %}
 																	<tr style="background-color:{% if loop.index is odd %}#F1E0C6{% else %}#D4C0A1{% endif %};">
-																		<td><a href="{{URL}}/community/char-bazaar/{{ auction.id }}">{{ auction.character_name }}</a></td>
-																		<td>{{ auction.level }}</td>
-																		<td>{{ auction.vocation }}</td>
+																		<td><a href="{{URL}}/community/char-bazaar/{{ auction.id }}">#{{ auction.id }}</a></td>
+																		<td>{{ auction.character_name }}</td>
 																		<td>{{ auction.current_price }}</td>
-																		<td>{{ auction.bid_increment }}</td>
 																		<td>{{ auction.ends_at|date("M d Y H:i:s") }}</td>
-																		<td>{% if auction.has_winner %}Leading bid{% else %}Open{% endif %}</td>
+																		<td>{{ auction.watched_at|date("M d Y H:i:s") }}</td>
+																		<td>{% if auction.status == 'active' and auction.is_ended %}Awaiting settlement{% else %}{{ auction.status|capitalize }}{% endif %}</td>
+																		<td>
+																			<form action="{{URL}}/community/char-bazaar/{{ auction.id }}/unwatch" method="post">
+																				<input type="hidden" name="return_to" value="{{ return_to }}">
+																				<input type="submit" value="Unwatch">
+																			</form>
+																		</td>
 																	</tr>
 																	{% else %}
-																	<tr style="background-color:#F1E0C6;">
-																		<td colspan="7">There are no active character auctions right now.</td>
+																	<tr style="background-color:#F1E0C6;"><td colspan="7">You are not watching any active auctions yet.</td></tr>
+																	{% endfor %}
+																</tbody>
+															</table>
+														</div>
+													</td>
+												</tr>
+											</tbody>
+										</table>
+									</div>
+								</td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+				<br>
+
+				<div class="TableContainer">
+					<div class="CaptionContainer">
+						<div class="CaptionInnerContainer">
+							<span class="CaptionEdgeLeftTop" style="background-image:url({{IMAGE_PATH}}/global/content/box-frame-edge.gif);"></span>
+							<span class="CaptionEdgeRightTop" style="background-image:url({{IMAGE_PATH}}/global/content/box-frame-edge.gif);"></span>
+							<span class="CaptionBorderTop" style="background-image:url({{IMAGE_PATH}}/global/content/table-headline-border.gif);"></span>
+							<span class="CaptionVerticalLeft" style="background-image:url({{IMAGE_PATH}}/global/content/box-frame-vertical.gif);"></span>
+							<div class="Text">Ended Watched Auctions</div>
+							<span class="CaptionVerticalRight" style="background-image:url({{IMAGE_PATH}}/global/content/box-frame-vertical.gif);"></span>
+							<span class="CaptionBorderBottom" style="background-image:url({{IMAGE_PATH}}/global/content/table-headline-border.gif);"></span>
+							<span class="CaptionEdgeLeftBottom" style="background-image:url({{IMAGE_PATH}}/global/content/box-frame-edge.gif);"></span>
+							<span class="CaptionEdgeRightBottom" style="background-image:url({{IMAGE_PATH}}/global/content/box-frame-edge.gif);"></span>
+						</div>
+					</div>
+					<table class="Table5" cellpadding="0" cellspacing="0">
+						<tbody>
+							<tr>
+								<td>
+									<div class="InnerTableContainer">
+										<table style="width:100%;">
+											<tbody>
+												<tr>
+													<td>
+														<div class="TableContentContainer">
+															<table class="TableContent" width="100%" style="border:1px solid #faf0d7;">
+																<tbody>
+																	<tr class="LabelV" style="background-color:#D4C0A1;">
+																		<td>Auction</td>
+																		<td>Character</td>
+																		<td>Price</td>
+																		<td>Ends At</td>
+																		<td>Watched At</td>
+																		<td>Status</td>
+																		<td>Action</td>
 																	</tr>
+																	{% for auction in ended_watched %}
+																	<tr style="background-color:{% if loop.index is odd %}#F1E0C6{% else %}#D4C0A1{% endif %};">
+																		<td><a href="{{URL}}/community/char-bazaar/{{ auction.id }}">#{{ auction.id }}</a></td>
+																		<td>{{ auction.character_name }}</td>
+																		<td>{{ auction.current_price }}</td>
+																		<td>{{ auction.ends_at|date("M d Y H:i:s") }}</td>
+																		<td>{{ auction.watched_at|date("M d Y H:i:s") }}</td>
+																		<td>{% if auction.status == 'active' and auction.is_ended %}Awaiting settlement{% else %}{{ auction.status|capitalize }}{% endif %}</td>
+																		<td>
+																			<form action="{{URL}}/community/char-bazaar/{{ auction.id }}/unwatch" method="post">
+																				<input type="hidden" name="return_to" value="{{ return_to }}">
+																				<input type="submit" value="Unwatch">
+																			</form>
+																		</td>
+																	</tr>
+																	{% else %}
+																	<tr style="background-color:#F1E0C6;"><td colspan="7">You are not watching any ended auctions yet.</td></tr>
 																	{% endfor %}
 																</tbody>
 															</table>
