@@ -6,8 +6,6 @@ use App\DatabaseManager\Database;
 
 class CharacterBazaar
 {
-    private static bool $schemaBootstrapped = false;
-
     public static function getPublicAuctions(?string $status = 'active', int $limit = 50, int $offset = 0, ?string $search = null): array
     {
         $limit = max(1, min($limit, 100));
@@ -31,8 +29,7 @@ class CharacterBazaar
 
         $whereSql = $where !== [] ? 'WHERE ' . implode(' AND ', $where) : '';
 
-        $statement = self::query(
-            $database,
+        $statement = $database->execute(
             "
             SELECT
                 a.id,
@@ -80,8 +77,7 @@ class CharacterBazaar
             $params[] = $like;
         }
 
-        $statement = self::query(
-            $database,
+        $statement = $database->execute(
             "
             SELECT
                 a.id,
@@ -118,8 +114,7 @@ class CharacterBazaar
     public static function getPublicAuctionById(int $auctionId): ?array
     {
         $database = new Database();
-        $statement = self::query(
-            $database,
+        $statement = $database->execute(
             "
             SELECT
                 a.id,
@@ -165,8 +160,7 @@ class CharacterBazaar
             $params[] = $like;
         }
 
-        $statement = self::query(
-            $database,
+        $statement = $database->execute(
             "
             SELECT
                 a.id,
@@ -212,8 +206,7 @@ class CharacterBazaar
             $params[] = $like;
         }
 
-        $statement = self::query(
-            $database,
+        $statement = $database->execute(
             "
             SELECT
                 b.auction_id,
@@ -258,8 +251,7 @@ class CharacterBazaar
             $params[] = $like;
         }
 
-        $statement = self::query(
-            $database,
+        $statement = $database->execute(
             "
             SELECT
                 a.id,
@@ -301,8 +293,7 @@ class CharacterBazaar
     public static function isAuctionWatched(int $accountId, int $auctionId): bool
     {
         $database = new Database();
-        $statement = self::query(
-            $database,
+        $statement = $database->execute(
             "
             SELECT 1
             FROM char_bazaar_watchlist
@@ -318,8 +309,7 @@ class CharacterBazaar
     public static function getEligibleCharacters(int $accountId): array
     {
         $database = new Database();
-        $statement = self::query(
-            $database,
+        $statement = $database->execute(
             "
             SELECT
                 p.id,
@@ -344,52 +334,5 @@ class CharacterBazaar
         );
 
         return $statement->fetchAll(\PDO::FETCH_ASSOC) ?: [];
-    }
-
-    private static function query(Database $database, string $query, array $params = []): \PDOStatement
-    {
-        try {
-            return $database->executeOrFail($query, $params);
-        } catch (\PDOException $exception) {
-            if (!self::isMissingBazaarSchemaError($exception)) {
-                throw $exception;
-            }
-
-            self::bootstrapSchema();
-
-            return $database->executeOrFail($query, $params);
-        }
-    }
-
-    private static function isMissingBazaarSchemaError(\PDOException $exception): bool
-    {
-        $code = (string) $exception->getCode();
-        $message = $exception->getMessage();
-
-        return $code === '42S02' || $code === '1146' || strpos($message, 'char_bazaar_') !== false;
-    }
-
-    private static function bootstrapSchema(): void
-    {
-        if (self::$schemaBootstrapped) {
-            return;
-        }
-
-        self::$schemaBootstrapped = true;
-
-        $schemaFile = dirname(__DIR__, 3) . '/services/char-bazaar/migrations/0001_char_bazaar.sql';
-        if (!is_file($schemaFile)) {
-            return;
-        }
-
-        $sql = trim((string) file_get_contents($schemaFile));
-        if ($sql === '') {
-            return;
-        }
-
-        $database = new Database();
-        foreach (array_filter(array_map('trim', explode(';', $sql))) as $statement) {
-            $database->executeOrFail($statement);
-        }
     }
 }

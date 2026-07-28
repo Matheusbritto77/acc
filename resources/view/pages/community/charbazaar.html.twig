@@ -56,11 +56,11 @@
 																			Browse active character auctions. Listing, cancelling and settlement are available in your account panel.
 																		</td>
 																		<td style="text-align:right; white-space:nowrap;">
-																			<a href="{{URL}}/charactertrade">Current Auctions</a><br>
-																			<a href="{{URL}}/charactertrade/history">Auction History</a><br>
+																			<a href="{{URL}}/community/char-bazaar">Current Auctions</a><br>
+																			<a href="{{URL}}/community/char-bazaar/history">Auction History</a><br>
 																			<a href="{{URL}}/account/char-bazaar/my-bids">My Bids</a><br>
 																			<a href="{{URL}}/account/char-bazaar/my-auctions">My Auctions</a><br>
-																			<a href="{{URL}}/charactertrade/watched">My Watched Auctions</a>
+																			<a href="{{URL}}/community/char-bazaar/watched">My Watched Auctions</a>
 																		</td>
 																	</tr>
 																</tbody>
@@ -78,7 +78,7 @@
 				</div>
 				<br>
 
-				<form action="{{URL}}/charactertrade" method="get">
+				<form action="{{URL}}/community/char-bazaar" method="get">
 					<div class="SmallBox">
 						<div class="MessageContainer">
 							<div class="BoxFrameHorizontal" style="background-image:url({{IMAGE_PATH}}/global/content/box-frame-horizontal.gif);"></div>
@@ -181,7 +181,7 @@
 																	</tr>
 																	{% for auction in auctions %}
 																	<tr style="background-color:{% if loop.index is odd %}#F1E0C6{% else %}#D4C0A1{% endif %};">
-																		<td><a href="{{URL}}/charactertrade/{{ auction.id }}">{{ auction.character_name }}</a></td>
+																		<td><a href="{{URL}}/community/char-bazaar/{{ auction.id }}">{{ auction.character_name }}</a></td>
 																		<td>{{ auction.level }}</td>
 																		<td>{{ auction.vocation }}</td>
 																		<td>{{ auction.current_price }}</td>

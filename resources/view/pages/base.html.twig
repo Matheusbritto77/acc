@@ -178,18 +178,6 @@ var FB_ForceReload = 0;
 								{% endfor %}
 							</ul>
 						</li>
-						<li class="Level1Block" id="charactertrade">
-							<div class="Level1Entry" onclick="MenuItemAction('charactertrade')" ;="">Char Bazaar</div>
-							<ul class="">
-								{% for menu in menu %}
-								{% if menu.category == 'charactertrade' %}
-								<li class="Level2Block MobileNavigationLinkContainer" id="{{ menu.tag }}" style="display: none;">
-									<a class="Level2Entry" href="{{ URL }}/{{ menu.link }}">{{ menu.name }}</a>
-								</li>
-								{% endif %}
-								{% endfor %}
-							</ul>
-						</li>
 						<li class="Level1Block" id="account">
 							<div class="Level1Entry" onclick="MenuItemAction('account')" ;="">Account</div>
 							<ul class="">
@@ -379,36 +367,6 @@ var FB_ForceReload = 0;
 								</a>
                 {% endif %}
                 {% endfor %}
-							</div>
-						</div>
-						<div id='charactertrade' class='menuitem'>
-							<span onclick="MenuItemAction('charactertrade')">
-								<div class='MenuButton' style='background-image:url({{IMAGE_PATH}}/global/menu/button-background.gif);'>
-									<div onmouseover='MouseOverMenuItem(this);' onmouseout='MouseOutMenuItem(this);'><div class='Button' style='background-image:url({{IMAGE_PATH}}/global/menu/button-background-over.gif);'></div>
-										<span id='charactertrade_Lights' class='Lights'>
-											<div class='light_lu' style='background-image:url({{IMAGE_PATH}}/global/menu/green-light.gif);'></div>
-											<div class='light_ld' style='background-image:url({{IMAGE_PATH}}/global/menu/green-light.gif);'></div>
-											<div class='light_ru' style='background-image:url({{IMAGE_PATH}}/global/menu/green-light.gif);'></div>
-										</span>
-										<div id='charactertrade_Icon' class='Icon' style='background-image:url({{IMAGE_PATH}}/global/menu/icon-community.gif);'></div>
-										<div id='charactertrade_Label' class='Label' style='background-image:url({{IMAGE_PATH}}/global/menu/label-community.png);'></div>
-										<div id='charactertrade_Extend' class='Extend' style='background-image:url({{IMAGE_PATH}}/global/general/plus.gif);'></div>
-									</div>
-								</div>
-							</span>
-							<div id='charactertrade_Submenu' class='Submenu'>
-								{% for menu in menu %}
-								{% if menu.category == 'charactertrade' %}
-								<a href='{{URL}}/{{ menu.link }}'>
-									<div id='submenu_{{ menu.tag }}' class='Submenuitem' onmouseover='MouseOverSubmenuItem(this)' onmouseout='MouseOutSubmenuItem(this)'>
-										<div class='LeftChain' style='background-image:url({{IMAGE_PATH}}/global/general/chain.gif);'></div>
-										<div id='ActiveSubmenuItemIcon_{{ menu.tag }}' class='ActiveSubmenuItemIcon' style='background-image:url({{IMAGE_PATH}}/global/menu/icon-activesubmenu.gif);'></div>
-										<div id='ActiveSubmenuItemLabel_{{ menu.tag }}' class='SubmenuitemLabel' style="color: #{{ menu.color }}">{{ menu.name }}</div>
-										<div class='RightChain' style='background-image:url({{IMAGE_PATH}}/global/general/chain.gif);'></div>
-									</div>
-								</a>
-								{% endif %}
-								{% endfor %}
 							</div>
 						</div>
             			<div id='account' class='menuitem'>

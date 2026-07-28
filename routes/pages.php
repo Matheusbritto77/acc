@@ -200,61 +200,14 @@ $obRouter->get('/community/houses', [
         return new Response(200, Houses::getHouses($request));
     }
 ]);
-$obRouter->get('/charactertrade', [
+$obRouter->get('/community/char-bazaar', [
     function($request){
         return new Response(200, CharacterBazaar::viewMarketplace($request));
     }
 ]);
-$obRouter->get('/charactertrade/history', [
-    function($request){
-        return new Response(200, CharacterBazaar::viewAuctionHistory($request));
-    }
-]);
-$obRouter->get('/charactertrade/watched', [
-    'middlewares' => [
-        'required-login'
-    ],
-    function($request){
-        return new Response(200, CharacterBazaar::viewWatchedAuctions($request));
-    }
-]);
-$obRouter->get('/charactertrade/{auctionId}', [
-    function($request, $auctionId){
-        return new Response(200, CharacterBazaar::viewAuction($request, $auctionId));
-    }
-]);
-$obRouter->post('/charactertrade/{auctionId}/bids', [
-    'middlewares' => [
-        'required-login'
-    ],
-    function($request, $auctionId){
-        return new Response(200, CharacterBazaar::placeBid($request, $auctionId));
-    }
-]);
-$obRouter->post('/charactertrade/{auctionId}/watch', [
-    'middlewares' => [
-        'required-login'
-    ],
-    function($request, $auctionId){
-        return new Response(200, CharacterBazaar::watchAuction($request, $auctionId));
-    }
-]);
-$obRouter->post('/charactertrade/{auctionId}/unwatch', [
-    'middlewares' => [
-        'required-login'
-    ],
-    function($request, $auctionId){
-        return new Response(200, CharacterBazaar::unwatchAuction($request, $auctionId));
-    }
-]);
-$obRouter->get('/community/char-bazaar', [
-    function($request){
-        $request->getRouter()->redirect('/charactertrade');
-    }
-]);
 $obRouter->get('/community/char-bazaar/history', [
     function($request){
-        $request->getRouter()->redirect('/charactertrade/history');
+        return new Response(200, CharacterBazaar::viewAuctionHistory($request));
     }
 ]);
 $obRouter->get('/community/char-bazaar/watched', [
@@ -262,12 +215,12 @@ $obRouter->get('/community/char-bazaar/watched', [
         'required-login'
     ],
     function($request){
-        $request->getRouter()->redirect('/charactertrade/watched');
+        return new Response(200, CharacterBazaar::viewWatchedAuctions($request));
     }
 ]);
 $obRouter->get('/community/char-bazaar/{auctionId}', [
     function($request, $auctionId){
-        $request->getRouter()->redirect('/charactertrade/' . $auctionId);
+        return new Response(200, CharacterBazaar::viewAuction($request, $auctionId));
     }
 ]);
 $obRouter->post('/community/char-bazaar/{auctionId}/bids', [

@@ -33,10 +33,10 @@
 						<div class="Message">
 							<div class="BoxFrameVerticalLeft" style="background-image:url({{IMAGE_PATH}}/global/content/box-frame-vertical.gif);"></div>
 							<div class="BoxFrameVerticalRight" style="background-image:url({{IMAGE_PATH}}/global/content/box-frame-vertical.gif);"></div>
-							<nobr>[<a href="{{URL}}/charactertrade">Public Bazaar</a>]</nobr>
+							<nobr>[<a href="{{URL}}/community/char-bazaar">Public Bazaar</a>]</nobr>
 							<nobr>[<a href="{{URL}}/account/char-bazaar/my-bids">My Bids</a>]</nobr>
 							<nobr>[<a href="{{URL}}/account/char-bazaar/my-auctions">My Auctions</a>]</nobr>
-							<nobr>[<a href="{{URL}}/charactertrade/watched">My Watched Auctions</a>]</nobr>
+							<nobr>[<a href="{{URL}}/community/char-bazaar/watched">My Watched Auctions</a>]</nobr>
 						</div>
 						<div class="BoxFrameHorizontal" style="background-image:url({{IMAGE_PATH}}/global/content/box-frame-horizontal.gif);"></div>
 						<div class="BoxFrameEdgeRightBottom" style="background-image:url({{IMAGE_PATH}}/global/content/box-frame-edge.gif);"></div>
@@ -169,7 +169,7 @@
 																	</tr>
 																	{% for bid in bids %}
 																	<tr style="background-color:{% if loop.index is odd %}#F1E0C6{% else %}#D4C0A1{% endif %};">
-																		<td><a href="{{URL}}/charactertrade/{{ bid.auction_id }}">#{{ bid.auction_id }}</a></td>
+																		<td><a href="{{URL}}/community/char-bazaar/{{ bid.auction_id }}">#{{ bid.auction_id }}</a></td>
 																		<td>{{ bid.character_name }}</td>
 																		<td>{{ bid.bid_limit }}</td>
 																		<td>{{ bid.price_after_bid }}</td>
