@@ -17,6 +17,7 @@ use App\Controller\Pages\GuildsWars;
 use App\Controller\Pages\LastDeaths;
 use App\Controller\Pages\Newsarchive;
 use App\Controller\Pages\Polls;
+use App\Controller\Pages\CharacterBazaar;
 use App\Controller\Pages\Support;
 use App\Controller\Pages\Seo;
 use App\Model\Functions\Signature;
@@ -197,6 +198,24 @@ $obRouter->post('/community/polls/{id}/view', [
 $obRouter->get('/community/houses', [
     function($request){
         return new Response(200, Houses::getHouses($request));
+    }
+]);
+$obRouter->get('/community/char-bazaar', [
+    function($request){
+        return new Response(200, CharacterBazaar::viewMarketplace($request));
+    }
+]);
+$obRouter->get('/community/char-bazaar/{auctionId}', [
+    function($request, $auctionId){
+        return new Response(200, CharacterBazaar::viewAuction($request, $auctionId));
+    }
+]);
+$obRouter->post('/community/char-bazaar/{auctionId}/bids', [
+    'middlewares' => [
+        'required-login'
+    ],
+    function($request, $auctionId){
+        return new Response(200, CharacterBazaar::placeBid($request, $auctionId));
     }
 ]);
 $obRouter->get('/community/houses/{house_id}/view', [

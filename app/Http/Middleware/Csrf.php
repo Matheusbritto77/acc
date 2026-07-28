@@ -14,12 +14,18 @@ use App\Security\Csrf as CsrfSecurity;
 
 class Csrf
 {
+    private const PROTECTED_PREFIXES = [
+        '/admin',
+        '/account',
+        '/community/char-bazaar',
+    ];
+
     public function handle($request, $next)
     {
         $method = strtoupper((string) $request->getHttpMethod());
         $uri = (string) $request->getUri();
 
-        if (!in_array($method, ['POST', 'PUT', 'DELETE'], true) || strpos($uri, '/admin') !== 0) {
+        if (!in_array($method, ['POST', 'PUT', 'DELETE'], true) || !$this->requiresProtection($uri)) {
             return $next($request);
         }
 
@@ -32,5 +38,16 @@ class Csrf
         }
 
         return $next($request);
+    }
+
+    private function requiresProtection(string $uri): bool
+    {
+        foreach (self::PROTECTED_PREFIXES as $prefix) {
+            if (strpos($uri, $prefix) === 0) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }

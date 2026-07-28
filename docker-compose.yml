@@ -1,4 +1,19 @@
 services:
+  char-bazaar:
+    build:
+      context: ./services/char-bazaar
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    expose:
+      - "8089"
+    environment:
+      TZ: ${TZ:-America/Sao_Paulo}
+      CHAR_BAZAAR_DATABASE_URL: mysql://${CANARY_DB_USER}:${CANARY_DB_PASSWORD}@${CANARY_DB_HOST}:${CANARY_DB_PORT}/${CANARY_DB_NAME}
+      CHAR_BAZAAR_ESCROW_ACCOUNT_ID: ${CHAR_BAZAAR_ESCROW_ACCOUNT_ID}
+      CHAR_BAZAAR_INTERNAL_TOKEN: ${CHAR_BAZAAR_INTERNAL_TOKEN}
+      CHAR_BAZAAR_BIND: 0.0.0.0:8089
+      RUST_LOG: ${CHAR_BAZAAR_RUST_LOG:-char_bazaar_service=info,tower_http=info}
+
   account-service:
     build:
       context: .
@@ -6,6 +21,8 @@ services:
     restart: unless-stopped
     expose:
       - "80"
+    depends_on:
+      - char-bazaar
     environment:
       TZ: ${TZ:-America/Sao_Paulo}
       URL: ${URL}
@@ -40,3 +57,6 @@ services:
       MAIL_SMTP: ${MAIL_SMTP}
       MAIL_WEB: ${MAIL_WEB}
       RESEND_API_KEY: ${RESEND_API_KEY}
+      CHAR_BAZAAR_INTERNAL_URL: ${CHAR_BAZAAR_INTERNAL_URL:-http://char-bazaar:8089}
+      CHAR_BAZAAR_INTERNAL_TOKEN: ${CHAR_BAZAAR_INTERNAL_TOKEN}
+      CHAR_BAZAAR_STEP_UP_TTL_SECONDS: ${CHAR_BAZAAR_STEP_UP_TTL_SECONDS}

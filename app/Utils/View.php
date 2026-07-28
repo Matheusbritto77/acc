@@ -77,9 +77,18 @@ class View{
         return $twig;
     }
 
-    private static function injectAdminCsrfFields($view, $html)
+    private static function shouldInjectCsrfFields(string $view): bool
     {
-        if (strpos(trim($view, '/'), 'admin/') !== 0) {
+        $normalizedView = trim($view, '/');
+
+        return strpos($normalizedView, 'admin/') === 0
+            || strpos($normalizedView, 'pages/account/') === 0
+            || strpos($normalizedView, 'pages/community/charbazaar') === 0;
+    }
+
+    private static function injectCsrfFields($view, $html)
+    {
+        if (!self::shouldInjectCsrfFields((string) $view)) {
             return $html;
         }
 
@@ -112,7 +121,7 @@ class View{
         }
 
         $html = $contentView->render($template, $vars);
-        $html = self::injectAdminCsrfFields($normalizedView, $html);
+        $html = self::injectCsrfFields($normalizedView, $html);
         return \App\Utils\Translator::translateHtml($html);
     }
 

@@ -63,6 +63,71 @@ $obRouter->get('/account/manage', [
     }
 ]);
 
+$obRouter->get('/account/char-bazaar', [
+    'middlewares' => [
+        'required-login'
+    ],
+    function($request){
+        $request->getRouter()->redirect('/account/char-bazaar/my-listings');
+    }
+]);
+$obRouter->get('/account/char-bazaar/my-listings', [
+    'middlewares' => [
+        'required-login'
+    ],
+    function($request){
+        return new Response(200, \App\Controller\Pages\CharacterBazaar::viewMyListings($request));
+    }
+]);
+$obRouter->post('/account/char-bazaar/preview', [
+    'middlewares' => [
+        'required-login'
+    ],
+    function($request){
+        return new Response(200, \App\Controller\Pages\CharacterBazaar::previewListing($request));
+    }
+]);
+$obRouter->post('/account/char-bazaar/listings', [
+    'middlewares' => [
+        'required-login'
+    ],
+    function($request){
+        return new Response(200, \App\Controller\Pages\CharacterBazaar::createListing($request));
+    }
+]);
+$obRouter->post('/account/char-bazaar/{auctionId}/cancel', [
+    'middlewares' => [
+        'required-login'
+    ],
+    function($request, $auctionId){
+        return new Response(200, \App\Controller\Pages\CharacterBazaar::cancelListing($request, $auctionId));
+    }
+]);
+$obRouter->post('/account/char-bazaar/{auctionId}/settle', [
+    'middlewares' => [
+        'required-login'
+    ],
+    function($request, $auctionId){
+        return new Response(200, \App\Controller\Pages\CharacterBazaar::settleListing($request, $auctionId));
+    }
+]);
+$obRouter->get('/account/char-bazaar/my-bids', [
+    'middlewares' => [
+        'required-login'
+    ],
+    function($request){
+        return new Response(200, \App\Controller\Pages\CharacterBazaar::viewMyBids($request));
+    }
+]);
+$obRouter->post('/account/char-bazaar/step-up', [
+    'middlewares' => [
+        'required-login'
+    ],
+    function($request){
+        return new Response(200, \App\Controller\Pages\CharacterBazaar::confirmStepUp($request));
+    }
+]);
+
 $obRouter->get('/account/registration', [
     'middlewares' => [
         'required-login'

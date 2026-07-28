@@ -1,0 +1,262 @@
+<div id="accountcharbazaar" class="Box">
+	<div class="Corner-tl" style="background-image:url({{IMAGE_PATH}}/global/content/corner-tl.gif);"></div>
+	<div class="Corner-tr" style="background-image:url({{IMAGE_PATH}}/global/content/corner-tr.gif);"></div>
+	<div class="Border_1" style="background-image:url({{IMAGE_PATH}}/global/content/border-1.gif);"></div>
+	<div class="BorderTitleText" style="background-image:url({{IMAGE_PATH}}/global/content/title-background-green.gif);"></div><img id="ContentBoxHeadline" class="Title" src="{{IMAGE_PATH}}/global/strings/headline-accountmanagement.gif" alt="Contentbox headline">
+	<div class="Border_2">
+		<div class="Border_3">
+			<div class="BoxContent" style="background-image:url({{IMAGE_PATH}}/global/content/scroll.gif);">
+				{% if status_message %}
+				<div class="SmallBox">
+					<div class="MessageContainer">
+						<div class="BoxFrameHorizontal" style="background-image:url({{IMAGE_PATH}}/global/content/box-frame-horizontal.gif);"></div>
+						<div class="BoxFrameEdgeLeftTop" style="background-image:url({{IMAGE_PATH}}/global/content/box-frame-edge.gif);"></div>
+						<div class="BoxFrameEdgeRightTop" style="background-image:url({{IMAGE_PATH}}/global/content/box-frame-edge.gif);"></div>
+						<div class="Message">
+							<div class="BoxFrameVerticalLeft" style="background-image:url({{IMAGE_PATH}}/global/content/box-frame-vertical.gif);"></div>
+							<div class="BoxFrameVerticalRight" style="background-image:url({{IMAGE_PATH}}/global/content/box-frame-vertical.gif);"></div>
+							<b>{% if status_type == 'error' %}Error{% elseif status_type == 'success' %}Success{% else %}Notice{% endif %}:</b> {{ status_message }}
+						</div>
+						<div class="BoxFrameHorizontal" style="background-image:url({{IMAGE_PATH}}/global/content/box-frame-horizontal.gif);"></div>
+						<div class="BoxFrameEdgeRightBottom" style="background-image:url({{IMAGE_PATH}}/global/content/box-frame-edge.gif);"></div>
+						<div class="BoxFrameEdgeLeftBottom" style="background-image:url({{IMAGE_PATH}}/global/content/box-frame-edge.gif);"></div>
+					</div>
+				</div>
+				<br>
+				{% endif %}
+
+				<div class="SmallBox">
+					<div class="MessageContainer">
+						<div class="BoxFrameHorizontal" style="background-image:url({{IMAGE_PATH}}/global/content/box-frame-horizontal.gif);"></div>
+						<div class="BoxFrameEdgeLeftTop" style="background-image:url({{IMAGE_PATH}}/global/content/box-frame-edge.gif);"></div>
+						<div class="BoxFrameEdgeRightTop" style="background-image:url({{IMAGE_PATH}}/global/content/box-frame-edge.gif);"></div>
+						<div class="Message">
+							<div class="BoxFrameVerticalLeft" style="background-image:url({{IMAGE_PATH}}/global/content/box-frame-vertical.gif);"></div>
+							<div class="BoxFrameVerticalRight" style="background-image:url({{IMAGE_PATH}}/global/content/box-frame-vertical.gif);"></div>
+							<nobr>[<a href="{{URL}}/community/char-bazaar">Public Bazaar</a>]</nobr>
+							<nobr>[<a href="{{URL}}/account/char-bazaar/my-listings">My Listings</a>]</nobr>
+							<nobr>[<a href="{{URL}}/account/char-bazaar/my-bids">My Bids</a>]</nobr>
+						</div>
+						<div class="BoxFrameHorizontal" style="background-image:url({{IMAGE_PATH}}/global/content/box-frame-horizontal.gif);"></div>
+						<div class="BoxFrameEdgeRightBottom" style="background-image:url({{IMAGE_PATH}}/global/content/box-frame-edge.gif);"></div>
+						<div class="BoxFrameEdgeLeftBottom" style="background-image:url({{IMAGE_PATH}}/global/content/box-frame-edge.gif);"></div>
+					</div>
+				</div>
+				<br>
+
+				{% if not step_up_fresh %}
+				<div class="TableContainer">
+					<div class="CaptionContainer">
+						<div class="CaptionInnerContainer">
+							<span class="CaptionEdgeLeftTop" style="background-image:url({{IMAGE_PATH}}/global/content/box-frame-edge.gif);"></span>
+							<span class="CaptionEdgeRightTop" style="background-image:url({{IMAGE_PATH}}/global/content/box-frame-edge.gif);"></span>
+							<span class="CaptionBorderTop" style="background-image:url({{IMAGE_PATH}}/global/content/table-headline-border.gif);"></span>
+							<span class="CaptionVerticalLeft" style="background-image:url({{IMAGE_PATH}}/global/content/box-frame-vertical.gif);"></span>
+							<div class="Text">Sensitive Action Verification</div>
+							<span class="CaptionVerticalRight" style="background-image:url({{IMAGE_PATH}}/global/content/box-frame-vertical.gif);"></span>
+							<span class="CaptionBorderBottom" style="background-image:url({{IMAGE_PATH}}/global/content/table-headline-border.gif);"></span>
+							<span class="CaptionEdgeLeftBottom" style="background-image:url({{IMAGE_PATH}}/global/content/box-frame-edge.gif);"></span>
+							<span class="CaptionEdgeRightBottom" style="background-image:url({{IMAGE_PATH}}/global/content/box-frame-edge.gif);"></span>
+						</div>
+					</div>
+					<table class="Table1" cellpadding="0" cellspacing="0">
+						<tbody>
+							<tr>
+								<td>
+									<div class="InnerTableContainer">
+										<form action="{{URL}}/account/char-bazaar/step-up" method="post">
+											<input type="hidden" name="return_to" value="{{ return_to }}">
+											<table style="width:100%;">
+												<tbody>
+													<tr><td class="LabelV">Password</td><td><input type="password" name="step_up_password" size="30" maxlength="64"></td></tr>
+													<tr><td class="LabelV">Authenticator Token</td><td><input type="text" name="step_up_token" size="12" maxlength="12"></td></tr>
+													<tr><td colspan="2">You must confirm your credentials before creating, cancelling or settling character auctions.</td></tr>
+													<tr>
+														<td colspan="2" style="text-align:center;">
+															<div class="BigButton" style="background-image:url({{IMAGE_PATH}}/global/buttons/button_blue.gif)">
+																<div onmouseover="MouseOverBigButton(this);" onmouseout="MouseOutBigButton(this);"><div class="BigButtonOver" style="background-image:url({{IMAGE_PATH}}/global/buttons/button_blue_over.gif);"></div><input class="BigButtonText" type="submit" value="Verify"></div>
+															</div>
+														</td>
+													</tr>
+												</tbody>
+											</table>
+										</form>
+									</div>
+								</td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+				<br>
+				{% else %}
+				<div class="SmallBox">
+					<div class="MessageContainer">
+						<div class="BoxFrameHorizontal" style="background-image:url({{IMAGE_PATH}}/global/content/box-frame-horizontal.gif);"></div>
+						<div class="BoxFrameEdgeLeftTop" style="background-image:url({{IMAGE_PATH}}/global/content/box-frame-edge.gif);"></div>
+						<div class="BoxFrameEdgeRightTop" style="background-image:url({{IMAGE_PATH}}/global/content/box-frame-edge.gif);"></div>
+						<div class="Message">
+							<div class="BoxFrameVerticalLeft" style="background-image:url({{IMAGE_PATH}}/global/content/box-frame-vertical.gif);"></div>
+							<div class="BoxFrameVerticalRight" style="background-image:url({{IMAGE_PATH}}/global/content/box-frame-vertical.gif);"></div>
+							Sensitive bazaar actions are unlocked for {{ step_up_remaining }} more seconds.
+						</div>
+						<div class="BoxFrameHorizontal" style="background-image:url({{IMAGE_PATH}}/global/content/box-frame-horizontal.gif);"></div>
+						<div class="BoxFrameEdgeRightBottom" style="background-image:url({{IMAGE_PATH}}/global/content/box-frame-edge.gif);"></div>
+						<div class="BoxFrameEdgeLeftBottom" style="background-image:url({{IMAGE_PATH}}/global/content/box-frame-edge.gif);"></div>
+					</div>
+				</div>
+				<br>
+				{% endif %}
+
+				<div class="TableContainer">
+					<div class="CaptionContainer">
+						<div class="CaptionInnerContainer">
+							<span class="CaptionEdgeLeftTop" style="background-image:url({{IMAGE_PATH}}/global/content/box-frame-edge.gif);"></span>
+							<span class="CaptionEdgeRightTop" style="background-image:url({{IMAGE_PATH}}/global/content/box-frame-edge.gif);"></span>
+							<span class="CaptionBorderTop" style="background-image:url({{IMAGE_PATH}}/global/content/table-headline-border.gif);"></span>
+							<span class="CaptionVerticalLeft" style="background-image:url({{IMAGE_PATH}}/global/content/box-frame-vertical.gif);"></span>
+							<div class="Text">Create Listing</div>
+							<span class="CaptionVerticalRight" style="background-image:url({{IMAGE_PATH}}/global/content/box-frame-vertical.gif);"></span>
+							<span class="CaptionBorderBottom" style="background-image:url({{IMAGE_PATH}}/global/content/table-headline-border.gif);"></span>
+							<span class="CaptionEdgeLeftBottom" style="background-image:url({{IMAGE_PATH}}/global/content/box-frame-edge.gif);"></span>
+							<span class="CaptionEdgeRightBottom" style="background-image:url({{IMAGE_PATH}}/global/content/box-frame-edge.gif);"></span>
+						</div>
+					</div>
+					<table class="Table1" cellpadding="0" cellspacing="0">
+						<tbody>
+							<tr>
+								<td>
+									<div class="InnerTableContainer">
+										<form action="{{URL}}/account/char-bazaar/preview" method="post" style="margin-bottom:10px;">
+											<table style="width:100%;">
+												<tbody>
+													<tr><td class="LabelV">Character</td><td><select name="player_id">{% for character in characters %}<option value="{{ character.id }}"{% if selected_player_id == character.id %} selected{% endif %}>{{ character.name }} (Level {{ character.level }} {{ character.vocation }})</option>{% endfor %}</select></td></tr>
+													<tr>
+														<td colspan="2" style="text-align:center;">
+															<div class="BigButton" style="background-image:url({{IMAGE_PATH}}/global/buttons/button_blue.gif)">
+																<div onmouseover="MouseOverBigButton(this);" onmouseout="MouseOutBigButton(this);"><div class="BigButtonOver" style="background-image:url({{IMAGE_PATH}}/global/buttons/button_blue_over.gif);"></div><input class="BigButtonText" type="submit" value="Preview Eligibility"></div>
+															</div>
+														</td>
+													</tr>
+												</tbody>
+											</table>
+										</form>
+
+										{% if preview %}
+										<div class="TableContentContainer">
+											<table class="TableContent" width="100%" style="border:1px solid #faf0d7;">
+												<tbody>
+													<tr style="background-color:#D4C0A1;"><td class="LabelV">Preview Result</td><td>{% if preview.eligible %}Eligible{% else %}Blocked{% endif %}</td></tr>
+													<tr style="background-color:#F1E0C6;"><td class="LabelV">Character</td><td>{{ preview.character_name }}</td></tr>
+													<tr style="background-color:#D4C0A1;"><td class="LabelV">Level</td><td>{{ preview.level }}</td></tr>
+													<tr style="background-color:#F1E0C6;"><td class="LabelV">Reasons</td><td>{% if preview.reasons is empty %}No blockers reported.{% else %}{{ preview.reasons|join(', ') }}{% endif %}</td></tr>
+												</tbody>
+											</table>
+										</div>
+										{% endif %}
+
+										<form action="{{URL}}/account/char-bazaar/listings" method="post">
+											<table style="width:100%; margin-top:10px;">
+												<tbody>
+													<tr><td class="LabelV">Character</td><td><select name="player_id">{% for character in characters %}<option value="{{ character.id }}"{% if selected_player_id == character.id %} selected{% endif %}>{{ character.name }} (Level {{ character.level }} {{ character.vocation }})</option>{% endfor %}</select></td></tr>
+													<tr><td class="LabelV">Starting Bid</td><td><input type="number" min="1" name="starting_bid" value="1"></td></tr>
+													<tr><td class="LabelV">Bid Increment</td><td><input type="number" min="1" name="bid_increment" value="1"></td></tr>
+													<tr><td class="LabelV">Duration</td><td><select name="duration_hours"><option value="24">24 hours</option><option value="72">72 hours</option><option value="168">168 hours</option></select></td></tr>
+													<tr>
+														<td colspan="2" style="text-align:center;">
+															<div class="BigButton" style="background-image:url({{IMAGE_PATH}}/global/buttons/button_green.gif)">
+																<div onmouseover="MouseOverBigButton(this);" onmouseout="MouseOutBigButton(this);"><div class="BigButtonOver" style="background-image:url({{IMAGE_PATH}}/global/buttons/button_green_over.gif);"></div><input class="BigButtonText" type="submit" value="Create Listing"></div>
+															</div>
+														</td>
+													</tr>
+												</tbody>
+											</table>
+										</form>
+									</div>
+								</td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+				<br>
+
+				<div class="TableContainer">
+					<div class="CaptionContainer">
+						<div class="CaptionInnerContainer">
+							<span class="CaptionEdgeLeftTop" style="background-image:url({{IMAGE_PATH}}/global/content/box-frame-edge.gif);"></span>
+							<span class="CaptionEdgeRightTop" style="background-image:url({{IMAGE_PATH}}/global/content/box-frame-edge.gif);"></span>
+							<span class="CaptionBorderTop" style="background-image:url({{IMAGE_PATH}}/global/content/table-headline-border.gif);"></span>
+							<span class="CaptionVerticalLeft" style="background-image:url({{IMAGE_PATH}}/global/content/box-frame-vertical.gif);"></span>
+							<div class="Text">My Listings</div>
+							<span class="CaptionVerticalRight" style="background-image:url({{IMAGE_PATH}}/global/content/box-frame-vertical.gif);"></span>
+							<span class="CaptionBorderBottom" style="background-image:url({{IMAGE_PATH}}/global/content/table-headline-border.gif);"></span>
+							<span class="CaptionEdgeLeftBottom" style="background-image:url({{IMAGE_PATH}}/global/content/box-frame-edge.gif);"></span>
+							<span class="CaptionEdgeRightBottom" style="background-image:url({{IMAGE_PATH}}/global/content/box-frame-edge.gif);"></span>
+						</div>
+					</div>
+					<table class="Table5" cellpadding="0" cellspacing="0">
+						<tbody>
+							<tr>
+								<td>
+									<div class="InnerTableContainer">
+										<table style="width:100%;">
+											<tbody>
+												<tr>
+													<td>
+														<div class="TableContentContainer">
+															<table class="TableContent" width="100%" style="border:1px solid #faf0d7;">
+																<tbody>
+																	<tr class="LabelV" style="background-color:#D4C0A1;">
+																		<td>Auction</td>
+																		<td>Character</td>
+																		<td>Price</td>
+																		<td>Ends At</td>
+																		<td>Status</td>
+																		<td>Actions</td>
+																	</tr>
+																	{% for listing in listings %}
+																	<tr style="background-color:{% if loop.index is odd %}#F1E0C6{% else %}#D4C0A1{% endif %};">
+																		<td><a href="{{URL}}/community/char-bazaar/{{ listing.id }}">#{{ listing.id }}</a></td>
+																		<td>{{ listing.character_name }}</td>
+																		<td>{{ listing.current_price }}</td>
+																		<td>{{ listing.ends_at|date("M d Y H:i:s") }}</td>
+																		<td>{% if listing.status == 'active' and listing.is_ended %}Awaiting settlement{% else %}{{ listing.status|capitalize }}{% endif %}</td>
+																		<td style="white-space:nowrap;">
+																			{% if listing.can_cancel %}
+																			<form action="{{URL}}/account/char-bazaar/{{ listing.id }}/cancel" method="post" style="display:inline;">
+																				<input type="submit" value="Cancel">
+																			</form>
+																			{% endif %}
+																			{% if listing.can_settle %}
+																			<form action="{{URL}}/account/char-bazaar/{{ listing.id }}/settle" method="post" style="display:inline; margin-left:4px;">
+																				<input type="submit" value="Settle">
+																			</form>
+																			{% endif %}
+																		</td>
+																	</tr>
+																	{% else %}
+																	<tr style="background-color:#F1E0C6;"><td colspan="6">You do not have any character bazaar listings yet.</td></tr>
+																	{% endfor %}
+																</tbody>
+															</table>
+														</div>
+													</td>
+												</tr>
+											</tbody>
+										</table>
+									</div>
+								</td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="Border_1" style="background-image:url({{IMAGE_PATH}}/global/content/border-1.gif);"></div>
+	<div class="CornerWrapper-b">
+		<div class="Corner-bl" style="background-image:url({{IMAGE_PATH}}/global/content/corner-bl.gif);"></div>
+	</div>
+	<div class="CornerWrapper-b">
+		<div class="Corner-br" style="background-image:url({{IMAGE_PATH}}/global/content/corner-br.gif);"></div>
+	</div>
+</div>
