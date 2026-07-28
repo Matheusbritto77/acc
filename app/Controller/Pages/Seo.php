@@ -130,7 +130,6 @@ class Seo
         self::addUrl($items, '/community/highscores');
         self::addUrl($items, '/community/lastdeaths');
         self::addUrl($items, '/community/houses');
-        self::addUrl($items, '/community/char-bazaar');
         self::addUrl($items, '/community/guilds');
         self::addUrl($items, '/community/polls');
         self::addUrl($items, '/guildwars/active');

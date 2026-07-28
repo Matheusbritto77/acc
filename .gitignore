@@ -7,5 +7,3 @@ Thumbs.db
 .DS_Store
 .idea/
 /store
-/services/char-bazaar/target/
-/services/char-bazaar/.env
