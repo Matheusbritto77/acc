@@ -22,6 +22,7 @@ use models::{
     PlaceBidRequest, PlaceBidResponse, SettleAuctionRequest,
 };
 use sqlx::{
+    migrate::Migrator,
     MySqlPool, Row,
     mysql::{MySqlPoolOptions, MySqlRow},
 };
@@ -29,6 +30,8 @@ use state::AppState;
 use tower_http::trace::TraceLayer;
 use tracing::info;
 use uuid::Uuid;
+
+static MIGRATOR: Migrator = sqlx::migrate!("./migrations");
 
 const COIN_TRANSACTION_TYPE_ADD: u8 = 1;
 const COIN_TRANSACTION_TYPE_REMOVE: u8 = 2;
@@ -54,6 +57,10 @@ async fn main() -> Result<(), AppError> {
         .max_connections(10)
         .connect(&config.database_url)
         .await?;
+    MIGRATOR
+        .run(&pool)
+        .await
+        .map_err(|error| AppError::config(format!("failed to run bazaar migrations: {error}")))?;
 
     let state = AppState { pool, config };
     let app = Router::new()
